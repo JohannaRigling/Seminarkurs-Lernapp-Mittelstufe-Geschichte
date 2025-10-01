@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geschichte Lernen mit KI - Französische Revolution</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .api-setup {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .api-setup input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            margin: 10px 0;
+        }
+
+        .api-setup button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+
+        .api-setup button:hover {
+            background: #5568d3;
+        }
+
+        .api-status {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .api-status.connected {
+            background: #4caf50;
+            color: white;
+        }
+
+        .api-status.disconnected {
+            background: #f44336;
+            color: white;
+        }
+
+        .setup-steps {
+            background: #f0f8ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #4285f4;
+        }
+
+        .setup-steps h4 {
+            color: #1a73e8;
+            margin-bottom: 10px;
+        }
+
+        .setup-steps ol {
+            margin-left: 20px;
+        }
+
+        .setup-steps li {
+            margin: 5px 0;
+            color: #333;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .content-section {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Quiz Styles */
+        .quiz-container {
+            margin-top: 20px;
+        }
+
+        .question {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .option:hover {
+            background: #e0e0e0;
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: #4caf50;
+            color: white;
+            border-color: #45a049;
+        }
+
+        .option.incorrect {
+            background: #f44336;
+            color: white;
+            border-color: #da190b;
+        }
+
+        .ai-explanation {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .ai-explanation.show {
+            display: block;
+            animation: slideIn 0.5s;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ai-explanation h4 {
+            color: #1976d2;
+            margin-bottom: 8px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .score {
+            text-align: center;
+            font-size: 1.5em;
+            margin: 20px 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .next-btn, .generate-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .next-btn:hover, .generate-btn:hover {
+            background: #5568d3;
+        }
+
+        .next-btn {
+            display: none;
+        }
+
+        /* Chat Styles */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 80%;
+            animation: messageIn 0.3s;
+        }
+
+        @keyframes messageIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            background: #667eea;
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.ai {
+            background: white;
+            border: 2px solid #e0e0e0;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .send-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .send-btn:hover {
+            background: #5568d3;
+        }
+
+        .send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Timeline Styles */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .timeline-date {
+            min-width: 100px;
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .timeline-content {
+            flex: 1;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin-left: 20px;
+        }
+
+        .timeline-content h3 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        /* Flashcard Styles */
+        .flashcard {
+            perspective: 1000px;
+            height: 300px;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            padding: 30px;
+            font-size: 1.3em;
+            text-align: center;
+        }
+
+        .flashcard-front {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .flashcard-back {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            transform: rotateY(180deg);
+        }
+
+        .flashcard-nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .flashcard-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .flashcard-btn:hover {
+            background: #5568d3;
+        }
+
+        .flashcard-counter {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        /* Recommendations */
+        .recommendations {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .recommendations h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .recommendations ul {
+            margin-left: 20px;
+        }
+
+        .recommendations li {
+            margin: 8px 0;
+            color: #856404;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .timeline-item {
+                flex-direction: column;
+            }
+            
+            .timeline-content {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .chat-messages {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 Geschichte Lernen mit KI</h1>
+            <p>Französische Revolution (1789-1799) • Powered by Google Gemini ✨</p>
+        </header>
+
+        <!-- API Setup -->
+        <div class="api-setup" id="apiSetup">
+            <h3>🔑 Google Gemini API (100% KOSTENLOS!)</h3>
+            
+            <div class="setup-steps">
+                <h4>So holst du deinen kostenlosen API-Key:</h4>
+                <ol>
+                    <li>Gehe zu <a href="https://aistudio.google.com/apikey" target="_blank" style="color: #1a73e8;">aistudio.google.com/apikey</a></li>
+                    <li>Melde dich mit deinem Google-Konto an</li>
+                    <li>Klicke auf "Create API Key"</li>
+                    <li>Kopiere den Key und füge ihn unten ein</li>
+                </ol>
+            </div>
+            
+            <input type="password" id="apiKeyInput" placeholder="AIzaSy...">
+            <button onclick="connectAPI()">Verbinden</button>
+            <div id="apiStatus"></div>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn active" onclick="showSection('quiz')">🎯 Quiz</button>
+            <button class="nav-btn" onclick="showSection('chat')">💬 KI-Chat</button>
+            <button class="nav-btn" onclick="showSection('timeline')">📅 Zeitleiste</button>
+            <button class="nav-btn" onclick="showSection('flashcards')">🃏 Karteikarten</button>
+        </div>
+
+        <!-- Quiz Section -->
+        <div id="quiz" class="content-section active">
+            <h2>Quiz zur Französischen Revolution</h2>
+            <div class="score">Punktzahl: <span id="score">0</span> / <span id="total">0</span></div>
+            <div class="quiz-container" id="quizContainer"></div>
+            <div class="ai-explanation" id="aiExplanation"></div>
+            <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Nächste Frage →</button>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="generate-btn" onclick="generateNewQuestions()">🤖 Neue Fragen generieren</button>
+            </div>
+        </div>
+
+        <!-- Chat Section -->
+        <div id="chat" class="content-section">
+            <h2>💬 Frag die KI zur Geschichte</h2>
+            <p style="color: #666; margin-bottom: 15px;">Stelle Google Gemini Fragen zur Französischen Revolution!</p>
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai">
+                        Hallo! Ich bin dein KI-Geschichtsassistent powered by Google Gemini. Frag mich alles zur Französischen Revolution! 📚
+                    </div>
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Stelle eine Frage..." onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">Senden</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline Section -->
+        <div id="timeline" class="content-section">
+            <h2>📅 Zeitleiste der wichtigsten Ereignisse</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">1789</div>
+                    <div class="timeline-content">
+                        <h3>Beginn der Revolution</h3>
+                        <p>Sturm auf die Bastille am 14. Juli - Symbol für den Beginn der Revolution und den Kampf gegen die Monarchie.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">1789</div>
+                    <div class="timeline-content">
+                        <h3>Erklärung der Menschenrechte</h3>
+                        <p>Die Nationalversammlung verabschiedet die "Erklärung der Menschen- und Bürgerrechte" - ein Meilenstein für Freiheit und Gleichheit.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">1792</div>
+                    <div class="timeline-content">
+                        <h3>Ausrufung der Republik</h3>
+                        <p>Frankreich wird zur Republik erklärt. Die Monarchie wird offiziell abgeschafft.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">1793</div>
+                    <div class="timeline-content">
+                        <h3>Hinrichtung von Ludwig XVI.</h3>
+                        <p>König Ludwig XVI. wird am 21. Januar durch die Guillotine hingerichtet.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">1793-94</div>
+                    <div class="timeline-content">
+                        <h3>Schreckensherrschaft</h3>
+                        <p>Die Jakobiner unter Robespierre errichten eine Terrorherrschaft mit Massenhinrichtungen.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">1799</div>
+                    <div class="timeline-content">
+                        <h3>Napoleon übernimmt die Macht</h3>
+                        <p>Napoleon Bonaparte beendet die Revolution durch einen Staatsstreich und wird Erster Konsul.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flashcards Section -->
+        <div id="flashcards" class="content-section">
+            <h2>🃏 Karteikarten zum Lernen</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 20px;">Klicke auf die Karte, um die Antwort zu sehen!</p>
+            <div class="flashcard-counter">
+                Karte <span id="currentCard">1</span> von <span id="totalCards">6</span>
+            </div>
+            <div class="flashcard" id="flashcard" onclick="flipCard()">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div id="cardQuestion">Wann begann die Französische Revolution?</div>
+                    </div>
+                    <div class="flashcard-back">
+                        <div id="cardAnswer">1789 mit dem Sturm auf die Bastille am 14. Juli</div>
+                    </div>
+                </div>
+            </div>
+            <div class="flashcard-nav">
+                <button class="flashcard-btn" onclick="prevCard()">← Zurück</button>
+                <button class="flashcard-btn" onclick="nextCard()">Weiter →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let apiKey = '';
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+        let currentFlashcard = 0;
+        let userPerformance = {
+            totalQuestions: 0,
+            correctAnswers: 0,
+            weakTopics: []
+        };
+
+        // Quiz Data
+        let quizData = [
+            {
+                question: "In welchem Jahr begann die Französische Revolution?",
+                options: ["1776", "1789", "1799", "1804"],
+                correct: 1,
+                topic: "Chronologie"
+            },
+            {
+                question: "Welches berühmte Gefängnis wurde am 14. Juli 1789 gestürmt?",
+                options: ["Der Louvre", "Die Bastille", "Versailles", "Notre-Dame"],
+                correct: 1,
+                topic: "Ereignisse"
+            },
+            {
+                question: "Wer war der französische König während der Revolution?",
+                options: ["Ludwig XIV.", "Ludwig XV.", "Ludwig XVI.", "Napoleon"],
+                correct: 2,
+                topic: "Personen"
+            },
+            {
+                question: "Was bedeutet die Devise 'Liberté, Égalité, Fraternité'?",
+                options: ["Freiheit, Gleichheit, Brüderlichkeit", "Leben, Liebe, Frieden", "Mut, Stärke, Ehre", "Glaube, Hoffnung, Liebe"],
+                correct: 0,
+                topic: "Ideologie"
+            },
+            {
+                question: "Wie endete die Schreckensherrschaft unter Robespierre?",
+                options: ["Er dankte ab", "Er wurde hingerichtet", "Er floh ins Ausland", "Er wurde zum König gekrönt"],
+                correct: 1,
+                topic: "Ereignisse"
+            },
+            {
+                question: "Wer beendete die Revolution durch einen Staatsstreich 1799?",
+                options: ["Robespierre", "Ludwig XVII.", "Napoleon Bonaparte", "Danton"],
+                correct: 2,
+                topic: "Personen"
+            }
+        ];
+
+        // Flashcards Data
+        const flashcards = [
+            {
+                question: "Wann begann die Französische Revolution?",
+                answer: "1789 mit dem Sturm auf die Bastille am 14. Juli"
+            },
+            {
+                question: "Was waren die drei Stände im alten Frankreich?",
+                answer: "1. Stand: Klerus (Geistliche), 2. Stand: Adel, 3. Stand: Bürger und Bauern (98% der Bevölkerung)"
+            },
+            {
+                question: "Was war die Nationalversammlung?",
+                answer: "Eine Versammlung der Vertreter des dritten Standes, die eine neue Verfassung für Frankreich schaffen wollte"
+            },
+            {
+                question: "Was geschah während der Schreckensherrschaft?",
+                answer: "1793-1794: Die Jakobiner unter Robespierre richteten etwa 40.000 Menschen hin, die als Feinde der Revolution galten"
+            },
+            {
+                question: "Welche wichtigen Prinzipien brachte die Revolution?",
+                answer: "Menschenrechte, Gewaltenteilung, Volkssouveränität, Gleichheit vor dem Gesetz"
+            },
+            {
+                question: "Welche Auswirkungen hatte die Revolution auf Europa?",
+                answer: "Sie inspirierte demokratische Bewegungen in ganz Europa und führte zu Kriegen zwischen revolutionärem Frankreich und europäischen Monarchien"
+            }
+        ];
+
+        // API Connection
+        function connectAPI() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            if (!key) {
+                alert('Bitte gib einen API-Key ein!');
+                return;
+            }
+            
+            apiKey = key;
+            document.getElementById('apiStatus').innerHTML = 
+                '<span class="api-status connected">✓ Verbunden - Bereit zum Lernen!</span>';
+            
+            setTimeout(() => {
+                document.getElementById('apiSetup').style.display = 'none';
+            }, 1500);
+        }
+
+        // Google Gemini API Call
+        async function callGemini(prompt, systemContext = '') {
+            if (!apiKey) {
+                alert('Bitte verbinde zuerst deinen API-Key!');
+                return null;
+            }
+
+            try {
+                const fullPrompt = systemContext ? `${systemContext}\n\n${prompt}` : prompt;
+                
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: fullPrompt
+                            }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.7,
+                            maxOutputTokens: 1024,
+                        }
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                    return data.candidates[0].content.parts[0].text;
+                } else {
+                    throw new Error('Unerwartete API-Antwort');
+                }
+            } catch (error) {
+                console.error('API Fehler:', error);
+                return 'Fehler bei der KI-Verbindung. Bitte überprüfe deinen API-Key oder versuche es später erneut.';
+            }
+        }
+
+        // Quiz Functions
+        function loadQuestion() {
+            answered = false;
+            const q = quizData[currentQuestion];
+            const container = document.getElementById('quizContainer');
+            
+            let html = `<div class="question">${currentQuestion + 1}. ${q.question}</div><div class="options">`;
+            
+            q.options.forEach((option, index) => {
+                html += `<div class="option" onclick="checkAnswer(${index})">${option}</div>`;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('aiExplanation').classList.remove('show');
+            document.getElementById('total').textContent = quizData.length;
+        }
+
+        async function checkAnswer(selected) {
+            if (answered) return;
+            
+            answered = true;
+            const q = quizData[currentQuestion];
+            const options = document.querySelectorAll('.option');
+            
+            userPerformance.totalQuestions++;
+            
+            if (selected === q.correct) {
+                options[selected].classList.add('correct');
+                score++;
+                userPerformance.correctAnswers++;
+                document.getElementById('score').textContent = score;
+            } else {
+                options[selected].classList.add('incorrect');
+                options[q.correct].classList.add('correct');
+                userPerformance.weakTopics.push(q.topic);
+                
+                // Get AI explanation for wrong answer
+                const explanationDiv = document.getElementById('aiExplanation');
+                explanationDiv.innerHTML = '<h4>🤖 KI erklärt:</h4><div class="loading"></div>';
+                explanationDiv.classList.add('show');
+                
+                const systemContext = 'Du bist ein hilfreicher Geschichtslehrer für Schüler der Mittelstufe (13-16 Jahre). Erkläre historische Themen klar und verständlich.';
+                const prompt = `Die Frage war: "${q.question}"
+Die richtige Antwort ist: "${q.options[q.correct]}"
+Der Schüler hat falsch geantwortet mit: "${q.options[selected]}"
+
+Erkläre kurz und verständlich:
+1. Warum die richtige Antwort stimmt
+2. Warum die falsche Antwort nicht stimmt
+3. Ein interessanter Fakt dazu
+
+Halte die Erklärung unter 100 Wörtern und nutze einfache Sprache.`;
+
+                const explanation = await callGemini(prompt, systemContext);
+                explanationDiv.innerHTML = '<h4>🤖 KI erklärt:</h4><p>' + explanation + '</p>';
+            }
+            
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        async function showResults() {
+            const container = document.getElementById('quizContainer');
+            const percentage = Math.round((score / quizData.length) * 100);
+            let message = '';
+            
+            if (percentage >= 80) {
+                message = '🎉 Ausgezeichnet! Du kennst dich super aus!';
+            } else if (percentage >= 60) {
+                message = '👍 Gut gemacht! Du bist auf dem richtigen Weg!';
+            } else {
+                message = '📚 Weiter üben! Du schaffst das!';
+            }
+            
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px;">
+                    <h2>Quiz beendet!</h2>
+                    <p style="font-size: 1.5em; margin: 20px 0;">${message}</p>
+                    <p style="font-size: 1.2em;">Du hast ${score} von ${quizData.length} Fragen richtig beantwortet (${percentage}%).</p>
+                    <button class="nav-btn" onclick="restartQuiz()" style="margin-top: 20px;">Nochmal versu
