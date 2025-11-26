@@ -1,0 +1,31 @@
+{
+  "name": "history-learning-app",
+  "version": "1.0.0",
+  "description": "A learning app focused on history for middle school students.",
+  "main": "src/scripts/app.js",
+  "scripts": {
+    "start": "live-server public",
+    "test": "jest"
+  },
+  "keywords": [
+    "history",
+    "education",
+    "learning",
+    "middle school"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "live-server": "^1.2.1",
+    "jest": "^27.0.6"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/history-learning-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/history-learning-app/issues"
+  },
+  "homepage": "https://github.com/yourusername/history-learning-app#readme"
+}

@@ -1,0 +1,59 @@
+{
+  "lessons": [
+    {
+      "id": 1,
+      "title": "Ancient Civilizations",
+      "content": "This lesson covers the major ancient civilizations, including Mesopotamia, Egypt, and the Indus Valley.",
+      "duration": "45 minutes",
+      "objectives": [
+        "Understand the key features of ancient civilizations.",
+        "Identify the contributions of each civilization to modern society.",
+        "Discuss the cultural practices of ancient peoples."
+      ]
+    },
+    {
+      "id": 2,
+      "title": "The Middle Ages",
+      "content": "Explore the social, political, and economic structures of the Middle Ages, including feudalism and the role of the Church.",
+      "duration": "60 minutes",
+      "objectives": [
+        "Analyze the impact of feudalism on medieval society.",
+        "Examine the influence of the Church during the Middle Ages.",
+        "Discuss the significance of the Crusades."
+      ]
+    },
+    {
+      "id": 3,
+      "title": "The Renaissance",
+      "content": "Learn about the Renaissance period, its key figures, and its impact on art, science, and culture.",
+      "duration": "50 minutes",
+      "objectives": [
+        "Identify major artists and thinkers of the Renaissance.",
+        "Discuss the innovations in art and science during this period.",
+        "Understand the concept of humanism."
+      ]
+    },
+    {
+      "id": 4,
+      "title": "The Age of Exploration",
+      "content": "This lesson focuses on the Age of Exploration, including the motivations for exploration and its consequences.",
+      "duration": "40 minutes",
+      "objectives": [
+        "Examine the reasons behind European exploration.",
+        "Discuss the impact of exploration on indigenous populations.",
+        "Analyze the economic changes resulting from exploration."
+      ]
+    },
+    {
+      "id": 5,
+      "title": "The American Revolution",
+      "content": "Explore the causes, key events, and outcomes of the American Revolution.",
+      "duration": "55 minutes",
+      "objectives": [
+        "Identify the key figures in the American Revolution.",
+        "Discuss the significance of the Declaration of Independence.",
+        "Analyze the impact of the Revolution on the formation of the United States."
+      ]
+    }
+  ]
+}

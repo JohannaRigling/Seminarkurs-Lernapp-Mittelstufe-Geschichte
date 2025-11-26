@@ -1,0 +1,59 @@
+{
+  "quizzes": [
+    {
+      "id": 1,
+      "question": "What year did the Titanic sink?",
+      "options": [
+        "1912",
+        "1905",
+        "1920",
+        "1898"
+      ],
+      "correctAnswer": "1912"
+    },
+    {
+      "id": 2,
+      "question": "Who was the first President of the United States?",
+      "options": [
+        "George Washington",
+        "Thomas Jefferson",
+        "Abraham Lincoln",
+        "John Adams"
+      ],
+      "correctAnswer": "George Washington"
+    },
+    {
+      "id": 3,
+      "question": "What was the main cause of World War I?",
+      "options": [
+        "Assassination of Archduke Franz Ferdinand",
+        "Economic depression",
+        "Colonial disputes",
+        "Nazi expansion"
+      ],
+      "correctAnswer": "Assassination of Archduke Franz Ferdinand"
+    },
+    {
+      "id": 4,
+      "question": "Which ancient civilization built the pyramids?",
+      "options": [
+        "Romans",
+        "Greeks",
+        "Egyptians",
+        "Mayans"
+      ],
+      "correctAnswer": "Egyptians"
+    },
+    {
+      "id": 5,
+      "question": "What was the significance of the Magna Carta?",
+      "options": [
+        "It established the principle of due process.",
+        "It ended the Black Plague.",
+        "It was the first constitution.",
+        "It declared independence from France."
+      ],
+      "correctAnswer": "It established the principle of due process."
+    }
+  ]
+}
