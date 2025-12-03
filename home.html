@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Startseite - Geschichts-Lernapp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --text-primary: #e8f0f8;
+      --text-secondary: #a8c0d8;
+      --accent-color: #5dade2;
+      --accent-glow: rgba(93, 173, 226, 0.4);
+      --highlight: #f4d03f;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Quicksand', sans-serif;
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+
+      /* Spektakulärer Hintergrund mit mehreren Verläufen */
+      background:
+        /* Leuchtender Kreis oben */
+        radial-gradient(ellipse 80% 50% at 50% 0%, rgba(93, 173, 226, 0.3) 0%, transparent 50%),
+        /* Leuchtender Kreis unten links */
+        radial-gradient(ellipse 60% 40% at 10% 90%, rgba(155, 89, 182, 0.25) 0%, transparent 50%),
+        /* Leuchtender Kreis unten rechts */
+        radial-gradient(ellipse 50% 40% at 90% 80%, rgba(231, 76, 60, 0.2) 0%, transparent 50%),
+        /* Basis-Verlauf */
+        linear-gradient(180deg,
+          #0a1628 0%,
+          #0f2035 20%,
+          #152a45 40%,
+          #1a3355 60%,
+          #1e3a5f 80%,
+          #234168 100%
+        );
+      background-attachment: fixed;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       STATS BAR - Oben (weiche Kanten)
+       ══════════════════════════════════════════════════════════════ */
+
+    .stats-bar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      padding: 20px 30px;
+      background: linear-gradient(180deg,
+        rgba(20, 40, 70, 0.9) 0%,
+        rgba(20, 40, 70, 0.6) 70%,
+        transparent 100%
+      );
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      background: linear-gradient(135deg,
+        rgba(255,255,255,0.1) 0%,
+        rgba(255,255,255,0.05) 100%
+      );
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 30px;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .stat-item:hover {
+      background: linear-gradient(135deg,
+        rgba(255,255,255,0.15) 0%,
+        rgba(255,255,255,0.08) 100%
+      );
+      transform: translateY(-2px);
+    }
+
+    .stat-item .icon {
+      font-size: 1.3rem;
+    }
+
+    .stat-item.streak { color: #ff6b6b; text-shadow: 0 0 10px rgba(255,107,107,0.5); }
+    .stat-item.rank { color: #a855f7; text-shadow: 0 0 10px rgba(168,85,247,0.5); }
+    .stat-item.time { color: #60a5fa; text-shadow: 0 0 10px rgba(96,165,250,0.5); }
+    .stat-item.coins { color: #fbbf24; text-shadow: 0 0 10px rgba(251,191,36,0.5); }
+
+    /* ══════════════════════════════════════════════════════════════
+       MAIN CONTENT
+       ══════════════════════════════════════════════════════════════ */
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 24px;
+      gap: 35px;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       FUN FACT BOX (Glasmorphismus)
+       ══════════════════════════════════════════════════════════════ */
+
+    .fun-fact-box {
+      background: linear-gradient(135deg,
+        rgba(255,255,255,0.12) 0%,
+        rgba(255,255,255,0.05) 100%
+      );
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 24px;
+      padding: 28px 35px;
+      max-width: 550px;
+      text-align: center;
+      backdrop-filter: blur(15px);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fun-fact-box::before {
+      content: '💡';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 2rem;
+      filter: drop-shadow(0 0 10px rgba(244, 208, 63, 0.6));
+    }
+
+    .fun-fact-box::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -50%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(255,255,255,0.05),
+        transparent
+      );
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(50%); }
+    }
+
+    .fun-fact-label {
+      font-size: 0.9rem;
+      color: var(--highlight);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 12px;
+      margin-top: 15px;
+      text-shadow: 0 0 15px rgba(244, 208, 63, 0.5);
+    }
+
+    .fun-fact-text {
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: var(--text-primary);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       NAVIGATION BUTTONS - Untereinander, weiche Kanten
+       ══════════════════════════════════════════════════════════════ */
+
+    .nav-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 350px;
+      width: 100%;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px 30px;
+      background: linear-gradient(135deg,
+        rgba(255,255,255,0.08) 0%,
+        rgba(255,255,255,0.03) 100%
+      );
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: var(--text-primary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg,
+        transparent 0%,
+        rgba(255,255,255,0.05) 50%,
+        transparent 100%
+      );
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .nav-btn:hover {
+      transform: translateX(8px);
+      border-color: rgba(255,255,255,0.25);
+    }
+
+    .nav-btn:hover::before {
+      opacity: 1;
+    }
+
+    .nav-btn .icon {
+      font-size: 2rem;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-btn .label {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    /* Button Farben */
+    .nav-btn.chat .icon {
+      background: linear-gradient(135deg, rgba(93, 173, 226, 0.3), rgba(93, 173, 226, 0.1));
+      box-shadow: 0 0 20px rgba(93, 173, 226, 0.3);
+    }
+    .nav-btn.chat:hover {
+      background: linear-gradient(135deg, rgba(93, 173, 226, 0.2), rgba(93, 173, 226, 0.05));
+      box-shadow: 0 0 30px rgba(93, 173, 226, 0.2);
+    }
+
+    .nav-btn.quiz .icon {
+      background: linear-gradient(135deg, rgba(231, 76, 60, 0.3), rgba(231, 76, 60, 0.1));
+      box-shadow: 0 0 20px rgba(231, 76, 60, 0.3);
+    }
+    .nav-btn.quiz:hover {
+      background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(231, 76, 60, 0.05));
+      box-shadow: 0 0 30px rgba(231, 76, 60, 0.2);
+    }
+
+    .nav-btn.library .icon {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(251, 191, 36, 0.1));
+      box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+    }
+    .nav-btn.library:hover {
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(251, 191, 36, 0.05));
+      box-shadow: 0 0 30px rgba(251, 191, 36, 0.2);
+    }
+
+    .nav-btn.settings .icon {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.3), rgba(168, 85, 247, 0.1));
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+    }
+    .nav-btn.settings:hover {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.05));
+      box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       ZEITSTRAHL - Unten (weiche Kanten)
+       ══════════════════════════════════════════════════════════════ */
+
+    .timeline-container {
+      width: 100%;
+      background: linear-gradient(180deg,
+        transparent 0%,
+        rgba(15, 30, 50, 0.7) 20%,
+        rgba(15, 30, 50, 0.9) 100%
+      );
+      padding: 25px 20px 20px;
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding: 0 15px;
+    }
+
+    .timeline-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent-color);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      text-shadow: 0 0 15px rgba(93, 173, 226, 0.5);
+    }
+
+    .timeline-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .timeline-btn {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg,
+        rgba(255,255,255,0.1) 0%,
+        rgba(255,255,255,0.05) 100%
+      );
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      color: var(--text-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      backdrop-filter: blur(5px);
+      transition: all 0.3s ease;
+    }
+
+    .timeline-btn:hover {
+      background: linear-gradient(135deg,
+        rgba(93, 173, 226, 0.3) 0%,
+        rgba(93, 173, 226, 0.1) 100%
+      );
+      border-color: var(--accent-color);
+      transform: scale(1.05);
+    }
+
+    .timeline-viewport {
+      overflow: hidden;
+      border-radius: 20px;
+      background: linear-gradient(180deg,
+        rgba(0,0,0,0.3) 0%,
+        rgba(0,0,0,0.2) 100%
+      );
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .timeline-scroll {
+      overflow-x: auto;
+      cursor: grab;
+      padding: 25px 0;
+    }
+
+    .timeline-scroll:active {
+      cursor: grabbing;
+    }
+
+    .timeline {
+      display: flex;
+      align-items: center;
+      min-width: max-content;
+      padding: 0 50px;
+      height: 130px;
+      position: relative;
+      transform-origin: left center;
+      transition: transform 0.2s ease;
+    }
+
+    .timeline-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg,
+        transparent,
+        rgba(93, 173, 226, 0.5) 10%,
+        rgba(93, 173, 226, 0.5) 90%,
+        transparent
+      );
+      transform: translateY(-50%);
+      box-shadow: 0 0 15px rgba(93, 173, 226, 0.3);
+    }
+
+    .timeline-event {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 130px;
+      cursor: pointer;
+      z-index: 1;
+      transition: all 0.3s ease;
+    }
+
+    .timeline-event:hover {
+      transform: translateY(-5px);
+    }
+
+    .timeline-event .dot {
+      width: 18px;
+      height: 18px;
+      background: radial-gradient(circle, var(--accent-color), #3a8cc2);
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px rgba(93, 173, 226, 0.5);
+    }
+
+    .timeline-event:hover .dot {
+      background: radial-gradient(circle, var(--highlight), #d4a42f);
+      transform: scale(1.4);
+      box-shadow: 0 0 25px rgba(244, 208, 63, 0.7);
+    }
+
+    .timeline-event .year {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--highlight);
+      margin-bottom: 6px;
+      text-shadow: 0 0 10px rgba(244, 208, 63, 0.4);
+    }
+
+    .timeline-event .title {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-align: center;
+      max-width: 110px;
+      transition: color 0.3s ease;
+    }
+
+    .timeline-event:hover .title {
+      color: var(--text-primary);
+    }
+
+    /* Scrollbar */
+    .timeline-scroll::-webkit-scrollbar {
+      height: 6px;
+    }
+    .timeline-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .timeline-scroll::-webkit-scrollbar-thumb {
+      background: rgba(93, 173, 226, 0.4);
+      border-radius: 3px;
+    }
+    .timeline-scroll::-webkit-scrollbar-thumb:hover {
+      background: rgba(93, 173, 226, 0.6);
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       RESPONSIVE
+       ══════════════════════════════════════════════════════════════ */
+
+    @media (max-width: 600px) {
+      .stats-bar {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        padding: 15px;
+      }
+      .stat-item {
+        padding: 8px 14px;
+        font-size: 0.9rem;
+      }
+      .nav-btn {
+        padding: 16px 24px;
+      }
+      .fun-fact-box {
+        padding: 24px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Stats Bar -->
+  <div class="stats-bar">
+    <div class="stat-item streak">
+      <span class="icon">🔥</span>
+      <span>5 Tage</span>
+    </div>
+    <div class="stat-item rank">
+      <span class="icon">⚔️</span>
+      <span>Knappe</span>
+    </div>
+    <div class="stat-item time">
+      <span class="icon">⏱️</span>
+      <span>2h 30min</span>
+    </div>
+    <div class="stat-item coins">
+      <span class="icon">🪙</span>
+      <span>350</span>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Fun Fact Box -->
+    <div class="fun-fact-box">
+      <div class="fun-fact-label">Wusstest du?</div>
+      <div class="fun-fact-text" id="funFact">
+        Die Chinesische Mauer ist so lang, dass man über 18 Monate bräuchte, um sie komplett abzulaufen!
+      </div>
+    </div>
+
+    <!-- Navigation Buttons - Untereinander -->
+    <div class="nav-buttons">
+      <a href="preview.html" class="nav-btn chat">
+        <span class="icon">💬</span>
+        <span class="label">KI-Chat</span>
+      </a>
+      <a href="#" class="nav-btn quiz">
+        <span class="icon">❓</span>
+        <span class="label">Quiz</span>
+      </a>
+      <a href="#" class="nav-btn library">
+        <span class="icon">📚</span>
+        <span class="label">Bibliothek</span>
+      </a>
+      <a href="#" class="nav-btn settings">
+        <span class="icon">⚙️</span>
+        <span class="label">Einstellungen</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Zeitstrahl -->
+  <div class="timeline-container">
+    <div class="timeline-header">
+      <span class="timeline-title">Zeitstrahl</span>
+      <div class="timeline-controls">
+        <button class="timeline-btn" id="zoomOut" title="Herauszoomen">−</button>
+        <button class="timeline-btn" id="zoomIn" title="Hineinzoomen">+</button>
+      </div>
+    </div>
+    <div class="timeline-viewport">
+      <div class="timeline-scroll" id="timelineScroll">
+        <div class="timeline" id="timeline">
+          <div class="timeline-line"></div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">3000 v.Chr.</div>
+            <div class="title">Pyramiden von Gizeh</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">753 v.Chr.</div>
+            <div class="title">Gründung Roms</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">44 v.Chr.</div>
+            <div class="title">Caesar ermordet</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">476</div>
+            <div class="title">Fall Westroms</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">800</div>
+            <div class="title">Karl der Große</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">1066</div>
+            <div class="title">Schlacht bei Hastings</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">1215</div>
+            <div class="title">Magna Carta</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">1347</div>
+            <div class="title">Schwarzer Tod</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">1453</div>
+            <div class="title">Fall Konstantinopels</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">1492</div>
+            <div class="title">Kolumbus Amerika</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">1517</div>
+            <div class="title">Reformation</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">1618</div>
+            <div class="title">30-jähriger Krieg</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">1789</div>
+            <div class="title">Franz. Revolution</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">1848</div>
+            <div class="title">Märzrevolution</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">1871</div>
+            <div class="title">Deutsches Reich</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">1914</div>
+            <div class="title">1. Weltkrieg</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">1939</div>
+            <div class="title">2. Weltkrieg</div>
+          </div>
+
+          <div class="timeline-event">
+            <div class="dot"></div>
+            <div class="year">1989</div>
+            <div class="title">Mauerfall</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fun Facts Array
+    const funFacts = [
+      "Die Chinesische Mauer ist so lang, dass man über 18 Monate bräuchte, um sie komplett abzulaufen!",
+      "Kleopatra lebte zeitlich näher an der Mondlandung als am Bau der Pyramiden von Gizeh!",
+      "Die Römer benutzten Urin zum Zähneputzen – der Ammoniak darin wirkte als Bleichmittel!",
+      "Im Mittelalter wurden Tiere vor Gericht gestellt und verurteilt – sogar Schweine und Insekten!",
+      "Die kürzeste Amtszeit eines Papstes dauerte nur 13 Tage (Papst Urban VII, 1590)!",
+      "Napoleon wurde einmal von einem Rudel Kaninchen angegriffen und musste fliehen!",
+      "Die Azteken nutzten Kakaobohnen als Währung – Schokolade war buchstäblich Geld!",
+      "Im alten Ägypten wurden Katzen so verehrt, dass bei deren Tod die ganze Familie trauerte!",
+      "Wikinger benutzten nie gehörnte Helme – das ist ein Mythos aus dem 19. Jahrhundert!",
+      "Die erste Universität der Welt wurde 859 n.Chr. in Marokko von einer Frau gegründet!"
+    ];
+
+    // Zufälliger Fun Fact beim Laden
+    document.getElementById('funFact').textContent =
+      funFacts[Math.floor(Math.random() * funFacts.length)];
+
+    // Timeline Zoom
+    const timeline = document.getElementById('timeline');
+    const timelineScroll = document.getElementById('timelineScroll');
+    let zoomLevel = 1;
+    const minZoom = 0.5;
+    const maxZoom = 2;
+
+    document.getElementById('zoomIn').addEventListener('click', () => {
+      if (zoomLevel < maxZoom) {
+        zoomLevel += 0.2;
+        timeline.style.transform = `scale(${zoomLevel})`;
+      }
+    });
+
+    document.getElementById('zoomOut').addEventListener('click', () => {
+      if (zoomLevel > minZoom) {
+        zoomLevel -= 0.2;
+        timeline.style.transform = `scale(${zoomLevel})`;
+      }
+    });
+
+    // Timeline Drag-Scroll
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    timelineScroll.addEventListener('mousedown', (e) => {
+      isDown = true;
+      startX = e.pageX - timelineScroll.offsetLeft;
+      scrollLeft = timelineScroll.scrollLeft;
+    });
+
+    timelineScroll.addEventListener('mouseleave', () => {
+      isDown = false;
+    });
+
+    timelineScroll.addEventListener('mouseup', () => {
+      isDown = false;
+    });
+
+    timelineScroll.addEventListener('mousemove', (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - timelineScroll.offsetLeft;
+      const walk = (x - startX) * 2;
+      timelineScroll.scrollLeft = scrollLeft - walk;
+    });
+
+    // Touch support für Mobile
+    timelineScroll.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].pageX - timelineScroll.offsetLeft;
+      scrollLeft = timelineScroll.scrollLeft;
+    });
+
+    timelineScroll.addEventListener('touchmove', (e) => {
+      const x = e.touches[0].pageX - timelineScroll.offsetLeft;
+      const walk = (x - startX) * 2;
+      timelineScroll.scrollLeft = scrollLeft - walk;
+    });
+  </script>
+</body>
+</html>

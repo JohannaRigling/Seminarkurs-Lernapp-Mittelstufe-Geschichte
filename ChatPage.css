@@ -1,0 +1,384 @@
+/* ══════════════════════════════════════════════════════════════
+   CHAT PAGE - Stardew Valley / Retro RPG Style
+   ══════════════════════════════════════════════════════════════ */
+
+.chat-page {
+  display: flex;
+  height: 100vh;
+  /* Nebeliger Blau-Verlauf */
+  background: linear-gradient(180deg,
+    #87CEEB 0%,      /* Himmelblau oben */
+    #B0E0E6 30%,     /* Hellblau */
+    #E0F4F8 60%,     /* Sehr helles Blau */
+    #F0F8FF 100%     /* Fast weiß unten */
+  );
+  background-attachment: fixed;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SIDEBAR - Werkzeugkiste Style
+   ══════════════════════════════════════════════════════════════ */
+
+.chat-sidebar {
+  width: 260px;
+  background: var(--bg-secondary);
+  padding: 20px;
+  border-right: var(--pixel-border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* Holzrahmen Effekt */
+  box-shadow:
+    inset -4px 0 0 var(--border-light),
+    inset 4px 0 0 rgba(255,255,255,0.1);
+}
+
+.chat-sidebar h2 {
+  color: var(--text-light);
+  font-size: 0.75rem;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 2px dashed var(--border-light);
+  text-align: center;
+}
+
+/* Lernhilfe Buttons - Inventar Items Style */
+.helper-btn {
+  font-family: 'VT323', monospace;
+  font-size: 1.1rem;
+  padding: 12px 16px;
+  background: var(--bg-parchment);
+  border: 3px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--text-primary);
+  text-align: left;
+  position: relative;
+  box-shadow:
+    3px 3px 0 var(--border-color),
+    inset -2px -2px 0 rgba(0,0,0,0.1),
+    inset 2px 2px 0 rgba(255,255,255,0.3);
+}
+
+.helper-btn::before {
+  content: '▸';
+  margin-right: 8px;
+  color: var(--accent-color);
+}
+
+.helper-btn:hover {
+  background: linear-gradient(180deg, #ffe4a0 0%, #f4d080 100%);
+  transform: translate(1px, 1px);
+  box-shadow:
+    2px 2px 0 var(--border-color),
+    inset -2px -2px 0 rgba(0,0,0,0.1),
+    inset 2px 2px 0 rgba(255,255,255,0.5);
+}
+
+.helper-btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   POMODORO TIMER - Uhr/Kalender Style
+   ══════════════════════════════════════════════════════════════ */
+
+.pomodoro-timer {
+  margin-top: auto;
+  background: var(--bg-parchment);
+  border: var(--pixel-border);
+  box-shadow: var(--pixel-shadow);
+  padding: 16px;
+  text-align: center;
+}
+
+.pomodoro-timer h3 {
+  color: var(--text-primary);
+  font-size: 0.65rem;
+  margin-bottom: 12px;
+}
+
+.timer-display {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1.5rem;
+  color: var(--rank-color);
+  margin: 16px 0;
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+  /* Pixel-Rahmen um die Zeit */
+  background: rgba(0,0,0,0.05);
+  padding: 12px;
+  border: 2px solid var(--border-light);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MAIN CHAT AREA - Pergament/Brief Style
+   ══════════════════════════════════════════════════════════════ */
+
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-parchment);
+  /* Pergament-Textur */
+  background-image:
+    radial-gradient(
+      ellipse at center,
+      transparent 0%,
+      rgba(0,0,0,0.03) 100%
+    );
+  margin: 16px;
+  margin-left: 0;
+  border: var(--pixel-border);
+  box-shadow: var(--pixel-shadow);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CHAT HEADER - Banner/Schild Style
+   ══════════════════════════════════════════════════════════════ */
+
+.chat-header {
+  padding: 16px 24px;
+  background: linear-gradient(180deg, #5c4332 0%, #4a3728 100%);
+  border-bottom: var(--pixel-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Holzschild Effekt */
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.1),
+    inset 0 -2px 0 rgba(0,0,0,0.2);
+}
+
+.chat-header h1 {
+  color: var(--text-light);
+  font-size: 0.85rem;
+  text-shadow: 2px 2px 0px var(--border-color);
+}
+
+.session-stats {
+  display: flex;
+  gap: 20px;
+  font-family: 'VT323', monospace;
+  font-size: 1.1rem;
+  color: var(--text-light);
+}
+
+.session-stats span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CHAT MESSAGES - Dialogbox Style (wie in RPGs)
+   ══════════════════════════════════════════════════════════════ */
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.message {
+  max-width: 75%;
+  padding: 16px 20px;
+  font-family: 'VT323', monospace;
+  font-size: 1.2rem;
+  line-height: 1.4;
+  animation: messageAppear 0.3s ease-out;
+  position: relative;
+}
+
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* User Message - Sprechblase rechts */
+.message.user {
+  align-self: flex-end;
+  background: linear-gradient(180deg, #6b8cce 0%, #5070b0 100%);
+  color: white;
+  border: 3px solid #3d5a80;
+  box-shadow:
+    4px 4px 0 #2d4060,
+    inset -2px -2px 0 rgba(0,0,0,0.2),
+    inset 2px 2px 0 rgba(255,255,255,0.2);
+}
+
+.message.user::after {
+  content: '';
+  position: absolute;
+  right: -12px;
+  bottom: 12px;
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+  border-left-color: #5070b0;
+}
+
+/* Assistant Message - RPG Dialogbox Style */
+.message.assistant {
+  align-self: flex-start;
+  background: #faf6e8;
+  color: var(--text-primary);
+  border: 3px solid var(--border-color);
+  box-shadow:
+    4px 4px 0 var(--border-color),
+    inset -2px -2px 0 rgba(0,0,0,0.05),
+    inset 2px 2px 0 rgba(255,255,255,0.5);
+}
+
+.message.assistant::before {
+  content: '📜';
+  position: absolute;
+  left: -8px;
+  top: -8px;
+  font-size: 1.2rem;
+}
+
+.message.assistant::after {
+  content: '';
+  position: absolute;
+  left: -12px;
+  bottom: 12px;
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+  border-right-color: #faf6e8;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TYPING INDICATOR - Pixel Animation
+   ══════════════════════════════════════════════════════════════ */
+
+.typing-indicator {
+  display: flex;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.typing-indicator span {
+  width: 10px;
+  height: 10px;
+  background: var(--accent-color);
+  border: 2px solid var(--border-color);
+  animation: pixelBounce 1s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes pixelBounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    background: var(--accent-color);
+  }
+  30% {
+    transform: translateY(-8px);
+    background: var(--highlight);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   CHAT INPUT - Eingabefeld wie Textbox in RPGs
+   ══════════════════════════════════════════════════════════════ */
+
+.chat-input {
+  padding: 20px 24px;
+  background: linear-gradient(180deg, #e8dcc4 0%, #d8ccb4 100%);
+  border-top: var(--pixel-border);
+  display: flex;
+  gap: 12px;
+  box-shadow: inset 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 14px 18px;
+  font-family: 'VT323', monospace;
+  font-size: 1.2rem;
+  background: #faf6e8;
+  border: 3px solid var(--border-color);
+  color: var(--text-primary);
+  box-shadow:
+    inset 2px 2px 0 rgba(0,0,0,0.1),
+    inset -2px -2px 0 rgba(255,255,255,0.5);
+}
+
+.chat-input input::placeholder {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.chat-input input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  background: #fffdf5;
+  box-shadow:
+    inset 2px 2px 0 rgba(0,0,0,0.05),
+    0 0 0 3px rgba(139,69,19,0.2);
+}
+
+.chat-input .btn {
+  min-width: 100px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE - Mobile Anpassungen
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  .chat-page {
+    flex-direction: column;
+  }
+
+  .chat-sidebar {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 12px;
+    border-right: none;
+    border-bottom: var(--pixel-border);
+  }
+
+  .chat-sidebar h2 {
+    width: 100%;
+  }
+
+  .helper-btn {
+    flex: 1;
+    min-width: 120px;
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+
+  .pomodoro-timer {
+    width: 100%;
+    margin-top: 0;
+  }
+
+  .chat-main {
+    margin: 8px;
+    margin-top: 0;
+  }
+
+  .message {
+    max-width: 85%;
+  }
+}

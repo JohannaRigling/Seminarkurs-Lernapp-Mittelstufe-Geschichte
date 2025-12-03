@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Preview - Geschichts-Lernapp</title>
+
+  <!-- Retro-lesbare Schrift -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Dunkle Blau-Töne */
+      --bg-dark: #1a2a3a;
+      --bg-darker: #0f1922;
+      --bg-panel: #243447;
+
+      --text-primary: #e8f0f8;
+      --text-secondary: #8fa4b8;
+      --text-dark: #1a2a3a;
+
+      --accent-color: #5dade2;
+      --accent-glow: rgba(93, 173, 226, 0.3);
+      --highlight: #f4d03f;
+
+      --border-color: #3d5a73;
+      --border-light: #4a6b85;
+
+      /* Retro Schatten */
+      --retro-shadow: 4px 4px 0px #0a1520;
+      --retro-shadow-sm: 2px 2px 0px #0a1520;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 16px;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       CHAT PAGE - Dunkler Blau-Verlauf
+       ══════════════════════════════════════════════════════════════ */
+
+    .chat-page {
+      display: flex;
+      height: 100vh;
+      background: linear-gradient(180deg,
+        #0f1922 0%,
+        #1a2a3a 30%,
+        #1e3248 60%,
+        #243a50 100%
+      );
+      background-attachment: fixed;
+      padding: 16px;
+      gap: 16px;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       HOME BUTTON - Retro Style
+       ══════════════════════════════════════════════════════════════ */
+
+    .home-btn {
+      position: fixed;
+      top: 24px;
+      left: 24px;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(180deg, #3d5a73 0%, #2d4a63 100%);
+      border: 3px solid var(--border-light);
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--retro-shadow);
+      transition: all 0.15s ease;
+      z-index: 100;
+    }
+
+    /* Pixel-Art Haus */
+    .home-btn::before {
+      content: '';
+      width: 24px;
+      height: 22px;
+      background:
+        /* Dach */
+        linear-gradient(135deg, transparent 50%, #e74c3c 50%) 0 0 / 12px 10px no-repeat,
+        linear-gradient(225deg, transparent 50%, #c0392b 50%) 12px 0 / 12px 10px no-repeat,
+        /* Haus-Körper */
+        linear-gradient(#f4d03f, #f4d03f) 3px 10px / 18px 12px no-repeat,
+        /* Tür */
+        linear-gradient(#8b4513, #8b4513) 9px 14px / 6px 8px no-repeat,
+        /* Fenster */
+        linear-gradient(#5dade2, #5dade2) 4px 12px / 4px 4px no-repeat;
+      image-rendering: pixelated;
+    }
+
+    .home-btn:hover {
+      background: linear-gradient(180deg, #5dade2 0%, #4a9dd2 100%);
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0px #0a1520;
+    }
+
+    .home-btn:active {
+      transform: translate(4px, 4px);
+      box-shadow: none;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       SIDEBAR - Retro Panel
+       ══════════════════════════════════════════════════════════════ */
+
+    .chat-sidebar {
+      width: 260px;
+      background: linear-gradient(180deg, #2d4a63 0%, #243a50 100%);
+      padding: 20px;
+      border-radius: 8px;
+      border: 3px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--retro-shadow);
+      margin-left: 60px;
+    }
+
+    .chat-sidebar h2 {
+      color: var(--accent-color);
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      padding-bottom: 12px;
+      border-bottom: 3px solid var(--border-color);
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .helper-btn {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 12px 16px;
+      background: linear-gradient(180deg, #3d5a73 0%, #2d4a63 100%);
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: var(--text-primary);
+      text-align: left;
+      box-shadow: var(--retro-shadow-sm);
+    }
+
+    .helper-btn:hover {
+      background: linear-gradient(180deg, #5dade2 0%, #4a9dd2 100%);
+      color: var(--bg-darker);
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0px #0a1520;
+    }
+
+    .helper-btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: none;
+    }
+
+    .pomodoro-timer {
+      margin-top: auto;
+      background: linear-gradient(180deg, #1e3248 0%, #162538 100%);
+      border: 3px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: var(--retro-shadow-sm);
+    }
+
+    .pomodoro-timer h3 {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .timer-display {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--highlight);
+      margin: 12px 0;
+      text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+    }
+
+    .btn {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 10px 20px;
+      border: 2px solid var(--border-light);
+      border-radius: 6px;
+      background: linear-gradient(180deg, #5dade2 0%, #4a9dd2 100%);
+      color: var(--bg-darker);
+      cursor: pointer;
+      box-shadow: var(--retro-shadow-sm);
+      transition: all 0.15s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn:hover {
+      background: linear-gradient(180deg, #7dcdff 0%, #5dade2 100%);
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0px #0a1520;
+    }
+
+    .btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: none;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       CHAT MAIN
+       ══════════════════════════════════════════════════════════════ */
+
+    .chat-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, #243447 0%, #1e3040 100%);
+      border-radius: 8px;
+      border: 3px solid var(--border-color);
+      box-shadow: var(--retro-shadow);
+      overflow: hidden;
+    }
+
+    .chat-header {
+      padding: 16px 24px;
+      background: linear-gradient(180deg, #2d4a63 0%, #243a50 100%);
+      border-bottom: 3px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-header h1 {
+      color: var(--accent-color);
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .session-stats {
+      display: flex;
+      gap: 20px;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+
+    .coin-display {
+      color: var(--highlight) !important;
+      font-weight: 700;
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       CHAT MESSAGES - Dunkler blauer Hintergrund
+       ══════════════════════════════════════════════════════════════ */
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: linear-gradient(180deg,
+        rgba(15, 25, 34, 0.5) 0%,
+        rgba(26, 42, 58, 0.3) 50%,
+        rgba(30, 50, 72, 0.2) 100%
+      );
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 14px 18px;
+      font-size: 1rem;
+      line-height: 1.6;
+      border-radius: 8px;
+      animation: messageAppear 0.3s ease-out;
+    }
+
+    @keyframes messageAppear {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #5dade2 0%, #4a9dd2 100%);
+      color: var(--bg-darker);
+      border: 2px solid #4a9dd2;
+      box-shadow: var(--retro-shadow-sm);
+    }
+
+    .message.assistant {
+      align-self: flex-start;
+      background: linear-gradient(180deg, #3d5a73 0%, #2d4a63 100%);
+      color: var(--text-primary);
+      border: 2px solid var(--border-color);
+      box-shadow: var(--retro-shadow-sm);
+    }
+
+    .typing-indicator {
+      display: flex;
+      gap: 8px;
+      padding: 4px 0;
+    }
+
+    .typing-indicator span {
+      width: 10px;
+      height: 10px;
+      background: var(--accent-color);
+      border-radius: 2px;
+      animation: retrobounce 1s infinite;
+    }
+
+    .typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
+    .typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes retrobounce {
+      0%, 60%, 100% {
+        transform: translateY(0);
+        background: var(--accent-color);
+      }
+      30% {
+        transform: translateY(-8px);
+        background: var(--highlight);
+      }
+    }
+
+    /* ══════════════════════════════════════════════════════════════
+       CHAT INPUT
+       ══════════════════════════════════════════════════════════════ */
+
+    .chat-input {
+      padding: 16px 24px;
+      background: linear-gradient(180deg, #2d4a63 0%, #243a50 100%);
+      border-top: 3px solid var(--border-color);
+      display: flex;
+      gap: 12px;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 12px 16px;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1rem;
+      background: var(--bg-darker);
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      transition: all 0.2s ease;
+    }
+
+    .chat-input input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .chat-input input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    /* Scrollbar - Retro */
+    ::-webkit-scrollbar { width: 12px; }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-darker);
+      border-left: 2px solid var(--border-color);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #3d5a73 0%, #2d4a63 100%);
+      border: 2px solid var(--border-color);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #5dade2 0%, #4a9dd2 100%);
+    }
+
+    @media (max-width: 768px) {
+      .chat-page { flex-direction: column; padding: 8px; }
+      .chat-sidebar {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 60px;
+      }
+      .home-btn { top: 8px; left: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Home Button - Pixel Art Haus -->
+  <button class="home-btn" title="Zurück zur Startseite" onclick="window.location.href='home.html'"></button>
+
+  <div class="chat-page">
+    <div class="chat-sidebar">
+      <h2>Lernhilfen</h2>
+      <button class="helper-btn">📝 Eselsbrücke</button>
+      <button class="helper-btn">📚 Zusammenfassung</button>
+      <button class="helper-btn">❓ Quiz erstellen</button>
+      <button class="helper-btn">📅 Zeitstrahl</button>
+
+      <div class="pomodoro-timer">
+        <h3>Pomodoro</h3>
+        <div class="timer-display">20:00</div>
+        <button class="btn">Start</button>
+      </div>
+    </div>
+
+    <div class="chat-main">
+      <div class="chat-header">
+        <h1>KI-Geschichts-Tutor</h1>
+        <div class="session-stats">
+          <span>Lernzeit: 12 Min</span>
+          <span class="coin-display">🪙 +5</span>
+        </div>
+      </div>
+
+      <div class="chat-messages">
+        <div class="message assistant">
+          Willkommen! Ich bin dein Geschichts-Tutor. Was möchtest du heute über die Vergangenheit lernen?
+        </div>
+
+        <div class="message user">
+          Kannst du mir etwas über das Mittelalter erzählen?
+        </div>
+
+        <div class="message assistant">
+          Das Mittelalter (ca. 500-1500 n.Chr.) war eine faszinierende Epoche! Es war geprägt von Rittern, Burgen und dem Feudalsystem. Möchtest du mehr über einen bestimmten Aspekt erfahren?
+        </div>
+
+        <div class="message user">
+          Ja, erzähl mir mehr über die Burgen!
+        </div>
+
+        <div class="message assistant">
+          <div class="typing-indicator">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input">
+        <input type="text" id="messageInput" placeholder="Stelle eine Frage zur Geschichte...">
+        <button class="btn" id="sendBtn">Senden</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const chatMessages = document.querySelector('.chat-messages');
+
+    function sendMessage() {
+      const text = messageInput.value.trim();
+      if (!text) return;
+
+      // User-Nachricht hinzufügen
+      const userMsg = document.createElement('div');
+      userMsg.className = 'message user';
+      userMsg.textContent = text;
+      chatMessages.appendChild(userMsg);
+
+      // Input leeren
+      messageInput.value = '';
+
+      // Nach unten scrollen
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // Typing-Indicator zeigen (simuliert)
+      setTimeout(() => {
+        const typingMsg = document.createElement('div');
+        typingMsg.className = 'message assistant';
+        typingMsg.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+        chatMessages.appendChild(typingMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Antwort nach kurzer Zeit (Demo)
+        setTimeout(() => {
+          typingMsg.innerHTML = 'Das ist eine Demo-Antwort. Im echten System würde hier die KI antworten!';
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 1500);
+      }, 300);
+    }
+
+    // Senden bei Klick
+    sendBtn.addEventListener('click', sendMessage);
+
+    // Senden bei Enter
+    messageInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
