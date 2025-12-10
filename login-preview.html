@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Geschichts-Lernapp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-dark: #1a2a3a;
+      --bg-darker: #0f1922;
+      --bg-panel: #243447;
+      --text-primary: #e8f0f8;
+      --text-secondary: #8fa4b8;
+      --accent-color: #5dade2;
+      --accent-glow: rgba(93, 173, 226, 0.3);
+      --highlight: #f4d03f;
+      --border-color: #3d5a73;
+      --border-light: #4a6b85;
+      --retro-shadow: 4px 4px 0px #0a1520;
+      --retro-shadow-sm: 2px 2px 0px #0a1520;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg,
+        #0f1922 0%,
+        #1a2a3a 30%,
+        #1e3248 60%,
+        #243a50 100%
+      );
+      font-family: 'Quicksand', sans-serif;
+    }
+
+    .login-container {
+      background: linear-gradient(180deg, #2d4a63 0%, #243a50 100%);
+      padding: 2.5rem;
+      border-radius: 8px;
+      border: 3px solid var(--border-color);
+      box-shadow: var(--retro-shadow);
+      max-width: 400px;
+      width: 90%;
+    }
+
+    /* Pixel-Art Burg als Logo */
+    .logo {
+      width: 80px;
+      height: 70px;
+      margin: 0 auto 1.5rem;
+      background:
+        /* Turm links */
+        linear-gradient(#6b7b8c, #6b7b8c) 0 20px / 20px 50px no-repeat,
+        linear-gradient(#5a6a7a, #5a6a7a) 0 10px / 20px 10px no-repeat,
+        /* Zinnen links */
+        linear-gradient(#6b7b8c, #6b7b8c) 0 0 / 6px 10px no-repeat,
+        linear-gradient(#6b7b8c, #6b7b8c) 14px 0 / 6px 10px no-repeat,
+
+        /* Turm rechts */
+        linear-gradient(#6b7b8c, #6b7b8c) 60px 20px / 20px 50px no-repeat,
+        linear-gradient(#5a6a7a, #5a6a7a) 60px 10px / 20px 10px no-repeat,
+        /* Zinnen rechts */
+        linear-gradient(#6b7b8c, #6b7b8c) 60px 0 / 6px 10px no-repeat,
+        linear-gradient(#6b7b8c, #6b7b8c) 74px 0 / 6px 10px no-repeat,
+
+        /* Mitte */
+        linear-gradient(#7b8b9c, #7b8b9c) 20px 30px / 40px 40px no-repeat,
+        /* Tor */
+        linear-gradient(#3d5a73, #3d5a73) 30px 45px / 20px 25px no-repeat,
+        /* Fenster */
+        linear-gradient(#f4d03f, #f4d03f) 28px 35px / 8px 8px no-repeat,
+        linear-gradient(#f4d03f, #f4d03f) 44px 35px / 8px 8px no-repeat;
+      image-rendering: pixelated;
+    }
+
+    .login-container h1 {
+      text-align: center;
+      color: var(--accent-color);
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .auth-tabs button {
+      flex: 1;
+      padding: 0.75rem;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: 2px solid var(--border-color);
+      background: linear-gradient(180deg, #3d5a73 0%, #2d4a63 100%);
+      color: var(--text-primary);
+      cursor: pointer;
+      border-radius: 6px;
+      box-shadow: var(--retro-shadow-sm);
+      transition: all 0.15s ease;
+    }
+
+    .auth-tabs button:hover {
+      background: linear-gradient(180deg, #4a6b85 0%, #3d5a73 100%);
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0px #0a1520;
+    }
+
+    .auth-tabs button.active {
+      background: linear-gradient(180deg, #5dade2 0%, #4a9dd2 100%);
+      color: var(--bg-darker);
+      border-color: var(--accent-color);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    input {
+      padding: 1rem;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1rem;
+      background: var(--bg-darker);
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      transition: all 0.2s ease;
+    }
+
+    input::placeholder {
+      color: var(--text-secondary);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .btn {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 1rem;
+      border: 2px solid var(--border-light);
+      border-radius: 6px;
+      background: linear-gradient(180deg, #5dade2 0%, #4a9dd2 100%);
+      color: var(--bg-darker);
+      cursor: pointer;
+      box-shadow: var(--retro-shadow-sm);
+      transition: all 0.15s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 0.5rem;
+    }
+
+    .btn:hover {
+      background: linear-gradient(180deg, #7dcdff 0%, #5dade2 100%);
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0px #0a1520;
+    }
+
+    .btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: none;
+    }
+
+    .register-field {
+      display: none;
+    }
+
+    .register-field.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-container">
+      <div class="logo"></div>
+      <h1>Geschichts-Lernapp</h1>
+      <p class="subtitle">Lerne Geschichte auf eine neue Art</p>
+
+      <div class="auth-tabs">
+        <button class="active" id="loginTab">Anmelden</button>
+        <button id="registerTab">Registrieren</button>
+      </div>
+
+      <form id="authForm">
+        <input type="text" id="usernameField" class="register-field" placeholder="Benutzername">
+        <input type="email" placeholder="E-Mail" required>
+        <input type="password" placeholder="Passwort" required>
+        <button type="submit" class="btn" id="submitBtn">Anmelden</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const loginTab = document.getElementById('loginTab');
+    const registerTab = document.getElementById('registerTab');
+    const usernameField = document.getElementById('usernameField');
+    const submitBtn = document.getElementById('submitBtn');
+    const authForm = document.getElementById('authForm');
+
+    let isLogin = true;
+
+    loginTab.addEventListener('click', () => {
+      isLogin = true;
+      loginTab.classList.add('active');
+      registerTab.classList.remove('active');
+      usernameField.classList.remove('show');
+      submitBtn.textContent = 'Anmelden';
+    });
+
+    registerTab.addEventListener('click', () => {
+      isLogin = false;
+      registerTab.classList.add('active');
+      loginTab.classList.remove('active');
+      usernameField.classList.add('show');
+      submitBtn.textContent = 'Registrieren';
+    });
+
+    authForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Nach Login zur Startseite
+      window.location.href = 'home.html';
+    });
+  </script>
+</body>
+</html>

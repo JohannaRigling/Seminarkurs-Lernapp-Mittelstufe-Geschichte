@@ -1,0 +1,160 @@
+/* Pixel Font Import - Press Start 2P für Überschriften, VT323 für Text */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+:root {
+  /* Stardew Valley inspirierte Farbpalette */
+  --bg-primary: #2c1810;        /* Dunkles Holz */
+  --bg-secondary: #4a3728;      /* Helleres Holz */
+  --bg-parchment: #f4e4bc;      /* Pergament */
+  --bg-panel: #5c4332;          /* Panel Holz */
+
+  --text-primary: #3d2914;      /* Dunkle Tinte */
+  --text-secondary: #6b5344;    /* Hellere Tinte */
+  --text-light: #f4e4bc;        /* Heller Text auf Holz */
+
+  --accent-color: #8b4513;      /* Braun/Orange Akzent */
+  --accent-hover: #a0522d;      /* Hover Akzent */
+  --highlight: #ffd700;         /* Gold */
+
+  --border-color: #1a0f0a;      /* Dunkler Rand */
+  --border-light: #6b5344;      /* Hellerer Rand */
+
+  /* Gamification Colors - Stardew Style */
+  --coin-color: #ffd700;
+  --coin-shadow: #b8860b;
+  --rank-color: #8b0000;
+  --xp-color: #32cd32;
+
+  /* Pixel Border Effekte */
+  --pixel-border: 4px solid var(--border-color);
+  --pixel-shadow: 4px 4px 0px var(--border-color);
+  --pixel-shadow-light: 2px 2px 0px var(--border-light);
+}
+
+[data-theme="dark"] {
+  --bg-primary: #1a0f0a;
+  --bg-secondary: #2c1810;
+  --bg-parchment: #d4c4a0;
+  --bg-panel: #3d2914;
+  --text-light: #d4c4a0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* Pixel-perfekte Darstellung */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+body {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: unset;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  /* Subtiles Holz-Muster Hintergrund */
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+}
+
+/* Pixel-Überschriften */
+h1, h2, h3 {
+  font-family: 'Press Start 2P', cursive;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 0px var(--border-color);
+}
+
+h1 { font-size: 1.2rem; }
+h2 { font-size: 1rem; }
+h3 { font-size: 0.8rem; }
+
+/* Pixel Buttons - Basis */
+.btn {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.7rem;
+  padding: 12px 20px;
+  border: var(--pixel-border);
+  background: linear-gradient(180deg, #c9a66b 0%, #a0815a 100%);
+  color: var(--text-primary);
+  cursor: pointer;
+  box-shadow: var(--pixel-shadow);
+  transition: transform 0.1s, box-shadow 0.1s;
+  text-transform: uppercase;
+}
+
+.btn:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px var(--border-color);
+}
+
+.btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, #e8b84a 0%, #c9942a 100%);
+  color: var(--text-primary);
+}
+
+/* Pixel Panels/Cards */
+.card, .panel {
+  background: var(--bg-parchment);
+  border: var(--pixel-border);
+  box-shadow: var(--pixel-shadow);
+  padding: 16px;
+}
+
+/* Coin Display - Stardew Style */
+.coin-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.7rem;
+  color: var(--coin-color);
+  text-shadow: 1px 1px 0px var(--coin-shadow);
+}
+
+.coin-display::before {
+  content: '●';
+  font-size: 1rem;
+  color: var(--coin-color);
+  text-shadow: 2px 2px 0px var(--coin-shadow);
+}
+
+/* Scrollbar im Pixel-Stil */
+::-webkit-scrollbar {
+  width: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-left: var(--pixel-border);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #c9a66b 0%, #8b7355 100%);
+  border: 2px solid var(--border-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #d9b67b 0%, #9b8365 100%);
+}
+
+code {
+  font-family: 'VT323', monospace;
+  background: var(--bg-secondary);
+  padding: 2px 6px;
+  border: 2px solid var(--border-light);
+}
