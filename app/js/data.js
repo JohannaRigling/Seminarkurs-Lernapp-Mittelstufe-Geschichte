@@ -824,6 +824,191 @@ const QUIZ_TOPICS = [
                 options: ['1987', '1988', '1989', '1990'],
                 correct: 2,
                 explanation: 'Am 9. November 1989 wurden die Grenzen geöffnet.'
+            },
+            {
+                question: 'Was war die Kubakrise?',
+                options: ['Ein Bürgerkrieg', 'Eine Wirtschaftskrise', 'Eine Konfrontation wegen Raketen', 'Eine Naturkatastrophe'],
+                correct: 2,
+                explanation: 'Die Kubakrise 1962 war eine Konfrontation zwischen USA und UdSSR wegen sowjetischer Raketen auf Kuba.'
+            },
+            {
+                question: 'Was war die Berlin-Blockade?',
+                options: ['Eine Mauer um Berlin', 'Sperrung der Zugangswege', 'Ein Putsch', 'Eine Demonstration'],
+                correct: 1,
+                explanation: 'Die Sowjetunion blockierte 1948/49 alle Land- und Wasserwege nach West-Berlin.'
+            }
+        ]
+    },
+    {
+        id: 'mittelalter',
+        name: 'Mittelalter',
+        icon: '🏰',
+        questions: [
+            {
+                question: 'Wann wurde Karl der Große zum Kaiser gekrönt?',
+                options: ['768', '800', '843', '962'],
+                correct: 1,
+                explanation: 'Karl der Große wurde am 25. Dezember 800 in Rom zum Kaiser gekrönt.'
+            },
+            {
+                question: 'Was war die Ständegesellschaft?',
+                options: ['Eine demokratische Ordnung', 'Eine Gliederung in Klerus, Adel, Bauern', 'Eine Wirtschaftsform', 'Eine Regierungsform'],
+                correct: 1,
+                explanation: 'Die mittelalterliche Gesellschaft war in drei Stände gegliedert: Klerus, Adel und den Rest.'
+            },
+            {
+                question: 'Was waren die Kreuzzüge?',
+                options: ['Handelsrouten', 'Militärische Unternehmungen nach Jerusalem', 'Pilgerreisen', 'Wissenschaftliche Expeditionen'],
+                correct: 1,
+                explanation: 'Die Kreuzzüge waren militärische Unternehmungen zur Eroberung des Heiligen Landes.'
+            },
+            {
+                question: 'Was war die Pest (Schwarzer Tod)?',
+                options: ['Eine Hungersnot', 'Eine Seuche die 1/3 Europas tötete', 'Ein Krieg', 'Eine Naturkatastrophe'],
+                correct: 1,
+                explanation: 'Die Pest tötete zwischen 1347-1353 etwa ein Drittel der europäischen Bevölkerung.'
+            },
+            {
+                question: 'Was bedeutet "Lehnswesen"?',
+                options: ['Ein Kreditsystem', 'Landvergabe gegen Dienste', 'Ein Handelssystem', 'Eine Zunftordnung'],
+                correct: 1,
+                explanation: 'Im Lehnswesen vergab der König Land an Vasallen, die dafür Kriegsdienste leisteten.'
+            }
+        ]
+    },
+    {
+        id: 'reformation',
+        name: 'Reformation',
+        icon: '⛪',
+        questions: [
+            {
+                question: 'Wann veröffentlichte Luther seine 95 Thesen?',
+                options: ['1517', '1521', '1530', '1555'],
+                correct: 0,
+                explanation: 'Am 31. Oktober 1517 soll Luther seine Thesen an die Schlosskirche zu Wittenberg geschlagen haben.'
+            },
+            {
+                question: 'Was war der Ablasshandel?',
+                options: ['Handel mit Reliquien', 'Verkauf von Sündenvergebung', 'Handel mit Bibeln', 'Verkauf von Kirchenämtern'],
+                correct: 1,
+                explanation: 'Beim Ablasshandel verkaufte die Kirche die Vergebung von Sünden gegen Geld.'
+            },
+            {
+                question: 'Was geschah auf dem Reichstag zu Worms 1521?',
+                options: ['Luther wurde hingerichtet', 'Luther widerrief', 'Luther verweigerte den Widerruf', 'Die Reformation wurde beendet'],
+                correct: 2,
+                explanation: 'Luther weigerte sich, seine Lehren zu widerrufen: "Hier stehe ich, ich kann nicht anders."'
+            },
+            {
+                question: 'Was besagte der Augsburger Religionsfrieden 1555?',
+                options: ['Verbot der Reformation', 'Cuius regio, eius religio', 'Einheit der Kirche', 'Verbot des Ablasshandels'],
+                correct: 1,
+                explanation: '"Cuius regio, eius religio" - Wessen Gebiet, dessen Religion. Landesherren bestimmten die Konfession.'
+            }
+        ]
+    },
+    {
+        id: 'industrialisierung',
+        name: 'Industrialisierung',
+        icon: '🏭',
+        questions: [
+            {
+                question: 'Wo begann die Industrielle Revolution?',
+                options: ['Deutschland', 'Frankreich', 'England', 'USA'],
+                correct: 2,
+                explanation: 'Die Industrialisierung begann Mitte des 18. Jahrhunderts in England.'
+            },
+            {
+                question: 'Was war die "Soziale Frage"?',
+                options: ['Ein Fragebogen', 'Probleme der Arbeiterschaft', 'Eine politische Partei', 'Ein Gesetz'],
+                correct: 1,
+                explanation: 'Die Soziale Frage beschreibt die Probleme der Arbeiterschaft: Armut, Kinderarbeit, schlechte Bedingungen.'
+            },
+            {
+                question: 'Wer erfand die Dampfmaschine?',
+                options: ['Thomas Edison', 'James Watt', 'Carl Benz', 'Werner von Siemens'],
+                correct: 1,
+                explanation: 'James Watt verbesserte die Dampfmaschine entscheidend und machte sie praktisch nutzbar.'
+            },
+            {
+                question: 'Was waren Gewerkschaften?',
+                options: ['Arbeitgeberverbände', 'Zusammenschlüsse von Arbeitern', 'Handelsgilden', 'Parteien'],
+                correct: 1,
+                explanation: 'Gewerkschaften waren Zusammenschlüsse von Arbeitern zur Durchsetzung besserer Arbeitsbedingungen.'
+            },
+            {
+                question: 'Was war das "Manchestertum"?',
+                options: ['Eine Kunstrichtung', 'Radikaler Wirtschaftsliberalismus', 'Eine Textilfirma', 'Eine Stadt'],
+                correct: 1,
+                explanation: 'Manchestertum bezeichnet einen radikalen Wirtschaftsliberalismus ohne staatliche Eingriffe.'
+            }
+        ]
+    },
+    {
+        id: 'reichsgruendung',
+        name: 'Deutsche Einigung',
+        icon: '🇩🇪',
+        questions: [
+            {
+                question: 'Wann wurde das Deutsche Reich gegründet?',
+                options: ['1848', '1866', '1871', '1890'],
+                correct: 2,
+                explanation: 'Am 18. Januar 1871 wurde das Deutsche Kaiserreich in Versailles proklamiert.'
+            },
+            {
+                question: 'Wer war der "Eiserne Kanzler"?',
+                options: ['Wilhelm I.', 'Friedrich III.', 'Otto von Bismarck', 'Helmuth von Moltke'],
+                correct: 2,
+                explanation: 'Otto von Bismarck wurde wegen seiner harten Politik "Eiserner Kanzler" genannt.'
+            },
+            {
+                question: 'Was war die "Blut und Eisen"-Rede?',
+                options: ['Ein Kriegsplan', 'Bismarcks Machtpolitik-Ankündigung', 'Eine Friedensrede', 'Ein Wirtschaftsprogramm'],
+                correct: 1,
+                explanation: 'Bismarck verkündete 1862, dass die deutschen Fragen durch "Blut und Eisen" gelöst würden.'
+            },
+            {
+                question: 'Welche Kriege führte Bismarck zur Einigung?',
+                options: ['Nur gegen Frankreich', 'Gegen Dänemark, Österreich, Frankreich', 'Gegen Russland', 'Keine Kriege'],
+                correct: 1,
+                explanation: 'Die drei Einigungskriege: gegen Dänemark (1864), Österreich (1866) und Frankreich (1870/71).'
+            }
+        ]
+    },
+    {
+        id: 'antike',
+        name: 'Antike',
+        icon: '🏛️',
+        questions: [
+            {
+                question: 'Wann wurde die Demokratie in Athen eingeführt?',
+                options: ['um 800 v. Chr.', 'um 500 v. Chr.', 'um 200 v. Chr.', 'um 100 n. Chr.'],
+                correct: 1,
+                explanation: 'Die attische Demokratie entstand um 500 v. Chr. unter Kleisthenes.'
+            },
+            {
+                question: 'Wer war Alexander der Große?',
+                options: ['Ein römischer Kaiser', 'Ein makedonischer König und Eroberer', 'Ein griechischer Philosoph', 'Ein ägyptischer Pharao'],
+                correct: 1,
+                explanation: 'Alexander der Große (356-323 v. Chr.) eroberte ein Weltreich von Griechenland bis Indien.'
+            },
+            {
+                question: 'Wann endete das Weströmische Reich?',
+                options: ['27 v. Chr.', '117 n. Chr.', '395 n. Chr.', '476 n. Chr.'],
+                correct: 3,
+                explanation: 'Das Weströmische Reich endete 476 n. Chr. mit der Absetzung des letzten Kaisers Romulus Augustulus.'
+            },
+            {
+                question: 'Was war das Forum Romanum?',
+                options: ['Ein Tempel', 'Das politische Zentrum Roms', 'Ein Amphitheater', 'Ein Palast'],
+                correct: 1,
+                explanation: 'Das Forum Romanum war das politische, religiöse und wirtschaftliche Zentrum des antiken Rom.'
+            },
+            {
+                question: 'Wer war Julius Caesar?',
+                options: ['Erster römischer Kaiser', 'Römischer Feldherr und Diktator', 'Griechischer Philosoph', 'Ägyptischer König'],
+                correct: 1,
+                explanation: 'Julius Caesar war ein römischer Staatsmann und Feldherr, der 44 v. Chr. ermordet wurde.'
             }
         ]
     }
@@ -867,5 +1052,250 @@ const ACHIEVEMENTS = [
     { id: 'strategy-guru', name: 'Strategie-Guru', icon: '🧠', description: 'Alle Lernstrategien entdeckt', condition: 'strategiesViewed >= 12' },
     { id: 'dedicated', name: 'Fleißig', icon: '📚', description: '1 Stunde gelernt', condition: 'totalMinutes >= 60' },
     { id: 'castle-builder', name: 'Burgenbauer', icon: '🏰', description: 'Erstes Burg-Upgrade gekauft', condition: 'castleLevel >= 2' },
-    { id: 'rich', name: 'Wohlhabend', icon: '🐄', description: '100 Münzen gesammelt', condition: 'totalCoins >= 100' }
+    { id: 'rich', name: 'Wohlhabend', icon: '🐄', description: '100 Münzen gesammelt', condition: 'totalCoins >= 100' },
+    { id: 'streak-3', name: '3-Tage-Streak', icon: '🔥', description: '3 Tage in Folge gelernt', condition: 'streak >= 3' },
+    { id: 'streak-7', name: 'Wochenläufer', icon: '🔥', description: '7 Tage in Folge gelernt', condition: 'streak >= 7' },
+    { id: 'memory-champ', name: 'Memory-Champion', icon: '🃏', description: '5 Memory-Spiele gewonnen', condition: 'memoryWins >= 5' },
+    { id: 'chat-explorer', name: 'Wissbegierig', icon: '💬', description: '20 Fragen an den KI-Tutor gestellt', condition: 'chatQuestions >= 20' },
+    { id: 'note-taker', name: 'Notizenmeister', icon: '📒', description: '10 Notizen erstellt', condition: 'notesCreated >= 10' },
+    { id: 'perfect-quiz', name: 'Perfektionist', icon: '💯', description: 'Ein Quiz mit 100% abgeschlossen', condition: 'perfectQuizzes >= 1' },
+    { id: 'night-owl', name: 'Nachteule', icon: '🦉', description: 'Nach 22 Uhr gelernt', condition: 'nightLearning >= 1' },
+    { id: 'early-bird', name: 'Frühaufsteher', icon: '🐦', description: 'Vor 7 Uhr gelernt', condition: 'earlyLearning >= 1' }
+];
+
+// ===== OPERATOR ÜBUNGEN =====
+const OPERATOR_EXERCISES = {
+    nennen: [
+        {
+            id: 'nennen-1',
+            question: 'Nennen Sie drei Ursachen für den Ausbruch des Ersten Weltkriegs.',
+            expectedPoints: 3,
+            sampleAnswer: ['Bündnissysteme (Dreibund, Triple Entente)', 'Nationalismus und imperialistische Rivalitäten', 'Wettrüsten und Militarismus', 'Balkankrise', 'Attentat von Sarajevo'],
+            tips: 'Konzentriere dich auf die Hauptursachen. Jeder Punkt sollte kurz und prägnant sein.'
+        },
+        {
+            id: 'nennen-2',
+            question: 'Nennen Sie die drei Stände der französischen Gesellschaft vor der Revolution.',
+            expectedPoints: 3,
+            sampleAnswer: ['Erster Stand: Klerus/Geistlichkeit', 'Zweiter Stand: Adel', 'Dritter Stand: Bürger und Bauern'],
+            tips: 'Die Ständeordnung war hierarchisch aufgebaut.'
+        },
+        {
+            id: 'nennen-3',
+            question: 'Nennen Sie vier wichtige Ereignisse der Französischen Revolution.',
+            expectedPoints: 4,
+            sampleAnswer: ['Sturm auf die Bastille 1789', 'Erklärung der Menschen- und Bürgerrechte', 'Hinrichtung Ludwigs XVI. 1793', 'Schreckensherrschaft (Terreur)', 'Sturz Robespierres 1794'],
+            tips: 'Wähle die wichtigsten Meilensteine aus.'
+        }
+    ],
+    beschreiben: [
+        {
+            id: 'beschreiben-1',
+            question: 'Beschreiben Sie den Verlauf der Märzrevolution 1848 in Deutschland.',
+            expectedPoints: 5,
+            sampleAnswer: 'Die Märzrevolution begann im März 1848 mit Unruhen in verschiedenen deutschen Staaten. Inspiriert von der Februarrevolution in Frankreich forderten Bürger politische Reformen, Pressefreiheit und nationale Einheit. In Berlin kam es zu Barrikadenkämpfen, woraufhin Friedrich Wilhelm IV. Zugeständnisse machte. Die Nationalversammlung trat in der Frankfurter Paulskirche zusammen, um eine Verfassung auszuarbeiten.',
+            tips: 'Strukturiere chronologisch: Beginn, Verlauf, wichtige Stationen.'
+        },
+        {
+            id: 'beschreiben-2',
+            question: 'Beschreiben Sie das Leben in einem mittelalterlichen Dorf.',
+            expectedPoints: 5,
+            sampleAnswer: 'Das Leben im mittelalterlichen Dorf war geprägt von harter landwirtschaftlicher Arbeit. Die Bauern lebten in einfachen Häusern und arbeiteten auf den Feldern des Grundherrn. Sie mussten Abgaben leisten und Frondienste verrichten. Die Dorfgemeinschaft war eng mit der Kirche verbunden, Feste wurden gemeinsam gefeiert. Das Leben folgte dem Rhythmus der Jahreszeiten.',
+            tips: 'Beschreibe verschiedene Aspekte: Wohnen, Arbeit, Gesellschaft, Religion.'
+        }
+    ],
+    analysieren: [
+        {
+            id: 'analysieren-1',
+            question: 'Analysieren Sie die Propaganda im Nationalsozialismus: Welche Methoden wurden eingesetzt?',
+            expectedPoints: 6,
+            sampleAnswer: 'Die NS-Propaganda nutzte verschiedene Methoden: 1) Massenkommunikation durch Radio (Volksempfänger) und Film, 2) Inszenierung von Großveranstaltungen (Reichsparteitage), 3) Personenkult um Hitler, 4) Verwendung einfacher Feindbilder, 5) Kontrolle aller Medien durch das Propagandaministerium, 6) Ansprache von Emotionen statt Vernunft.',
+            tips: 'Gehe systematisch vor: Medium, Methode, Ziel, Wirkung.'
+        }
+    ],
+    erklaeren: [
+        {
+            id: 'erklaeren-1',
+            question: 'Erklären Sie, warum die Weimarer Republik scheiterte.',
+            expectedPoints: 6,
+            sampleAnswer: 'Die Weimarer Republik scheiterte aus mehreren Gründen: Die Dolchstoßlegende belastete die Demokratie von Anfang an. Die Weltwirtschaftskrise 1929 führte zu Massenarbeitslosigkeit und radikalisierte die Bevölkerung. Die Verfassung hatte Schwächen (Artikel 48, Verhältniswahlrecht ohne Sperrklausel). Antidemokratische Kräfte von links und rechts bekämpften die Republik. Das Bürgertum unterstützte die Demokratie nicht ausreichend.',
+            tips: 'Nenne Ursachen und erkläre die Zusammenhänge zwischen ihnen.'
+        }
+    ],
+    beurteilen: [
+        {
+            id: 'beurteilen-1',
+            question: 'Beurteilen Sie die Außenpolitik Bismarcks.',
+            expectedPoints: 7,
+            sampleAnswer: 'Bismarcks Außenpolitik kann als erfolgreich beurteilt werden, da sie Deutschland eine lange Friedensperiode sicherte. Positiv: Das komplexe Bündnissystem isolierte Frankreich und verhinderte einen Zweifrontenkrieg. Der Rückversicherungsvertrag mit Russland zeugte von diplomatischem Geschick. Kritisch: Die Politik war zu sehr auf Bismarck zugeschnitten und brach nach seinem Rücktritt zusammen. Die Kolonialpolitik widersprach seiner anfänglichen Zurückhaltung. Insgesamt überwogen die stabilisierenden Elemente.',
+            tips: 'Lege Beurteilungskriterien fest und wäge Pro und Contra ab.'
+        }
+    ],
+    vergleichen: [
+        {
+            id: 'vergleichen-1',
+            question: 'Vergleichen Sie die Französische Revolution mit der Russischen Revolution 1917.',
+            expectedPoints: 6,
+            sampleAnswer: 'Gemeinsamkeiten: Beide Revolutionen entstanden aus sozialer Unzufriedenheit und wirtschaftlicher Not. Beide stürzten das bestehende monarchische System. In beiden Fällen folgte eine radikale Phase mit Terror. Unterschiede: Die Französische Revolution hatte bürgerliche Ideale (Menschenrechte), die Russische kommunistische. Die soziale Trägerschaft war unterschiedlich (Bürgertum vs. Arbeiter/Soldaten). Die Ergebnisse waren verschieden: bürgerliche Gesellschaft vs. Diktatur des Proletariats.',
+            tips: 'Strukturiere nach Vergleichskriterien und nenne immer beide Seiten.'
+        }
+    ]
+};
+
+// ===== KI CHAT ANTWORTEN (Offline-Fallback) =====
+const AI_RESPONSES = {
+    greeting: [
+        'Hallo! Ich bin dein Geschichtstutor. Was möchtest du heute lernen?',
+        'Willkommen zurück! Bereit für eine Zeitreise durch die Geschichte?',
+        'Hi! Ich helfe dir gerne bei Geschichte. Was interessiert dich?'
+    ],
+    eselsbruecke: {
+        'französische revolution': 'Merke dir "1789 - Die Bastille fällt, der König zählt" - Im Jahr 1789 stürmte das Volk die Bastille!',
+        'wiener kongress': '1815 - "Nach Napoleons Fall tanzt Wien überall" - Der Wiener Kongress ordnete Europa nach Napoleon neu.',
+        'reichsgründung': '1871 - "Einundsiebzig - Wilhelm ist König, aber auch Kaiser wenig" - Die deutsche Reichsgründung unter Wilhelm I.',
+        'erster weltkrieg': '1914-1918: "Vierzehn bis achtzehn, der große Krieg bricht ein" - Die Jahre des Ersten Weltkriegs.',
+        'mauerfall': '1989 - "Neunundachtzig, die Mauer geht fort, Freiheit das Wort!" - Der Fall der Berliner Mauer.',
+        default: 'Eine gute Eselsbrücke für Geschichte: Verbinde das Jahr mit einem Reim oder Bild! Z.B. "1789 - Die Bastille fällt, der König zählt".'
+    },
+    zusammenfassung: {
+        'französische revolution': 'Die Französische Revolution (1789-1799) war ein Wendepunkt der Geschichte:\n\n📌 Ursachen: Finanzielle Krise, soziale Ungleichheit, Aufklärungsideen\n📌 Beginn: Sturm auf die Bastille (14.7.1789)\n📌 Wichtige Phasen: Nationalversammlung, Schreckensherrschaft, Direktorium\n📌 Errungenschaften: Menschen- und Bürgerrechte, Ende des Absolutismus\n📌 Ende: Napoleons Machtergreifung 1799',
+        'nationalsozialismus': 'Der Nationalsozialismus (1933-1945):\n\n📌 Machtergreifung: 30. Januar 1933\n📌 Ideologie: Rassismus, Antisemitismus, Führerprinzip\n📌 Terror: Verfolgung politischer Gegner, Holocaust\n📌 Krieg: Zweiter Weltkrieg (1939-1945)\n📌 Ende: Bedingungslose Kapitulation 8. Mai 1945',
+        'kalter krieg': 'Der Kalte Krieg (1947-1991):\n\n📌 Konfliktparteien: USA (West) vs. UdSSR (Ost)\n📌 Kennzeichen: Kein direkter Krieg, aber Stellvertreterkriege\n📌 Symbole: Eiserner Vorhang, Berliner Mauer\n📌 Krisen: Kubakrise, Berlin-Blockade\n📌 Ende: Fall der Mauer 1989, Auflösung UdSSR 1991',
+        default: 'Ich erstelle gerne eine Zusammenfassung! Nenne mir das Thema genauer. Beispiele:\n- Französische Revolution\n- Nationalsozialismus\n- Kalter Krieg\n- Weimarer Republik'
+    },
+    erklaerung: {
+        'ständegesellschaft': 'Die Ständegesellschaft - einfach erklärt:\n\nStell dir vor, die Gesellschaft ist wie eine Pyramide:\n\n👑 OBEN: Der König (absolute Macht)\n⛪ 1. Stand: Klerus (Priester, Bischöfe) - ca. 1%\n🏰 2. Stand: Adel (Fürsten, Ritter) - ca. 2%\n👨‍🌾 3. Stand: Alle anderen - ca. 97%!\n\nDas Unfaire: Die oberen 3% zahlten kaum Steuern, der 3. Stand trug fast alle Lasten. Das führte zur Revolution!',
+        'absolutismus': 'Absolutismus - einfach erklärt:\n\nDer König hat ALLE Macht:\n\n"Der Staat bin ich!" (Ludwig XIV.)\n\n📜 Keine Gewaltenteilung\n👑 König = Gesetzgeber + Richter + Herrscher\n🏰 Prunkvolle Hofhaltung (Versailles)\n⚔️ Stehendes Heer\n💰 Merkantilismus (Staat kontrolliert Wirtschaft)\n\nEnde: Aufklärung und Revolutionen brachten neue Ideen!',
+        default: 'Ich erkläre dir gerne historische Begriffe! Frag mich zum Beispiel nach:\n- Ständegesellschaft\n- Absolutismus\n- Imperialismus\n- Nationalismus'
+    },
+    quiz: {
+        default: 'Lass uns ein Quiz starten! Hier eine Frage:\n\n❓ Wann begann die Französische Revolution?\n\nA) 1776\nB) 1789\nC) 1799\nD) 1804\n\n(Schreib mir den Buchstaben deiner Antwort!)'
+    },
+    default: [
+        'Interessante Frage! Lass mich dir dabei helfen...',
+        'Das ist ein wichtiges Thema in der Geschichte!',
+        'Gute Frage! Geschichte kann manchmal kompliziert sein, aber ich erkläre es dir.'
+    ]
+};
+
+// ===== SOUND EFFEKTE (Base64 encoded kurze Töne) =====
+const SOUNDS = {
+    coin: 'data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ4AAACAf4B/gH+Af4B/gH+Af4A=',
+    achievement: 'data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ4AAACAf4CAf4CAf4CAf4CAf4A=',
+    correct: 'data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ4AAACAf4CAf4CAf4CAf4CAf4A=',
+    wrong: 'data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ4AAACAf4B/gH+Af4B/gH+Af4A=',
+    timer: 'data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ4AAACAf4CAf4CAf4CAf4CAf4A=',
+    levelUp: 'data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ4AAACAf4CAf4CAf4CAf4CAf4A='
+};
+
+// ===== BIBLIOTHEK KATEGORIEN =====
+const LIBRARY_CATEGORIES = [
+    { id: 'antike', name: 'Antike', icon: '🏛️', color: '#e8d5b7' },
+    { id: 'mittelalter', name: 'Mittelalter', icon: '🏰', color: '#8b4513' },
+    { id: 'fruehe-neuzeit', name: 'Frühe Neuzeit', icon: '⚓', color: '#daa520' },
+    { id: 'neuzeit', name: '19. Jahrhundert', icon: '🏭', color: '#4a4a4a' },
+    { id: 'zeitgeschichte', name: '20. Jahrhundert', icon: '🌍', color: '#2c3e50' },
+    { id: 'methoden', name: 'Methoden', icon: '📝', color: '#667eea' },
+    { id: 'notizen', name: 'Meine Notizen', icon: '📒', color: '#27ae60' },
+    { id: 'favoriten', name: 'Favoriten', icon: '⭐', color: '#f39c12' }
+];
+
+// ===== LERNMATERIALIEN =====
+const LEARNING_MATERIALS = [
+    {
+        id: 'mat-1',
+        title: 'Die Französische Revolution - Überblick',
+        category: 'fruehe-neuzeit',
+        type: 'article',
+        content: `# Die Französische Revolution (1789-1799)
+
+## Ursachen
+- **Finanzielle Krise**: Der Staat war bankrott
+- **Soziale Ungleichheit**: Der 3. Stand trug alle Lasten
+- **Ideen der Aufklärung**: Freiheit, Gleichheit, Volkssouveränität
+
+## Verlauf
+1. **1789**: Sturm auf die Bastille, Erklärung der Menschenrechte
+2. **1791**: Erste Verfassung, konstitutionelle Monarchie
+3. **1792**: Republik wird ausgerufen
+4. **1793-94**: Schreckensherrschaft unter Robespierre
+5. **1799**: Napoleon ergreift die Macht
+
+## Folgen
+- Ende des Absolutismus in Frankreich
+- Verbreitung der Menschenrechtsidee
+- Vorbild für andere Revolutionen`,
+        difficulty: 2,
+        readTime: 5
+    },
+    {
+        id: 'mat-2',
+        title: 'Der Erste Weltkrieg - Ursachen und Verlauf',
+        category: 'zeitgeschichte',
+        type: 'article',
+        content: `# Der Erste Weltkrieg (1914-1918)
+
+## Ursachen (MAIN)
+- **M**ilitarismus: Wettrüsten der Großmächte
+- **A**llianzen: Bündnissysteme (Dreibund, Triple Entente)
+- **I**mperialismus: Konkurrenz um Kolonien
+- **N**ationalismus: Übersteigerte Vaterlandsliebe
+
+## Auslöser
+Das Attentat von Sarajevo am 28. Juni 1914 auf Erzherzog Franz Ferdinand.
+
+## Verlauf
+- **1914**: Kriegsausbruch, Schlieffen-Plan scheitert
+- **1915-17**: Stellungskrieg, Materialschlachten
+- **1917**: USA tritt ein, Revolution in Russland
+- **1918**: Deutsche Niederlage, Waffenstillstand am 11.11.
+
+## Folgen
+- 17 Millionen Tote
+- Ende der Kaiserreiche
+- Versailler Vertrag
+- Grundlage für den 2. Weltkrieg`,
+        difficulty: 2,
+        readTime: 6
+    },
+    {
+        id: 'mat-3',
+        title: 'Die Weimarer Republik',
+        category: 'zeitgeschichte',
+        type: 'article',
+        content: `# Die Weimarer Republik (1919-1933)
+
+## Gründung
+Nach der Novemberrevolution 1918 wurde am 9. November die Republik ausgerufen.
+
+## Die Verfassung
+- Demokratische Grundrechte
+- Reichspräsident mit starker Stellung (Artikel 48!)
+- Verhältniswahlrecht
+
+## Phasen
+1. **Krisenjahre (1919-1923)**: Inflation, Putschversuche
+2. **Goldene Zwanziger (1924-1929)**: Stabilisierung, Kultur
+3. **Niedergang (1929-1933)**: Weltwirtschaftskrise, Radikalisierung
+
+## Warum scheiterte sie?
+- Belastung durch Versailles
+- Antidemokratische Kräfte
+- Weltwirtschaftskrise
+- Schwächen der Verfassung`,
+        difficulty: 2,
+        readTime: 5
+    }
+];
+
+// ===== TÄGLICHE CHALLENGES =====
+const DAILY_CHALLENGES = [
+    { id: 'dc-1', name: 'Quiz-Runde', description: 'Beantworte 5 Quiz-Fragen richtig', reward: 20, type: 'quiz', target: 5 },
+    { id: 'dc-2', name: 'Zeitreisender', description: 'Erkunde 3 Ereignisse im Zeitstrahl', reward: 15, type: 'timeline', target: 3 },
+    { id: 'dc-3', name: 'Operator-Training', description: 'Schau dir 2 Operatoren an', reward: 10, type: 'operators', target: 2 },
+    { id: 'dc-4', name: 'Lernmarathon', description: 'Lerne 30 Minuten mit dem Timer', reward: 30, type: 'timer', target: 30 },
+    { id: 'dc-5', name: 'Strategie-Entdecker', description: 'Lerne eine neue Lernstrategie kennen', reward: 15, type: 'strategies', target: 1 },
+    { id: 'dc-6', name: 'Chat-Profi', description: 'Stelle 3 Fragen an den KI-Tutor', reward: 15, type: 'chat', target: 3 },
+    { id: 'dc-7', name: 'Memory-Meister', description: 'Gewinne ein Memory-Spiel', reward: 25, type: 'memory', target: 1 },
+    { id: 'dc-8', name: 'Notizen-Macher', description: 'Erstelle eine Notiz', reward: 10, type: 'notes', target: 1 }
 ];

@@ -292,21 +292,49 @@ function createFolder() {
 // Ordner laden
 function loadFolders() {
     const list = document.getElementById('folderList');
-    if (!list || !currentUser) return;
+    if (!list) return;
+
+    const noteCount = currentUser?.notes?.length || 0;
+    const favCount = currentUser?.favorites?.length || 0;
+    const learnedCount = currentUser?.learnedMaterials?.length || 0;
 
     let html = `
-        <div class="folder-item" onclick="openFolder('alle')">
+        <div class="folder-item active" onclick="openFolder('alle')">
             <span>📂</span> Alle Materialien
         </div>
+        <div class="folder-item" onclick="openFolder('notizen')">
+            <span>📝</span> Meine Notizen ${noteCount > 0 ? `<span class="folder-count">${noteCount}</span>` : ''}
+        </div>
         <div class="folder-item" onclick="openFolder('favoriten')">
-            <span>⭐</span> Favoriten
+            <span>⭐</span> Favoriten ${favCount > 0 ? `<span class="folder-count">${favCount}</span>` : ''}
         </div>
         <div class="folder-item" onclick="openFolder('gelernt')">
-            <span>✅</span> Gelernt
+            <span>✅</span> Gelernt ${learnedCount > 0 ? `<span class="folder-count">${learnedCount}</span>` : ''}
+        </div>
+        <hr style="border-color: var(--border-color); margin: 10px 0;">
+        <div class="folder-item" onclick="openFolder('antike')">
+            <span>🏛️</span> Antike
+        </div>
+        <div class="folder-item" onclick="openFolder('mittelalter')">
+            <span>🏰</span> Mittelalter
+        </div>
+        <div class="folder-item" onclick="openFolder('fruehe-neuzeit')">
+            <span>⚓</span> Frühe Neuzeit
+        </div>
+        <div class="folder-item" onclick="openFolder('neuzeit')">
+            <span>🏭</span> 19. Jahrhundert
+        </div>
+        <div class="folder-item" onclick="openFolder('zeitgeschichte')">
+            <span>🌍</span> 20. Jahrhundert
+        </div>
+        <div class="folder-item" onclick="openFolder('methoden')">
+            <span>📝</span> Methoden
         </div>
     `;
 
-    if (currentUser.folders) {
+    // Benutzerdefinierte Ordner
+    if (currentUser && currentUser.folders) {
+        html += '<hr style="border-color: var(--border-color); margin: 10px 0;">';
         currentUser.folders.forEach(folder => {
             html += `
                 <div class="folder-item" onclick="openFolder('${folder.id}')">
@@ -317,32 +345,522 @@ function loadFolders() {
     }
 
     list.innerHTML = html;
+
+    // CSS für Folder-Counts
+    if (!document.getElementById('folderStyles')) {
+        const style = document.createElement('style');
+        style.id = 'folderStyles';
+        style.textContent = `
+            .folder-item { display: flex; align-items: center; gap: 10px; padding: 10px 15px; cursor: pointer; border-radius: 8px; transition: var(--transition); }
+            .folder-item:hover { background: var(--bg-tertiary); }
+            .folder-item.active { background: var(--primary); color: white; }
+            .folder-count { background: var(--primary); color: white; font-size: 0.75em; padding: 2px 8px; border-radius: 10px; margin-left: auto; }
+            .folder-item.active .folder-count { background: white; color: var(--primary); }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Beim Laden auch Bibliothek-Inhalt anzeigen
+    displayLibraryContent('alle');
 }
 
 // Ordner öffnen
 function openFolder(folderId) {
-    const content = document.getElementById('libraryContent');
-    if (!content) return;
+    // Aktiven Ordner markieren
+    document.querySelectorAll('.folder-item').forEach(item => {
+        item.classList.remove('active');
+    });
+    event.target.closest('.folder-item')?.classList.add('active');
 
-    // Placeholder content
-    content.innerHTML = `
-        <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
-            <p>📂 Ordner: ${folderId}</p>
-            <p>Hier werden deine gespeicherten Materialien angezeigt.</p>
-        </div>
-    `;
+    // Inhalt laden
+    displayLibraryContent(folderId);
 }
 
 // Bibliothek durchsuchen
 function searchLibrary() {
-    const query = document.getElementById('librarySearch').value.toLowerCase();
-    // Implementierung folgt
+    const query = document.getElementById('librarySearch').value.toLowerCase().trim();
+    displayLibraryContent('alle', query);
 }
 
 // Bibliothek filtern
 function filterLibrary() {
     const filter = document.getElementById('libraryFilter').value;
-    // Implementierung folgt
+    displayLibraryContent(filter);
+}
+
+// Bibliothek-Inhalt anzeigen
+function displayLibraryContent(folderId = 'alle', searchQuery = '') {
+    const content = document.getElementById('libraryContent');
+    if (!content) return;
+
+    let materials = [];
+
+    // Basis-Materialien aus data.js
+    if (typeof LEARNING_MATERIALS !== 'undefined') {
+        materials = [...LEARNING_MATERIALS];
+    }
+
+    // Benutzer-Notizen hinzufügen
+    if (currentUser && currentUser.notes) {
+        const userNotes = currentUser.notes.map(note => ({
+            id: note.id,
+            title: note.title,
+            category: 'notizen',
+            type: 'note',
+            content: note.content,
+            createdAt: note.createdAt,
+            isUserNote: true
+        }));
+        materials = [...materials, ...userNotes];
+    }
+
+    // Filter nach Kategorie
+    if (folderId !== 'alle' && folderId !== 'favoriten' && folderId !== 'gelernt') {
+        materials = materials.filter(m => m.category === folderId || (m.isUserNote && folderId === 'notizen'));
+    }
+
+    // Filter nach Favoriten
+    if (folderId === 'favoriten' && currentUser) {
+        const favorites = currentUser.favorites || [];
+        materials = materials.filter(m => favorites.includes(m.id));
+    }
+
+    // Filter nach gelernt
+    if (folderId === 'gelernt' && currentUser) {
+        const learned = currentUser.learnedMaterials || [];
+        materials = materials.filter(m => learned.includes(m.id));
+    }
+
+    // Suche
+    if (searchQuery) {
+        materials = materials.filter(m =>
+            m.title.toLowerCase().includes(searchQuery) ||
+            (m.content && m.content.toLowerCase().includes(searchQuery))
+        );
+    }
+
+    // Anzeige
+    if (materials.length === 0) {
+        content.innerHTML = `
+            <div style="text-align: center; padding: 60px; color: var(--text-secondary);">
+                <div style="font-size: 4em; margin-bottom: 20px;">📚</div>
+                <p>Keine Materialien gefunden.</p>
+                ${folderId === 'notizen' ? '<button class="btn btn-primary" onclick="createNote()">+ Neue Notiz erstellen</button>' : ''}
+            </div>
+        `;
+        return;
+    }
+
+    content.innerHTML = `
+        <div class="library-grid">
+            ${materials.map(m => `
+                <div class="library-card ${m.isUserNote ? 'user-note' : ''}" onclick="openMaterial('${m.id}')">
+                    <div class="library-card-header">
+                        <span class="library-type">${getTypeIcon(m.type)}</span>
+                        ${currentUser ? `
+                            <button class="favorite-btn ${(currentUser.favorites || []).includes(m.id) ? 'active' : ''}"
+                                    onclick="event.stopPropagation(); toggleFavorite('${m.id}')">
+                                ${(currentUser.favorites || []).includes(m.id) ? '★' : '☆'}
+                            </button>
+                        ` : ''}
+                    </div>
+                    <h4>${m.title}</h4>
+                    <div class="library-card-meta">
+                        <span>${getCategoryName(m.category)}</span>
+                        ${m.readTime ? `<span>~${m.readTime} min</span>` : ''}
+                        ${m.difficulty ? `<span>${'⭐'.repeat(m.difficulty)}</span>` : ''}
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+        <style>
+            .library-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+            .library-card { background: var(--bg-tertiary); border-radius: 15px; padding: 20px; cursor: pointer; transition: var(--transition); border: 2px solid transparent; }
+            .library-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+            .library-card.user-note { border-left: 4px solid var(--primary); }
+            .library-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+            .library-type { font-size: 1.5em; }
+            .favorite-btn { background: none; border: none; font-size: 1.3em; cursor: pointer; color: var(--text-secondary); }
+            .favorite-btn.active { color: #f39c12; }
+            .library-card h4 { margin: 10px 0; color: var(--text-primary); }
+            .library-card-meta { display: flex; gap: 15px; font-size: 0.85em; color: var(--text-secondary); flex-wrap: wrap; }
+        </style>
+    `;
+}
+
+// Typ-Icon ermitteln
+function getTypeIcon(type) {
+    const icons = {
+        article: '📄',
+        video: '🎬',
+        quiz: '❓',
+        note: '📝',
+        summary: '📋',
+        timeline: '📅',
+        source: '📜'
+    };
+    return icons[type] || '📄';
+}
+
+// Kategorie-Name ermitteln
+function getCategoryName(category) {
+    if (typeof LIBRARY_CATEGORIES !== 'undefined') {
+        const cat = LIBRARY_CATEGORIES.find(c => c.id === category);
+        if (cat) return cat.name;
+    }
+    const names = {
+        antike: 'Antike',
+        mittelalter: 'Mittelalter',
+        'fruehe-neuzeit': 'Frühe Neuzeit',
+        neuzeit: '19. Jahrhundert',
+        zeitgeschichte: '20. Jahrhundert',
+        methoden: 'Methoden',
+        notizen: 'Meine Notizen'
+    };
+    return names[category] || category;
+}
+
+// Material öffnen
+function openMaterial(materialId) {
+    const modal = document.getElementById('exerciseModal');
+    const content = document.getElementById('exerciseModalContent');
+
+    // Material finden
+    let material = null;
+
+    // In LEARNING_MATERIALS suchen
+    if (typeof LEARNING_MATERIALS !== 'undefined') {
+        material = LEARNING_MATERIALS.find(m => m.id === materialId);
+    }
+
+    // In Benutzer-Notizen suchen
+    if (!material && currentUser && currentUser.notes) {
+        const note = currentUser.notes.find(n => n.id === materialId);
+        if (note) {
+            material = {
+                id: note.id,
+                title: note.title,
+                content: note.content,
+                type: 'note',
+                isUserNote: true
+            };
+        }
+    }
+
+    if (!material) {
+        showToast('Material nicht gefunden', 'error');
+        return;
+    }
+
+    const isFavorite = currentUser && (currentUser.favorites || []).includes(materialId);
+    const isLearned = currentUser && (currentUser.learnedMaterials || []).includes(materialId);
+
+    content.innerHTML = `
+        <div class="material-view">
+            <div class="material-header">
+                <h2>${material.title}</h2>
+                <div class="material-actions">
+                    ${currentUser ? `
+                        <button class="btn btn-icon ${isFavorite ? 'active' : ''}" onclick="toggleFavorite('${materialId}')" title="Favorit">
+                            ${isFavorite ? '★' : '☆'}
+                        </button>
+                        <button class="btn btn-icon ${isLearned ? 'active' : ''}" onclick="toggleLearned('${materialId}')" title="Als gelernt markieren">
+                            ${isLearned ? '✓' : '○'}
+                        </button>
+                    ` : ''}
+                    ${material.isUserNote ? `
+                        <button class="btn btn-secondary" onclick="editNote('${materialId}')">✏️ Bearbeiten</button>
+                        <button class="btn btn-danger" onclick="deleteNote('${materialId}')">🗑️ Löschen</button>
+                    ` : ''}
+                </div>
+            </div>
+
+            <div class="material-content markdown-body">
+                ${renderMarkdown(material.content)}
+            </div>
+
+            <div class="material-footer">
+                <button class="btn btn-secondary" onclick="closeExerciseModal()">Schließen</button>
+                ${!material.isUserNote ? `
+                    <button class="btn btn-primary" onclick="startMaterialQuiz('${materialId}')">🎯 Wissen testen</button>
+                ` : ''}
+            </div>
+        </div>
+        <style>
+            .material-view { max-height: 80vh; overflow-y: auto; }
+            .material-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
+            .material-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+            .btn-icon { width: 40px; height: 40px; border-radius: 50%; font-size: 1.2em; }
+            .btn-icon.active { background: var(--primary); color: white; }
+            .btn-danger { background: #e74c3c; color: white; }
+            .btn-danger:hover { background: #c0392b; }
+            .material-content { background: var(--bg-tertiary); padding: 30px; border-radius: 15px; line-height: 1.8; }
+            .material-content h1, .material-content h2, .material-content h3 { margin-top: 20px; margin-bottom: 10px; color: var(--primary); }
+            .material-content ul, .material-content ol { margin-left: 20px; }
+            .material-content li { margin: 8px 0; }
+            .material-content strong { color: var(--primary); }
+            .material-footer { margin-top: 20px; display: flex; gap: 15px; justify-content: flex-end; }
+        </style>
+    `;
+
+    modal.classList.add('active');
+
+    // Als angesehen tracken
+    if (currentUser) {
+        currentUser.progress.materialsViewed = (currentUser.progress.materialsViewed || 0) + 1;
+        updateUserProgress({ materialsViewed: currentUser.progress.materialsViewed });
+    }
+}
+
+// Einfaches Markdown rendern
+function renderMarkdown(text) {
+    if (!text) return '';
+
+    return text
+        // Headers
+        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+        // Bold
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        // Italic
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        // Lists
+        .replace(/^- (.*$)/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+        // Line breaks
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br>');
+}
+
+// Favorit togglen
+function toggleFavorite(materialId) {
+    if (!currentUser) return;
+
+    if (!currentUser.favorites) currentUser.favorites = [];
+
+    const index = currentUser.favorites.indexOf(materialId);
+    if (index === -1) {
+        currentUser.favorites.push(materialId);
+        showToast('Zu Favoriten hinzugefügt!', 'success');
+    } else {
+        currentUser.favorites.splice(index, 1);
+        showToast('Aus Favoriten entfernt', 'info');
+    }
+
+    saveCurrentUser();
+    displayLibraryContent('alle');
+}
+
+// Als gelernt markieren
+function toggleLearned(materialId) {
+    if (!currentUser) return;
+
+    if (!currentUser.learnedMaterials) currentUser.learnedMaterials = [];
+
+    const index = currentUser.learnedMaterials.indexOf(materialId);
+    if (index === -1) {
+        currentUser.learnedMaterials.push(materialId);
+        showToast('Als gelernt markiert! +5 XP', 'success');
+        addXP(5);
+    } else {
+        currentUser.learnedMaterials.splice(index, 1);
+        showToast('Markierung entfernt', 'info');
+    }
+
+    saveCurrentUser();
+}
+
+// ===== NOTIZEN-SYSTEM =====
+
+// Notiz erstellen
+function createNote() {
+    const modal = document.getElementById('exerciseModal');
+    const content = document.getElementById('exerciseModalContent');
+
+    content.innerHTML = `
+        <div class="note-editor">
+            <h2>📝 Neue Notiz erstellen</h2>
+
+            <div class="form-group">
+                <label>Titel:</label>
+                <input type="text" id="noteTitle" placeholder="Titel der Notiz..." style="width: 100%; padding: 12px; border-radius: 10px; border: 2px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label>Kategorie:</label>
+                <select id="noteCategory" style="width: 100%; padding: 12px; border-radius: 10px; border: 2px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                    <option value="antike">Antike</option>
+                    <option value="mittelalter">Mittelalter</option>
+                    <option value="fruehe-neuzeit">Frühe Neuzeit</option>
+                    <option value="neuzeit">19. Jahrhundert</option>
+                    <option value="zeitgeschichte">20. Jahrhundert</option>
+                    <option value="methoden">Methoden</option>
+                    <option value="notizen" selected>Allgemein</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label>Inhalt:</label>
+                <textarea id="noteContent" rows="15" placeholder="Schreibe hier deine Notiz...
+
+Du kannst Markdown verwenden:
+# Überschrift
+**fett**
+*kursiv*
+- Aufzählung" style="width: 100%; padding: 15px; border-radius: 10px; border: 2px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-family: inherit; resize: vertical;"></textarea>
+            </div>
+
+            <div style="margin-top: 20px; display: flex; gap: 15px; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="closeExerciseModal()">Abbrechen</button>
+                <button class="btn btn-primary" onclick="saveNote()">💾 Speichern</button>
+            </div>
+        </div>
+    `;
+
+    modal.classList.add('active');
+    document.getElementById('noteTitle').focus();
+}
+
+// Notiz speichern
+function saveNote(noteId = null) {
+    if (!currentUser) {
+        showToast('Bitte erst einloggen!', 'warning');
+        return;
+    }
+
+    const title = document.getElementById('noteTitle').value.trim();
+    const category = document.getElementById('noteCategory').value;
+    const content = document.getElementById('noteContent').value.trim();
+
+    if (!title) {
+        showToast('Bitte gib einen Titel ein!', 'warning');
+        return;
+    }
+
+    if (!content) {
+        showToast('Bitte gib einen Inhalt ein!', 'warning');
+        return;
+    }
+
+    if (!currentUser.notes) currentUser.notes = [];
+
+    if (noteId) {
+        // Bestehende Notiz aktualisieren
+        const noteIndex = currentUser.notes.findIndex(n => n.id === noteId);
+        if (noteIndex !== -1) {
+            currentUser.notes[noteIndex] = {
+                ...currentUser.notes[noteIndex],
+                title,
+                category,
+                content,
+                updatedAt: new Date().toISOString()
+            };
+            showToast('Notiz aktualisiert!', 'success');
+        }
+    } else {
+        // Neue Notiz erstellen
+        const newNote = {
+            id: 'note-' + Date.now(),
+            title,
+            category,
+            content,
+            createdAt: new Date().toISOString()
+        };
+        currentUser.notes.push(newNote);
+
+        // Achievement prüfen
+        currentUser.progress.notesCreated = (currentUser.progress.notesCreated || 0) + 1;
+        updateUserProgress({ notesCreated: currentUser.progress.notesCreated });
+
+        showToast('Notiz erstellt! +2 🐄', 'success');
+        addCoins(2, 'Notiz erstellt');
+        addXP(3);
+    }
+
+    saveCurrentUser();
+    closeExerciseModal();
+    displayLibraryContent('notizen');
+}
+
+// Notiz bearbeiten
+function editNote(noteId) {
+    if (!currentUser || !currentUser.notes) return;
+
+    const note = currentUser.notes.find(n => n.id === noteId);
+    if (!note) return;
+
+    const modal = document.getElementById('exerciseModal');
+    const content = document.getElementById('exerciseModalContent');
+
+    content.innerHTML = `
+        <div class="note-editor">
+            <h2>✏️ Notiz bearbeiten</h2>
+
+            <div class="form-group">
+                <label>Titel:</label>
+                <input type="text" id="noteTitle" value="${escapeHtml(note.title)}" style="width: 100%; padding: 12px; border-radius: 10px; border: 2px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label>Kategorie:</label>
+                <select id="noteCategory" style="width: 100%; padding: 12px; border-radius: 10px; border: 2px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                    <option value="antike" ${note.category === 'antike' ? 'selected' : ''}>Antike</option>
+                    <option value="mittelalter" ${note.category === 'mittelalter' ? 'selected' : ''}>Mittelalter</option>
+                    <option value="fruehe-neuzeit" ${note.category === 'fruehe-neuzeit' ? 'selected' : ''}>Frühe Neuzeit</option>
+                    <option value="neuzeit" ${note.category === 'neuzeit' ? 'selected' : ''}>19. Jahrhundert</option>
+                    <option value="zeitgeschichte" ${note.category === 'zeitgeschichte' ? 'selected' : ''}>20. Jahrhundert</option>
+                    <option value="methoden" ${note.category === 'methoden' ? 'selected' : ''}>Methoden</option>
+                    <option value="notizen" ${note.category === 'notizen' ? 'selected' : ''}>Allgemein</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label>Inhalt:</label>
+                <textarea id="noteContent" rows="15" style="width: 100%; padding: 15px; border-radius: 10px; border: 2px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-family: inherit; resize: vertical;">${escapeHtml(note.content)}</textarea>
+            </div>
+
+            <div style="margin-top: 20px; display: flex; gap: 15px; justify-content: flex-end;">
+                <button class="btn btn-secondary" onclick="closeExerciseModal()">Abbrechen</button>
+                <button class="btn btn-primary" onclick="saveNote('${noteId}')">💾 Speichern</button>
+            </div>
+        </div>
+    `;
+
+    modal.classList.add('active');
+}
+
+// Notiz löschen
+function deleteNote(noteId) {
+    if (!currentUser || !currentUser.notes) return;
+
+    if (!confirm('Möchtest du diese Notiz wirklich löschen?')) return;
+
+    currentUser.notes = currentUser.notes.filter(n => n.id !== noteId);
+    saveCurrentUser();
+
+    showToast('Notiz gelöscht', 'info');
+    closeExerciseModal();
+    displayLibraryContent('notizen');
+}
+
+// HTML escapen
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Benutzer speichern
+function saveCurrentUser() {
+    if (!currentUser) return;
+
+    const users = JSON.parse(localStorage.getItem('histolearn_users') || '[]');
+    const userIndex = users.findIndex(u => u.id === currentUser.id);
+    if (userIndex !== -1) {
+        users[userIndex] = currentUser;
+        localStorage.setItem('histolearn_users', JSON.stringify(users));
+    }
 }
 
 // Übungstyp wechseln

@@ -205,10 +205,78 @@ function addCoins(amount, reason) {
 
     showToast(`+${amount} 🐄 ${reason}`, 'success');
 
+    // Sound abspielen
+    if (typeof playSound === 'function') {
+        playSound('coin');
+    }
+
     // Animation
-    animateCoinGain(amount);
+    if (typeof animateCoinGain === 'function') {
+        animateCoinGain(amount);
+    }
+
+    // Daily Challenge Progress
+    if (typeof updateDailyChallengeProgress === 'function') {
+        updateDailyChallengeProgress('coins', amount);
+    }
 
     addActivity('coins', `${amount} Münzen erhalten: ${reason}`);
+}
+
+// XP hinzufügen
+function addXP(amount) {
+    if (!currentUser) return;
+
+    const oldRank = currentUser.progress.rank;
+    currentUser.progress.xp += amount;
+
+    // Rang-Check
+    let newRank = 0;
+    for (let i = RANKS.length - 1; i >= 0; i--) {
+        if (currentUser.progress.xp >= RANKS[i].minPoints) {
+            newRank = i;
+            break;
+        }
+    }
+
+    const leveledUp = newRank > oldRank;
+
+    updateUserProgress({
+        xp: currentUser.progress.xp,
+        rank: newRank
+    });
+
+    // XP Animation
+    if (typeof animateXPGain === 'function') {
+        animateXPGain(amount);
+    }
+
+    // Level Up!
+    if (leveledUp) {
+        const rank = RANKS[newRank];
+        showToast(`🎉 Level Up! Du bist jetzt ${rank.icon} ${rank.name}!`, 'success');
+
+        // Bonus-Münzen für Rang-Aufstieg
+        const bonus = 10 + (newRank * 5);
+        setTimeout(() => {
+            addCoins(bonus, `Rang-Aufstieg: ${rank.name}`);
+        }, 1000);
+
+        // Sound und Confetti
+        if (typeof playSound === 'function') {
+            playSound('levelUp');
+        }
+        if (typeof showConfetti === 'function') {
+            showConfetti(50);
+        }
+
+        addActivity('achievement', `Neuer Rang erreicht: ${rank.name}`);
+    }
+
+    // Daily Challenge Progress
+    if (typeof updateDailyChallengeProgress === 'function') {
+        updateDailyChallengeProgress('xp', amount);
+    }
 }
 
 // Münzen ausgeben
@@ -370,6 +438,45 @@ function checkAchievements() {
             case 'rich':
                 unlocked = p.totalCoins >= 100;
                 break;
+            // Neue Achievements
+            case 'streak-3':
+                unlocked = (p.streak || 0) >= 3;
+                break;
+            case 'streak-7':
+                unlocked = (p.streak || 0) >= 7;
+                break;
+            case 'memory-champ':
+                unlocked = (p.memoryWins || 0) >= 5;
+                break;
+            case 'chat-explorer':
+                unlocked = (p.chatQuestions || 0) >= 20;
+                break;
+            case 'note-taker':
+                unlocked = (p.notesCreated || 0) >= 5;
+                break;
+            case 'perfect-quiz':
+                unlocked = p.perfectQuizzes >= 1;
+                break;
+            case 'night-owl':
+                const hour = new Date().getHours();
+                unlocked = p.exercisesDone >= 1 && (hour >= 22 || hour < 6);
+                break;
+            case 'early-bird':
+                const earlyHour = new Date().getHours();
+                unlocked = p.exercisesDone >= 1 && (earlyHour >= 5 && earlyHour < 8);
+                break;
+            case 'bookworm':
+                unlocked = (p.materialsViewed || 0) >= 10;
+                break;
+            case 'quiz-streak':
+                unlocked = (p.quizStreak || 0) >= 5;
+                break;
+            case 'marathon':
+                unlocked = p.totalMinutes >= 300;
+                break;
+            case 'millionaire':
+                unlocked = p.totalCoins >= 500;
+                break;
         }
 
         if (unlocked) {
@@ -394,6 +501,14 @@ function checkAchievements() {
 function showAchievementUnlocked(achievement) {
     showToast(`🏆 Achievement freigeschaltet: ${achievement.name}!`, 'success');
     addActivity('achievement', `${achievement.name} freigeschaltet`);
+
+    // Sound und Confetti
+    if (typeof playSound === 'function') {
+        playSound('achievement');
+    }
+    if (typeof showConfetti === 'function') {
+        showConfetti(30);
+    }
 }
 
 // Achievements-Anzeige aktualisieren
@@ -412,27 +527,7 @@ function updateAchievementsDisplay() {
     }).join('');
 }
 
-// XP hinzufügen und Rang prüfen
-function addXP(amount) {
-    if (!currentUser) return;
-
-    currentUser.progress.xp += amount;
-
-    // Rang-Aufstieg prüfen
-    for (let i = RANKS.length - 1; i >= 0; i--) {
-        if (currentUser.progress.xp >= RANKS[i].minPoints) {
-            if (i > currentUser.progress.rank) {
-                currentUser.progress.rank = i;
-                showToast(`🎉 Aufgestiegen zu: ${RANKS[i].icon} ${RANKS[i].name}!`, 'success');
-                addCoins(50, 'Rang-Aufstieg');
-                addActivity('achievement', `Rang ${RANKS[i].name} erreicht`);
-            }
-            break;
-        }
-    }
-
-    updateUserProgress({ xp: currentUser.progress.xp, rank: currentUser.progress.rank });
-}
+// Note: addXP Funktion ist weiter oben definiert (mit Sound und Confetti)
 
 // Münzanimation
 function animateCoinGain(amount) {

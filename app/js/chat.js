@@ -241,60 +241,313 @@ async function callGeminiAPI(message, apiKey) {
 // Simulierte Antwort (wenn kein API-Key)
 async function getSimulatedResponse(message) {
     // Verzögerung simulieren
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
+    await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 800));
 
     const lowerMessage = message.toLowerCase();
 
-    // Einfache Antwort-Logik
-    if (lowerMessage.includes('französische revolution')) {
-        return `Die Französische Revolution (1789-1799) war ein einschneidendes Ereignis der europäischen Geschichte.
+    // Chat-Statistik aktualisieren
+    if (currentUser) {
+        currentUser.progress.chatQuestions = (currentUser.progress.chatQuestions || 0) + 1;
+        updateUserProgress({ chatQuestions: currentUser.progress.chatQuestions });
+    }
 
-**Wichtige Punkte:**
-- Begann am 14. Juli 1789 mit dem Sturm auf die Bastille
-- Motto: "Liberté, Égalité, Fraternité" (Freiheit, Gleichheit, Brüderlichkeit)
-- König Ludwig XVI. wurde 1793 hingerichtet
-- Führte zu grundlegenden Veränderungen in Gesellschaft und Politik
+    // Eselsbrücke-Anfragen
+    if (lowerMessage.includes('eselsbrücke')) {
+        for (const [key, value] of Object.entries(AI_RESPONSES.eselsbruecke)) {
+            if (key !== 'default' && lowerMessage.includes(key)) {
+                return value;
+            }
+        }
+        return AI_RESPONSES.eselsbruecke.default;
+    }
+
+    // Zusammenfassung-Anfragen
+    if (lowerMessage.includes('zusammenfassung') || lowerMessage.includes('zusammenfassen')) {
+        for (const [key, value] of Object.entries(AI_RESPONSES.zusammenfassung)) {
+            if (key !== 'default' && lowerMessage.includes(key)) {
+                return value;
+            }
+        }
+        return AI_RESPONSES.zusammenfassung.default;
+    }
+
+    // Erklärung-Anfragen
+    if (lowerMessage.includes('erkläre') || lowerMessage.includes('erklär') || lowerMessage.includes('was ist')) {
+        for (const [key, value] of Object.entries(AI_RESPONSES.erklaerung)) {
+            if (key !== 'default' && lowerMessage.includes(key)) {
+                return value;
+            }
+        }
+        return AI_RESPONSES.erklaerung.default;
+    }
+
+    // Quiz-Anfragen
+    if (lowerMessage.includes('quiz')) {
+        return AI_RESPONSES.quiz.default;
+    }
+
+    // Französische Revolution
+    if (lowerMessage.includes('französische revolution') || lowerMessage.includes('frankreich 1789')) {
+        return `Die **Französische Revolution** (1789-1799) war ein Wendepunkt der europäischen Geschichte.
+
+🏰 **Ursachen:**
+• Finanzielle Krise des Staates
+• Soziale Ungleichheit (Ständegesellschaft)
+• Ideen der Aufklärung (Freiheit, Gleichheit)
+
+📅 **Wichtige Ereignisse:**
+• 14. Juli 1789: Sturm auf die Bastille
+• August 1789: Erklärung der Menschen- und Bürgerrechte
+• 1793: Hinrichtung Ludwigs XVI.
+• 1793-94: Schreckensherrschaft (Terreur)
+• 1799: Napoleon übernimmt die Macht
+
+🎯 **Folgen:**
+• Ende des Absolutismus
+• Neue politische Ideen verbreiten sich in Europa
+• Vorbild für spätere Revolutionen
 
 Möchtest du mehr über einen bestimmten Aspekt erfahren?`;
     }
 
-    if (lowerMessage.includes('erster weltkrieg') || lowerMessage.includes('1. weltkrieg')) {
-        return `Der Erste Weltkrieg (1914-1918) war der erste globale Konflikt der Geschichte.
+    // Erster Weltkrieg
+    if (lowerMessage.includes('erster weltkrieg') || lowerMessage.includes('1. weltkrieg') || lowerMessage.includes('ww1')) {
+        return `Der **Erste Weltkrieg** (1914-1918) - "Die Urkatastrophe des 20. Jahrhunderts"
 
-**Ursachen:**
-- Nationalismus und Imperialismus
-- Bündnissysteme (Triple Entente vs. Mittelmächte)
-- Attentat von Sarajevo als Auslöser
+⚔️ **Ursachen (MAIN):**
+• **M**ilitarismus - Wettrüsten
+• **A**llianzen - Bündnissysteme
+• **I**mperialismus - Kolonialkonkurrenz
+• **N**ationalismus - übersteigertes Nationalgefühl
 
-**Folgen:**
-- Über 17 Millionen Tote
-- Ende der Kaiserreiche (Deutschland, Österreich, Russland)
-- Versailler Vertrag und neue Grenzen
+💥 **Auslöser:**
+Attentat von Sarajevo (28. Juni 1914) auf Erzherzog Franz Ferdinand
 
-Was interessiert dich besonders?`;
+📊 **Verlauf:**
+• 1914: Kriegsausbruch, Schlieffen-Plan scheitert
+• 1915-17: Stellungskrieg, Materialschlachten
+• 1917: USA tritt ein, Revolution in Russland
+• 11.11.1918: Waffenstillstand
+
+😢 **Folgen:**
+• 17 Millionen Tote
+• Ende von 4 Kaiserreichen
+• Versailler Vertrag
+• Grundlage für den 2. Weltkrieg
+
+Was möchtest du genauer wissen?`;
     }
 
-    if (lowerMessage.includes('eselsbrücke')) {
-        return `Hier ist eine Eselsbrücke für dich:
+    // Weimarer Republik
+    if (lowerMessage.includes('weimarer republik') || lowerMessage.includes('weimar')) {
+        return `Die **Weimarer Republik** (1919-1933) - Deutschlands erste Demokratie
 
-**753 - Rom schlüpft aus dem Ei**
-(Gründung Roms: 753 v. Chr.)
+🏛️ **Gründung:**
+• 9. November 1918: Ausrufung der Republik
+• 1919: Weimarer Verfassung tritt in Kraft
+• Friedrich Ebert wird erster Reichspräsident
 
-**Tipp:** Eselsbrücken funktionieren am besten, wenn du sie selbst erstellst und mit lustigen oder persönlichen Bildern verbindest!
+📅 **Die drei Phasen:**
 
-Soll ich dir eine Eselsbrücke für ein bestimmtes Datum oder Ereignis erstellen?`;
+**1. Krisenjahre (1919-1923):**
+• Versailler Vertrag und "Kriegsschuld"
+• Putschversuche (Kapp, Hitler)
+• Hyperinflation 1923
+
+**2. Goldene Zwanziger (1924-1929):**
+• Wirtschaftliche Stabilisierung
+• Kulturelle Blüte
+• Außenpolitische Erfolge (Stresemann)
+
+**3. Untergang (1929-1933):**
+• Weltwirtschaftskrise
+• Massenarbeitslosigkeit
+• Radikalisierung, Aufstieg der NSDAP
+
+❌ **Warum scheiterte sie?**
+• Dolchstoßlegende belastete von Anfang an
+• Antidemokratische Kräfte links und rechts
+• Schwächen der Verfassung (Artikel 48)
+• Weltwirtschaftskrise ab 1929`;
     }
 
-    // Standard-Antwort
-    return `Das ist eine interessante Frage!
+    // Nationalsozialismus
+    if (lowerMessage.includes('nationalsozialismus') || lowerMessage.includes('ns-zeit') || lowerMessage.includes('hitler') || lowerMessage.includes('drittes reich')) {
+        return `Der **Nationalsozialismus** (1933-1945) - Die dunkelste Zeit der deutschen Geschichte
 
-Um dir besser helfen zu können, gib bitte in den **Einstellungen** einen API-Key ein:
-- Google Gemini API (kostenlos): https://aistudio.google.com/apikey
-- Claude API (von Anthropic)
+⚠️ **Machtergreifung:**
+• 30. Januar 1933: Hitler wird Reichskanzler
+• Februar 1933: Reichstagsbrand, Notverordnungen
+• März 1933: Ermächtigungsgesetz
 
-Ohne API-Key kann ich nur begrenzt antworten. Mit API-Key bekommst du ausführliche, personalisierte Antworten zu allen Geschichtsthemen!
+🚫 **Ideologie:**
+• Rassismus und Antisemitismus
+• "Volksgemeinschaft" und Führerprinzip
+• Expansion und "Lebensraum im Osten"
 
-In der Zwischenzeit kannst du die **Quiz-Funktion** oder den **Zeitstrahl** nutzen.`;
+😢 **Terror:**
+• Verfolgung politischer Gegner
+• Nürnberger Gesetze 1935
+• Reichspogromnacht 1938
+• Holocaust: 6 Millionen ermordete Juden
+
+⚔️ **Zweiter Weltkrieg (1939-1945):**
+• 1. September 1939: Überfall auf Polen
+• 1941: Angriff auf Sowjetunion
+• 8. Mai 1945: Bedingungslose Kapitulation
+
+📚 **Merke:** Aus der Geschichte lernen bedeutet, Demokratie zu schützen und Menschenwürde zu verteidigen.`;
+    }
+
+    // Kalter Krieg
+    if (lowerMessage.includes('kalter krieg') || lowerMessage.includes('cold war') || lowerMessage.includes('ost west')) {
+        return `Der **Kalte Krieg** (1947-1991) - Der Konflikt ohne direkten Krieg
+
+🌍 **Was war das?**
+Ein Systemkonflikt zwischen:
+• 🇺🇸 USA und westlichen Demokratien (NATO)
+• 🇷🇺 Sowjetunion und Ostblock (Warschauer Pakt)
+
+❄️ **Warum "kalt"?**
+Kein direkter Krieg, aber: Wettrüsten, Spionage, Propaganda, Stellvertreterkriege
+
+📅 **Wichtige Ereignisse:**
+• 1948/49: Berlin-Blockade und Luftbrücke
+• 1949: Gründung BRD und DDR
+• 1961: Bau der Berliner Mauer
+• 1962: Kubakrise (fast Atomkrieg!)
+• 1989: Fall der Mauer
+• 1991: Ende der Sowjetunion
+
+🇩🇪 **Deutschland im Kalten Krieg:**
+• Teilung in BRD (West) und DDR (Ost)
+• Berlin als Symbol des Konflikts
+• "Eiserner Vorhang" durch Europa
+
+🎉 **Ende:** Der friedliche Zusammenbruch des Ostblocks 1989-1991`;
+    }
+
+    // Mittelalter
+    if (lowerMessage.includes('mittelalter')) {
+        return `Das **Mittelalter** (ca. 500-1500) - 1000 Jahre europäischer Geschichte
+
+📅 **Einteilung:**
+• **Frühmittelalter** (500-1000): Völkerwanderung, Karl der Große
+• **Hochmittelalter** (1000-1250): Kreuzzüge, Städtegründungen
+• **Spätmittelalter** (1250-1500): Pest, Reformation beginnt
+
+🏰 **Gesellschaft (Ständeordnung):**
+• 1. Stand: Klerus (Geistliche)
+• 2. Stand: Adel (Ritter, Fürsten)
+• 3. Stand: Bauern und Bürger
+
+⚔️ **Wichtige Ereignisse:**
+• 800: Kaiserkrönung Karls des Großen
+• 1077: Gang nach Canossa
+• 1096-1291: Kreuzzüge
+• 1347-1351: Die Pest tötet 1/3 der Bevölkerung
+
+🏠 **Leben im Mittelalter:**
+• Landwirtschaft prägt das Leben
+• Burgen als Herrschaftszentren
+• Kirche bestimmt das geistige Leben
+• Städte wachsen (Handel, Handwerk)
+
+Welcher Aspekt interessiert dich besonders?`;
+    }
+
+    // Römisches Reich
+    if (lowerMessage.includes('rom') || lowerMessage.includes('römisch') || lowerMessage.includes('caesar') || lowerMessage.includes('antike')) {
+        return `Das **Römische Reich** - Von der Gründung bis zum Untergang
+
+📅 **Geschichte Roms:**
+• **753 v. Chr.**: Legendäre Gründung (Romulus & Remus)
+• **509-27 v. Chr.**: Römische Republik
+• **27 v. Chr. - 476 n. Chr.**: Römisches Kaiserreich
+
+🏛️ **Wichtige Persönlichkeiten:**
+• **Julius Caesar**: Eroberer Galliens, ermordet 44 v. Chr.
+• **Augustus**: Erster Kaiser, Pax Romana
+• **Nero**: Berüchtigter Kaiser, Brand Roms
+• **Konstantin**: Machte Christentum zur Staatsreligion
+
+⚔️ **Errungenschaften:**
+• Straßenbau und Aquädukte
+• Römisches Recht (Grundlage unserer Gesetze)
+• Latein (Grundlage romanischer Sprachen)
+• Architektur (Kolosseum, Pantheon)
+
+💫 **Untergang:**
+• 395: Teilung in West- und Ostrom
+• 476: Ende des Weströmischen Reiches
+• Ursachen: Völkerwanderung, innere Krisen, Überdehnung`;
+    }
+
+    // Grußformeln
+    if (lowerMessage.includes('hallo') || lowerMessage.includes('hi') || lowerMessage.includes('hey') || lowerMessage.includes('guten tag')) {
+        const greetings = AI_RESPONSES.greeting;
+        return greetings[Math.floor(Math.random() * greetings.length)];
+    }
+
+    // Danke
+    if (lowerMessage.includes('danke') || lowerMessage.includes('vielen dank')) {
+        return `Gerne! 😊 Das freut mich, wenn ich dir helfen konnte!
+
+Hast du noch weitere Fragen zur Geschichte? Ich bin hier, um zu helfen!
+
+**Tipp:** Nutze die Quick-Buttons oben für:
+• 🐴 Eselsbrücken
+• 📋 Zusammenfassungen
+• ❓ Quiz-Fragen
+• 💡 Einfache Erklärungen`;
+    }
+
+    // Hilfe
+    if (lowerMessage.includes('hilfe') || lowerMessage.includes('help') || lowerMessage.includes('was kannst du')) {
+        return `Ich bin dein **Geschichts-Tutor**! 📚
+
+**Das kann ich für dich tun:**
+• 🐴 **Eselsbrücken** erstellen
+• 📋 **Zusammenfassungen** von Themen
+• ❓ **Quiz-Fragen** stellen
+• 💡 Begriffe **einfach erklären**
+• 📅 Ereignisse **zeitlich einordnen**
+• ⚖️ **Vergleiche** erstellen
+• 📝 **Prüfungsfragen** simulieren
+
+**Themen, zu denen ich viel weiß:**
+• Französische Revolution
+• Erster & Zweiter Weltkrieg
+• Weimarer Republik
+• Nationalsozialismus
+• Kalter Krieg
+• Mittelalter
+• Antikes Rom
+
+**Tipp:** Nutze die **Quick-Buttons** für schnelle Hilfe!
+
+Was möchtest du lernen?`;
+    }
+
+    // Standard-Antwort mit mehr Kontext
+    const defaultResponses = AI_RESPONSES.default;
+    const randomResponse = defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+
+    return `${randomResponse}
+
+Ich kann dir bei vielen Geschichtsthemen helfen:
+• Französische Revolution
+• Weltkriege
+• Weimarer Republik
+• Nationalsozialismus
+• Kalter Krieg
+• Mittelalter
+• Antike
+
+**Nutze die Quick-Buttons** oben für:
+🐴 Eselsbrücken | 📋 Zusammenfassungen | ❓ Quiz
+
+Oder frag mich einfach direkt! Was möchtest du wissen?`;
 }
 
 // KI-Modus ändern

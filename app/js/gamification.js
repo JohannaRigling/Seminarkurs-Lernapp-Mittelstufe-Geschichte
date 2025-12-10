@@ -493,3 +493,364 @@ window.addEventListener('userUpdated', function() {
     updateShop();
     updateRankDisplay();
 });
+
+// ===== SOUND-SYSTEM =====
+
+// Web Audio API Sound Generator
+const SoundSystem = {
+    audioContext: null,
+    enabled: true,
+    volume: 0.3,
+
+    init() {
+        // Lazy initialization beim ersten Sound
+        if (!this.audioContext) {
+            try {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (e) {
+                console.log('Web Audio API not supported');
+                this.enabled = false;
+            }
+        }
+        return this.audioContext;
+    },
+
+    // Einfacher Ton erzeugen
+    playTone(frequency, duration, type = 'sine', volume = this.volume) {
+        if (!this.enabled) return;
+        const ctx = this.init();
+        if (!ctx) return;
+
+        // Resume context if suspended (required for autoplay policies)
+        if (ctx.state === 'suspended') {
+            ctx.resume();
+        }
+
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        oscillator.type = type;
+        oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
+
+        // Envelope
+        gainNode.gain.setValueAtTime(0, ctx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.01);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + duration);
+    },
+
+    // Vordefinierte Sounds
+    sounds: {
+        coin: function() {
+            // Coin collect sound - aufsteigende Töne
+            SoundSystem.playTone(880, 0.1, 'square', 0.2);
+            setTimeout(() => SoundSystem.playTone(1100, 0.1, 'square', 0.2), 50);
+            setTimeout(() => SoundSystem.playTone(1320, 0.15, 'square', 0.15), 100);
+        },
+
+        correct: function() {
+            // Richtige Antwort - Dur-Akkord
+            SoundSystem.playTone(523, 0.2, 'sine', 0.2); // C
+            setTimeout(() => SoundSystem.playTone(659, 0.2, 'sine', 0.2), 100); // E
+            setTimeout(() => SoundSystem.playTone(784, 0.3, 'sine', 0.2), 200); // G
+        },
+
+        wrong: function() {
+            // Falsche Antwort - Dissonanz
+            SoundSystem.playTone(200, 0.3, 'sawtooth', 0.15);
+            setTimeout(() => SoundSystem.playTone(180, 0.3, 'sawtooth', 0.15), 100);
+        },
+
+        achievement: function() {
+            // Achievement - Fanfare
+            const notes = [523, 659, 784, 1047]; // C E G C
+            notes.forEach((note, i) => {
+                setTimeout(() => SoundSystem.playTone(note, 0.3, 'square', 0.15), i * 150);
+            });
+            setTimeout(() => {
+                SoundSystem.playTone(1047, 0.5, 'sine', 0.2);
+                SoundSystem.playTone(784, 0.5, 'sine', 0.15);
+            }, 600);
+        },
+
+        levelUp: function() {
+            // Level Up - Aufsteigende Fanfare
+            const notes = [392, 440, 494, 523, 587, 659, 698, 784];
+            notes.forEach((note, i) => {
+                setTimeout(() => SoundSystem.playTone(note, 0.15, 'square', 0.2), i * 75);
+            });
+        },
+
+        click: function() {
+            // UI Click
+            SoundSystem.playTone(800, 0.05, 'square', 0.1);
+        },
+
+        timer: function() {
+            // Timer Warning
+            SoundSystem.playTone(880, 0.1, 'sine', 0.3);
+        },
+
+        timerEnd: function() {
+            // Timer End
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => SoundSystem.playTone(660, 0.2, 'square', 0.25), i * 250);
+            }
+        },
+
+        message: function() {
+            // Neue Nachricht
+            SoundSystem.playTone(660, 0.1, 'sine', 0.2);
+            setTimeout(() => SoundSystem.playTone(880, 0.15, 'sine', 0.2), 100);
+        },
+
+        build: function() {
+            // Bau-Sound für Burg
+            SoundSystem.playTone(200, 0.1, 'square', 0.2);
+            setTimeout(() => SoundSystem.playTone(300, 0.1, 'square', 0.2), 100);
+            setTimeout(() => SoundSystem.playTone(400, 0.2, 'square', 0.2), 200);
+        }
+    }
+};
+
+// Globale playSound Funktion
+function playSound(soundName) {
+    // Prüfe ob Sounds aktiviert sind
+    const soundsEnabled = localStorage.getItem('histolearn_sounds') !== 'false';
+    if (!soundsEnabled) return;
+
+    if (SoundSystem.sounds[soundName]) {
+        try {
+            SoundSystem.sounds[soundName]();
+        } catch (e) {
+            console.log('Sound error:', e);
+        }
+    }
+}
+
+// Sound-Einstellungen speichern
+function toggleSounds() {
+    const current = localStorage.getItem('histolearn_sounds') !== 'false';
+    localStorage.setItem('histolearn_sounds', !current);
+    SoundSystem.enabled = !current;
+
+    showToast(current ? 'Sounds deaktiviert' : 'Sounds aktiviert', 'info');
+}
+
+// Vibration für Mobilgeräte
+function vibrate(pattern = 50) {
+    if (navigator.vibrate) {
+        navigator.vibrate(pattern);
+    }
+}
+
+// Kombinierter Feedback (Sound + Vibration)
+function giveFeedback(type) {
+    switch (type) {
+        case 'success':
+            playSound('correct');
+            vibrate(100);
+            break;
+        case 'error':
+            playSound('wrong');
+            vibrate([50, 50, 50]);
+            break;
+        case 'coin':
+            playSound('coin');
+            vibrate(30);
+            break;
+        case 'achievement':
+            playSound('achievement');
+            vibrate([100, 50, 100, 50, 200]);
+            break;
+        case 'levelUp':
+            playSound('levelUp');
+            vibrate([100, 100, 100, 100, 200]);
+            break;
+    }
+}
+
+// Daily Challenge System
+let dailyChallenge = null;
+
+function checkDailyChallenge() {
+    if (!currentUser) return;
+
+    const today = new Date().toDateString();
+    const lastChallenge = localStorage.getItem(`dailyChallenge_${currentUser.id}`);
+
+    if (lastChallenge !== today && typeof DAILY_CHALLENGES !== 'undefined') {
+        // Neue tägliche Herausforderung
+        const dayIndex = new Date().getDay();
+        dailyChallenge = DAILY_CHALLENGES[dayIndex % DAILY_CHALLENGES.length];
+
+        // Progress initialisieren
+        dailyChallenge.progress = 0;
+        dailyChallenge.completed = false;
+
+        localStorage.setItem(`dailyChallenge_${currentUser.id}`, today);
+    }
+}
+
+function updateDailyChallengeProgress(type, amount = 1) {
+    if (!dailyChallenge || dailyChallenge.completed) return;
+
+    if (dailyChallenge.type === type) {
+        dailyChallenge.progress += amount;
+
+        if (dailyChallenge.progress >= dailyChallenge.target) {
+            dailyChallenge.completed = true;
+            showToast(`🎯 Tägliche Herausforderung abgeschlossen! +${dailyChallenge.reward} 🐄`, 'success');
+            addCoins(dailyChallenge.reward, 'Tägliche Herausforderung');
+            playSound('achievement');
+        }
+    }
+}
+
+// XP-Bar Animation
+function animateXPGain(amount) {
+    const xpDisplay = document.querySelector('.xp-display');
+    if (!xpDisplay) return;
+
+    const popup = document.createElement('div');
+    popup.className = 'xp-popup';
+    popup.textContent = `+${amount} XP`;
+    popup.style.cssText = `
+        position: absolute;
+        top: -20px;
+        right: 0;
+        color: #9b59b6;
+        font-weight: bold;
+        font-size: 0.9em;
+        animation: xpFloat 1s ease-out forwards;
+        pointer-events: none;
+    `;
+
+    xpDisplay.style.position = 'relative';
+    xpDisplay.appendChild(popup);
+
+    setTimeout(() => popup.remove(), 1000);
+}
+
+// Coin Animation
+function animateCoinGain(amount) {
+    const coinDisplay = document.querySelector('.coin-display') || document.querySelector('[class*="coin"]');
+    if (!coinDisplay) return;
+
+    // Floating coin animation
+    for (let i = 0; i < Math.min(amount, 5); i++) {
+        setTimeout(() => {
+            const coin = document.createElement('div');
+            coin.textContent = '🐄';
+            coin.style.cssText = `
+                position: fixed;
+                font-size: 2em;
+                pointer-events: none;
+                z-index: 10000;
+                animation: coinFly 1s ease-out forwards;
+            `;
+
+            // Start from random position at bottom
+            coin.style.left = `${Math.random() * 50 + 25}%`;
+            coin.style.bottom = '20%';
+
+            document.body.appendChild(coin);
+            setTimeout(() => coin.remove(), 1000);
+        }, i * 100);
+    }
+}
+
+// CSS für Animationen
+const feedbackStyles = document.createElement('style');
+feedbackStyles.textContent = `
+    @keyframes xpFloat {
+        0% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(-30px); }
+    }
+
+    @keyframes coinFly {
+        0% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        50% {
+            opacity: 1;
+            transform: translateY(-100px) scale(1.2);
+        }
+        100% {
+            opacity: 0;
+            transform: translateY(-150px) scale(0.5);
+        }
+    }
+
+    /* Sound Toggle Button */
+    .sound-toggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: var(--bg-secondary);
+        border: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5em;
+        cursor: pointer;
+        transition: var(--transition);
+        z-index: 100;
+    }
+
+    .sound-toggle:hover {
+        transform: scale(1.1);
+        border-color: var(--primary);
+    }
+
+    .sound-toggle.muted {
+        opacity: 0.5;
+    }
+
+    /* Confetti für große Achievements */
+    .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        background: var(--primary);
+        pointer-events: none;
+        z-index: 10000;
+    }
+`;
+document.head.appendChild(feedbackStyles);
+
+// Confetti für große Erfolge
+function showConfetti(count = 50) {
+    const colors = ['#c9a227', '#e74c3c', '#27ae60', '#3498db', '#9b59b6', '#f39c12'];
+
+    for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = `${Math.random() * 100}%`;
+            confetti.style.top = '-10px';
+            confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+            const animation = confetti.animate([
+                { top: '-10px', opacity: 1 },
+                { top: '100vh', opacity: 0, transform: `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 200 - 100}px)` }
+            ], {
+                duration: 2000 + Math.random() * 2000,
+                easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+            });
+
+            document.body.appendChild(confetti);
+            animation.onfinish = () => confetti.remove();
+        }, i * 30);
+    }
+}

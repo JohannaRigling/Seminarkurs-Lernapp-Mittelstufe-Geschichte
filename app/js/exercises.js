@@ -99,9 +99,26 @@ function selectQuizAnswer(index) {
         quizScore++;
         if (currentUser) {
             currentUser.progress.quizCorrect++;
+            // Quiz-Streak erhöhen
+            currentUser.progress.quizStreak = (currentUser.progress.quizStreak || 0) + 1;
         }
         // Münze für richtige Antwort
         addCoins(1, 'Quiz-Frage richtig');
+
+        // Sound für richtige Antwort
+        if (typeof playSound === 'function') {
+            playSound('correct');
+        }
+    } else {
+        // Quiz-Streak zurücksetzen
+        if (currentUser) {
+            currentUser.progress.quizStreak = 0;
+        }
+
+        // Sound für falsche Antwort
+        if (typeof playSound === 'function') {
+            playSound('wrong');
+        }
     }
 
     // Erklärung und Weiter-Button anzeigen
@@ -191,9 +208,16 @@ function showQuizResults() {
     // Statistik
     if (currentUser) {
         currentUser.progress.exercisesDone++;
+
+        // Perfektes Quiz tracken
+        if (percent === 100) {
+            currentUser.progress.perfectQuizzes = (currentUser.progress.perfectQuizzes || 0) + 1;
+        }
+
         updateUserProgress({
             exercisesDone: currentUser.progress.exercisesDone,
-            quizCorrect: currentUser.progress.quizCorrect
+            quizCorrect: currentUser.progress.quizCorrect,
+            perfectQuizzes: currentUser.progress.perfectQuizzes
         });
     }
 
@@ -201,7 +225,21 @@ function showQuizResults() {
 
     // Thema als abgeschlossen markieren (wenn >= 80%)
     if (percent >= 80 && currentUser) {
-        // Hier könnten abgeschlossene Themen gespeichert werden
+        if (typeof playSound === 'function') {
+            playSound('achievement');
+        }
+    }
+
+    // Confetti für perfektes Ergebnis
+    if (percent === 100 && typeof showConfetti === 'function') {
+        showConfetti(100);
+    } else if (percent >= 80 && typeof showConfetti === 'function') {
+        showConfetti(30);
+    }
+
+    // Daily Challenge Progress
+    if (typeof updateDailyChallengeProgress === 'function') {
+        updateDailyChallengeProgress('quiz', 1);
     }
 }
 
