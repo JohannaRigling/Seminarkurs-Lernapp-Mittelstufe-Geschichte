@@ -732,3 +732,238 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// ===== EPOCHEN-THEME SYSTEM =====
+
+// Aktuelle Epoche
+let currentEpoch = 'mittelalter'; // Standard
+
+// Epochen-Definitionen
+const EPOCHS = {
+    antike: {
+        name: 'Antike',
+        icon: '🏛️',
+        years: [-3000, 500],
+        description: 'Hochkulturen, Griechen, Römer'
+    },
+    mittelalter: {
+        name: 'Mittelalter',
+        icon: '🏰',
+        years: [500, 1500],
+        description: 'Ritter, Burgen, Kreuzzüge'
+    },
+    'fruehe-neuzeit': {
+        name: 'Frühe Neuzeit',
+        icon: '⛵',
+        years: [1500, 1800],
+        description: 'Renaissance, Reformation, Absolutismus'
+    },
+    '19jh': {
+        name: '19. Jahrhundert',
+        icon: '🏭',
+        years: [1800, 1900],
+        description: 'Industrialisierung, Nationalismus'
+    },
+    '20jh': {
+        name: '20. Jahrhundert',
+        icon: '✈️',
+        years: [1900, 2000],
+        description: 'Weltkriege, Kalter Krieg'
+    },
+    gegenwart: {
+        name: 'Gegenwart',
+        icon: '🌐',
+        years: [2000, 2100],
+        description: 'Digitalisierung, Globalisierung'
+    }
+};
+
+// Epochen-Hintergrund initialisieren
+function initEpochBackground() {
+    // Erstelle Hintergrund-Elemente falls nicht vorhanden
+    if (!document.querySelector('.epoch-background')) {
+        const bg = document.createElement('div');
+        bg.className = 'epoch-background';
+        document.body.insertBefore(bg, document.body.firstChild);
+    }
+
+    if (!document.querySelector('.epoch-overlay')) {
+        const overlay = document.createElement('div');
+        overlay.className = 'epoch-overlay';
+        document.body.insertBefore(overlay, document.body.firstChild);
+    }
+
+    // Standard-Epoche setzen
+    setEpoch(currentEpoch);
+}
+
+// Epoche setzen
+function setEpoch(epochId) {
+    if (!EPOCHS[epochId]) {
+        console.warn('Unbekannte Epoche:', epochId);
+        return;
+    }
+
+    currentEpoch = epochId;
+    document.body.setAttribute('data-epoch', epochId);
+
+    // Epochen-Anzeige aktualisieren (falls vorhanden)
+    updateEpochDisplay();
+
+    // Event auslösen
+    document.dispatchEvent(new CustomEvent('epochChanged', { detail: { epoch: epochId } }));
+
+    // In LocalStorage speichern (optional)
+    if (currentUser) {
+        localStorage.setItem(`histolearn_epoch_${currentUser.id}`, epochId);
+    }
+}
+
+// Epoche basierend auf Jahr ermitteln
+function getEpochByYear(year) {
+    for (const [id, epoch] of Object.entries(EPOCHS)) {
+        if (year >= epoch.years[0] && year < epoch.years[1]) {
+            return id;
+        }
+    }
+    return 'mittelalter'; // Fallback
+}
+
+// Epoche basierend auf Quiz-Thema ermitteln
+function getEpochByTopic(topicId) {
+    const topicEpochs = {
+        // Antike
+        'antike': 'antike',
+        'griechenland': 'antike',
+        'rom': 'antike',
+        'aegypten': 'antike',
+
+        // Mittelalter
+        'mittelalter': 'mittelalter',
+        'kreuzzuege': 'mittelalter',
+        'ritter': 'mittelalter',
+        'pest': 'mittelalter',
+
+        // Frühe Neuzeit
+        'franz-revolution': 'fruehe-neuzeit',
+        'reformation': 'fruehe-neuzeit',
+        'absolutismus': 'fruehe-neuzeit',
+        'entdeckungen': 'fruehe-neuzeit',
+        'aufklaerung': 'fruehe-neuzeit',
+        'dreissig-krieg': 'fruehe-neuzeit',
+
+        // 19. Jahrhundert
+        'industrialisierung': '19jh',
+        'nationalismus': '19jh',
+        'kaiserreich': '19jh',
+        'maerzrevolution': '19jh',
+        'bismarck': '19jh',
+
+        // 20. Jahrhundert
+        'erster-weltkrieg': '20jh',
+        'weimarer-republik': '20jh',
+        'nationalsozialismus': '20jh',
+        'zweiter-weltkrieg': '20jh',
+        'kalter-krieg': '20jh',
+        'ddr': '20jh',
+        'wiedervereinigung': '20jh'
+    };
+
+    return topicEpochs[topicId] || 'mittelalter';
+}
+
+// Epochen-Anzeige aktualisieren
+function updateEpochDisplay() {
+    const epoch = EPOCHS[currentEpoch];
+    if (!epoch) return;
+
+    // Update Epochen-Badge falls vorhanden
+    const badges = document.querySelectorAll('.current-epoch-badge');
+    badges.forEach(badge => {
+        badge.innerHTML = `${epoch.icon} ${epoch.name}`;
+        badge.className = `current-epoch-badge epoch-badge ${currentEpoch}`;
+    });
+}
+
+// Epochen-Selektor erstellen
+function createEpochSelector(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    container.innerHTML = `
+        <div class="epoch-selector">
+            ${Object.entries(EPOCHS).map(([id, epoch]) => `
+                <button class="epoch-btn ${currentEpoch === id ? 'active' : ''}"
+                        onclick="setEpoch('${id}')"
+                        title="${epoch.description}">
+                    <span class="epoch-icon">${epoch.icon}</span>
+                    ${epoch.name}
+                </button>
+            `).join('')}
+        </div>
+    `;
+}
+
+// Event Listener für Epochen-Wechsel
+document.addEventListener('epochChanged', function(e) {
+    // Epochen-Buttons aktualisieren
+    document.querySelectorAll('.epoch-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    const activeBtn = document.querySelector(`.epoch-btn[onclick*="${e.detail.epoch}"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+    }
+});
+
+// Quiz starten mit Epochen-Wechsel (Original-Funktion erweitern)
+const originalStartQuiz = typeof startQuiz !== 'undefined' ? startQuiz : null;
+function startQuizWithEpoch(topicId) {
+    // Epoche basierend auf Thema setzen
+    const epoch = getEpochByTopic(topicId);
+    setEpoch(epoch);
+
+    // Original-Funktion aufrufen falls vorhanden
+    if (originalStartQuiz) {
+        originalStartQuiz(topicId);
+    }
+}
+
+// Zeitstrahl-Event mit Epochen-Wechsel
+function showTimelineEventWithEpoch(year) {
+    const epoch = getEpochByYear(year);
+    setEpoch(epoch);
+}
+
+// Initialisierung bei App-Start
+document.addEventListener('DOMContentLoaded', function() {
+    // Epochen-Hintergrund initialisieren
+    setTimeout(initEpochBackground, 100);
+
+    // Gespeicherte Epoche laden
+    if (currentUser) {
+        const savedEpoch = localStorage.getItem(`histolearn_epoch_${currentUser.id}`);
+        if (savedEpoch && EPOCHS[savedEpoch]) {
+            setEpoch(savedEpoch);
+        }
+    }
+});
+
+// Epochen-Wechsel beim Navigieren
+function showSectionWithEpoch(sectionId) {
+    showSection(sectionId);
+
+    // Epoche basierend auf Sektion anpassen
+    const sectionEpochs = {
+        'operators': 'mittelalter',
+        'zeitstrahl': 'mittelalter',
+        'uebungen': 'mittelalter',
+        'gamification': 'mittelalter'
+    };
+
+    // Bei bestimmten Sektionen Epoche wechseln
+    if (sectionEpochs[sectionId]) {
+        // Optional: Epoche basierend auf Sektion setzen
+        // setEpoch(sectionEpochs[sectionId]);
+    }
+}

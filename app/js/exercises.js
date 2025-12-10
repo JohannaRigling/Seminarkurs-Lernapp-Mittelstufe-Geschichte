@@ -17,6 +17,12 @@ function startQuiz(topicId) {
     currentQuizQuestion = 0;
     quizScore = 0;
 
+    // Epochen-Theme wechseln basierend auf Quiz-Thema
+    if (typeof setEpoch === 'function' && typeof getEpochByTopic === 'function') {
+        const epoch = topic.epoch || getEpochByTopic(topicId);
+        setEpoch(epoch);
+    }
+
     showQuizQuestion();
 }
 

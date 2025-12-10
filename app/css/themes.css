@@ -398,3 +398,324 @@ body.dark .toast.error {
 body.dark .toast.warning {
     border-left-color: var(--medieval-gold);
 }
+
+/* ===== EPOCHEN-SPEZIFISCHE THEMES ===== */
+
+/* Gemeinsame Epoch-Stile */
+.epoch-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    opacity: 0.15;
+    transition: all 0.8s ease;
+    pointer-events: none;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.epoch-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    pointer-events: none;
+    transition: all 0.8s ease;
+}
+
+/* ===== ANTIKE (Griechen, Römer) ===== */
+body[data-epoch="antike"] {
+    --epoch-primary: #d4a84b;
+    --epoch-secondary: #c9a227;
+    --epoch-accent: #8b6914;
+    --epoch-bg-tint: rgba(212, 168, 75, 0.05);
+}
+
+body[data-epoch="antike"] .epoch-background {
+    background:
+        linear-gradient(135deg, rgba(212, 168, 75, 0.1) 0%, transparent 50%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="columns" patternUnits="userSpaceOnUse" width="50" height="100"><rect x="10" y="20" width="8" height="80" fill="%23d4a84b" opacity="0.3"/><rect x="32" y="20" width="8" height="80" fill="%23d4a84b" opacity="0.3"/><ellipse cx="14" cy="20" rx="6" ry="3" fill="%23d4a84b" opacity="0.3"/><ellipse cx="36" cy="20" rx="6" ry="3" fill="%23d4a84b" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23columns)"/></svg>');
+    background-size: 200px 200px;
+}
+
+body[data-epoch="antike"] .epoch-overlay {
+    background: radial-gradient(ellipse at top, rgba(212, 168, 75, 0.1) 0%, transparent 70%);
+}
+
+body[data-epoch="antike"] .main-content {
+    background: linear-gradient(180deg, var(--bg-primary) 0%, rgba(212, 168, 75, 0.02) 100%);
+}
+
+/* ===== MITTELALTER ===== */
+body[data-epoch="mittelalter"] {
+    --epoch-primary: #8b4513;
+    --epoch-secondary: #654321;
+    --epoch-accent: #c9a227;
+    --epoch-bg-tint: rgba(139, 69, 19, 0.05);
+}
+
+body[data-epoch="mittelalter"] .epoch-background {
+    background:
+        linear-gradient(135deg, rgba(139, 69, 19, 0.15) 0%, transparent 50%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="stone" patternUnits="userSpaceOnUse" width="40" height="20"><rect width="40" height="20" fill="%234a4a4a" opacity="0.2"/><rect x="0" y="0" width="19" height="9" fill="%235a5a5a" opacity="0.3" rx="1"/><rect x="21" y="0" width="19" height="9" fill="%235a5a5a" opacity="0.3" rx="1"/><rect x="10" y="11" width="19" height="9" fill="%235a5a5a" opacity="0.3" rx="1"/></pattern></defs><rect width="100" height="100" fill="url(%23stone)"/></svg>');
+    background-size: 150px 75px;
+}
+
+body[data-epoch="mittelalter"] .epoch-overlay {
+    background:
+        radial-gradient(ellipse at bottom, rgba(26, 71, 42, 0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at top right, rgba(139, 69, 19, 0.1) 0%, transparent 50%);
+}
+
+body[data-epoch="mittelalter"] .main-content {
+    background: linear-gradient(180deg, var(--bg-primary) 0%, rgba(139, 69, 19, 0.03) 100%);
+}
+
+/* Mittelalter-spezifische Dekoration */
+body[data-epoch="mittelalter"] .card::before {
+    background: linear-gradient(90deg, transparent, #8b4513, transparent);
+}
+
+body[data-epoch="mittelalter"] .btn-primary {
+    background: linear-gradient(135deg, #8b4513, #654321);
+}
+
+body[data-epoch="mittelalter"] .btn-primary:hover {
+    background: linear-gradient(135deg, #a0522d, #8b4513);
+    box-shadow: 0 0 20px rgba(139, 69, 19, 0.4);
+}
+
+/* ===== FRÜHE NEUZEIT (Renaissance, Reformation, Absolutismus) ===== */
+body[data-epoch="fruehe-neuzeit"] {
+    --epoch-primary: #b8860b;
+    --epoch-secondary: #daa520;
+    --epoch-accent: #ffd700;
+    --epoch-bg-tint: rgba(218, 165, 32, 0.05);
+}
+
+body[data-epoch="fruehe-neuzeit"] .epoch-background {
+    background:
+        linear-gradient(135deg, rgba(218, 165, 32, 0.1) 0%, transparent 50%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><defs><pattern id="baroque" patternUnits="userSpaceOnUse" width="60" height="60"><circle cx="30" cy="30" r="20" fill="none" stroke="%23daa520" stroke-width="0.5" opacity="0.3"/><circle cx="30" cy="30" r="15" fill="none" stroke="%23daa520" stroke-width="0.3" opacity="0.2"/><path d="M30 10 Q40 20 30 30 Q20 20 30 10" fill="%23daa520" opacity="0.1"/><path d="M30 50 Q40 40 30 30 Q20 40 30 50" fill="%23daa520" opacity="0.1"/></pattern></defs><rect width="60" height="60" fill="url(%23baroque)"/></svg>');
+    background-size: 120px 120px;
+}
+
+body[data-epoch="fruehe-neuzeit"] .epoch-overlay {
+    background: radial-gradient(ellipse at center, rgba(218, 165, 32, 0.08) 0%, transparent 70%);
+}
+
+body[data-epoch="fruehe-neuzeit"] .main-content {
+    background: linear-gradient(180deg, var(--bg-primary) 0%, rgba(218, 165, 32, 0.02) 100%);
+}
+
+body[data-epoch="fruehe-neuzeit"] .card::before {
+    background: linear-gradient(90deg, transparent, #daa520, transparent);
+}
+
+body[data-epoch="fruehe-neuzeit"] .btn-primary {
+    background: linear-gradient(135deg, #b8860b, #8b6914);
+}
+
+/* ===== 19. JAHRHUNDERT (Industrialisierung, Nationalismus) ===== */
+body[data-epoch="19jh"] {
+    --epoch-primary: #4a4a4a;
+    --epoch-secondary: #696969;
+    --epoch-accent: #8b0000;
+    --epoch-bg-tint: rgba(74, 74, 74, 0.05);
+}
+
+body[data-epoch="19jh"] .epoch-background {
+    background:
+        linear-gradient(135deg, rgba(74, 74, 74, 0.15) 0%, transparent 50%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="gears" patternUnits="userSpaceOnUse" width="50" height="50"><circle cx="25" cy="25" r="12" fill="none" stroke="%234a4a4a" stroke-width="2" opacity="0.2"/><circle cx="25" cy="25" r="5" fill="%234a4a4a" opacity="0.15"/><rect x="23" y="5" width="4" height="8" fill="%234a4a4a" opacity="0.2"/><rect x="23" y="37" width="4" height="8" fill="%234a4a4a" opacity="0.2"/><rect x="5" y="23" width="8" height="4" fill="%234a4a4a" opacity="0.2"/><rect x="37" y="23" width="8" height="4" fill="%234a4a4a" opacity="0.2"/></pattern></defs><rect width="100" height="100" fill="url(%23gears)"/></svg>');
+    background-size: 100px 100px;
+}
+
+body[data-epoch="19jh"] .epoch-overlay {
+    background:
+        linear-gradient(180deg, rgba(50, 50, 50, 0.1) 0%, transparent 30%),
+        radial-gradient(ellipse at bottom, rgba(139, 0, 0, 0.05) 0%, transparent 50%);
+}
+
+body[data-epoch="19jh"] .main-content {
+    background: linear-gradient(180deg, var(--bg-primary) 0%, rgba(74, 74, 74, 0.03) 100%);
+}
+
+body[data-epoch="19jh"] .card::before {
+    background: linear-gradient(90deg, transparent, #4a4a4a, transparent);
+}
+
+body[data-epoch="19jh"] .btn-primary {
+    background: linear-gradient(135deg, #4a4a4a, #2a2a2a);
+}
+
+body[data-epoch="19jh"] .btn-primary:hover {
+    background: linear-gradient(135deg, #5a5a5a, #4a4a4a);
+    box-shadow: 0 0 20px rgba(139, 0, 0, 0.3);
+}
+
+/* ===== 20. JAHRHUNDERT (Weltkriege, Moderne) ===== */
+body[data-epoch="20jh"] {
+    --epoch-primary: #2c3e50;
+    --epoch-secondary: #34495e;
+    --epoch-accent: #e74c3c;
+    --epoch-bg-tint: rgba(44, 62, 80, 0.05);
+}
+
+body[data-epoch="20jh"] .epoch-background {
+    background:
+        linear-gradient(135deg, rgba(44, 62, 80, 0.15) 0%, transparent 50%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="modern" patternUnits="userSpaceOnUse" width="20" height="20"><rect width="20" height="20" fill="none"/><line x1="0" y1="10" x2="20" y2="10" stroke="%232c3e50" stroke-width="0.5" opacity="0.2"/><line x1="10" y1="0" x2="10" y2="20" stroke="%232c3e50" stroke-width="0.5" opacity="0.2"/></pattern></defs><rect width="100" height="100" fill="url(%23modern)"/></svg>');
+    background-size: 40px 40px;
+}
+
+body[data-epoch="20jh"] .epoch-overlay {
+    background:
+        linear-gradient(180deg, rgba(44, 62, 80, 0.1) 0%, transparent 40%),
+        radial-gradient(ellipse at bottom left, rgba(231, 76, 60, 0.05) 0%, transparent 50%);
+}
+
+body[data-epoch="20jh"] .main-content {
+    background: linear-gradient(180deg, var(--bg-primary) 0%, rgba(44, 62, 80, 0.03) 100%);
+}
+
+body[data-epoch="20jh"] .card::before {
+    background: linear-gradient(90deg, transparent, #2c3e50, transparent);
+}
+
+body[data-epoch="20jh"] .btn-primary {
+    background: linear-gradient(135deg, #2c3e50, #1a252f);
+}
+
+body[data-epoch="20jh"] .btn-primary:hover {
+    background: linear-gradient(135deg, #34495e, #2c3e50);
+    box-shadow: 0 0 20px rgba(231, 76, 60, 0.3);
+}
+
+/* ===== NACHKRIEGSZEIT & GEGENWART ===== */
+body[data-epoch="gegenwart"] {
+    --epoch-primary: #667eea;
+    --epoch-secondary: #764ba2;
+    --epoch-accent: #f093fb;
+    --epoch-bg-tint: rgba(102, 126, 234, 0.05);
+}
+
+body[data-epoch="gegenwart"] .epoch-background {
+    background:
+        linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.05) 100%);
+}
+
+body[data-epoch="gegenwart"] .epoch-overlay {
+    background: radial-gradient(ellipse at top right, rgba(240, 147, 251, 0.05) 0%, transparent 50%);
+}
+
+body[data-epoch="gegenwart"] .btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+/* ===== Epochen-Übergangs-Animation ===== */
+@keyframes epochFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(1.1);
+    }
+    to {
+        opacity: 0.15;
+        transform: scale(1);
+    }
+}
+
+body[data-epoch] .epoch-background {
+    animation: epochFadeIn 1s ease-out;
+}
+
+/* ===== Epochen-Badge Styling ===== */
+.epoch-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.epoch-badge.antike {
+    background: rgba(212, 168, 75, 0.2);
+    color: #d4a84b;
+    border: 1px solid rgba(212, 168, 75, 0.3);
+}
+
+.epoch-badge.mittelalter {
+    background: rgba(139, 69, 19, 0.2);
+    color: #cd853f;
+    border: 1px solid rgba(139, 69, 19, 0.3);
+}
+
+.epoch-badge.fruehe-neuzeit {
+    background: rgba(218, 165, 32, 0.2);
+    color: #daa520;
+    border: 1px solid rgba(218, 165, 32, 0.3);
+}
+
+.epoch-badge.jh19 {
+    background: rgba(74, 74, 74, 0.2);
+    color: #a0a0a0;
+    border: 1px solid rgba(74, 74, 74, 0.3);
+}
+
+.epoch-badge.jh20 {
+    background: rgba(44, 62, 80, 0.2);
+    color: #5dade2;
+    border: 1px solid rgba(44, 62, 80, 0.3);
+}
+
+.epoch-badge.gegenwart {
+    background: rgba(102, 126, 234, 0.2);
+    color: #667eea;
+    border: 1px solid rgba(102, 126, 234, 0.3);
+}
+
+/* ===== Epochen-Auswahl im Menü ===== */
+.epoch-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 15px;
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+    margin: 15px 0;
+}
+
+.epoch-btn {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 2px solid transparent;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.85em;
+}
+
+.epoch-btn:hover {
+    border-color: var(--epoch-primary, var(--primary));
+    color: var(--text-primary);
+}
+
+.epoch-btn.active {
+    background: var(--epoch-primary, var(--primary));
+    color: white;
+    border-color: var(--epoch-primary, var(--primary));
+}
+
+.epoch-btn .epoch-icon {
+    margin-right: 6px;
+}

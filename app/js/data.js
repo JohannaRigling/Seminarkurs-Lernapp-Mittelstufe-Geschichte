@@ -694,6 +694,7 @@ const QUIZ_TOPICS = [
         id: 'franz-revolution',
         name: 'Französische Revolution',
         icon: '🇫🇷',
+        epoch: 'fruehe-neuzeit',
         questions: [
             {
                 question: 'Wann begann die Französische Revolution?',
@@ -731,6 +732,7 @@ const QUIZ_TOPICS = [
         id: 'erster-weltkrieg',
         name: 'Erster Weltkrieg',
         icon: '⚔️',
+        epoch: '20jh',
         questions: [
             {
                 question: 'Was war der Auslöser des Ersten Weltkriegs?',
@@ -756,6 +758,7 @@ const QUIZ_TOPICS = [
         id: 'weimarer-republik',
         name: 'Weimarer Republik',
         icon: '🏛️',
+        epoch: '20jh',
         questions: [
             {
                 question: 'Wann wurde die Weimarer Republik gegründet?',
@@ -781,6 +784,7 @@ const QUIZ_TOPICS = [
         id: 'ns-zeit',
         name: 'Nationalsozialismus',
         icon: '🚫',
+        epoch: '20jh',
         questions: [
             {
                 question: 'Wann wurde Hitler Reichskanzler?',
@@ -806,6 +810,7 @@ const QUIZ_TOPICS = [
         id: 'kalter-krieg',
         name: 'Kalter Krieg',
         icon: '🧊',
+        epoch: '20jh',
         questions: [
             {
                 question: 'Was war der "Eiserne Vorhang"?',
