@@ -70,7 +70,42 @@ function showSection(sectionId) {
                 loadTimeline();
             }
             break;
+        case 'castle':
+            // 3D-Burg initialisieren
+            if (typeof showCastleSection === 'function') {
+                showCastleSection();
+            }
+            // Stats aktualisieren
+            updateCastleStats();
+            break;
     }
+}
+
+// Burg-Statistiken aktualisieren
+function updateCastleStats() {
+    if (!currentUser) return;
+
+    // Münzen
+    const coinsEl = document.getElementById('coinsDisplay');
+    if (coinsEl) coinsEl.textContent = currentUser.progress.coins || 0;
+
+    // Gebäude zählen
+    const buildingsEl = document.getElementById('totalBuildings');
+    if (buildingsEl) {
+        const count = Object.values(currentUser.progress.castleParts || {}).filter(v => v).length;
+        buildingsEl.textContent = count;
+    }
+
+    // Rang
+    const rankEl = document.getElementById('currentRankDisplay');
+    if (rankEl && RANKS) {
+        const rank = RANKS[currentUser.progress.rank || 0];
+        rankEl.textContent = rank ? rank.icon : '🌾';
+    }
+
+    // Streak
+    const streakEl = document.getElementById('streakDisplay');
+    if (streakEl) streakEl.textContent = currentUser.progress.streak || 0;
 }
 
 // Toast-Benachrichtigung anzeigen

@@ -548,69 +548,75 @@
                 </div>
             </section>
 
-            <!-- Castle Section (Gamification) -->
-            <section id="castle" class="content-section">
+            <!-- Castle Section (Gamification) - 3D Version -->
+            <section id="castle" class="content-section" onshow="showCastleSection()">
                 <div class="section-header">
                     <h1>🏰 Meine Burg</h1>
-                    <p>Baue deine Burg mit deinem Lernfortschritt aus!</p>
+                    <p>Baue deine mittelalterliche Festung aus! Drehe die Kamera mit der Maus.</p>
                 </div>
 
-                <div class="castle-layout">
-                    <div class="castle-view">
-                        <div class="castle-display" id="castleDisplay">
-                            <!-- Castle SVG/Graphics will be rendered here -->
-                            <div class="castle-base">
-                                <div class="castle-part wall-left locked" id="wallLeft">🧱</div>
-                                <div class="castle-part gate" id="gate">🚪</div>
-                                <div class="castle-part wall-right locked" id="wallRight">🧱</div>
-                                <div class="castle-part tower-left locked" id="towerLeft">🗼</div>
-                                <div class="castle-part keep locked" id="keep">🏰</div>
-                                <div class="castle-part tower-right locked" id="towerRight">🗼</div>
-                                <div class="castle-part flag locked" id="flag">🚩</div>
+                <div class="castle-layout-3d">
+                    <!-- 3D Burg Ansicht -->
+                    <div class="castle-3d-wrapper">
+                        <div id="castle3DContainer">
+                            <p style="color: var(--text-secondary); text-align: center; padding: 40px;">
+                                🏰 3D-Burg wird geladen...
+                            </p>
+                        </div>
+
+                        <!-- Level Anzeige -->
+                        <div class="castle-level-display">
+                            <h3 id="castle3DLevel">Level 1</h3>
+                            <div class="level-bar">
+                                <div class="level-bar-fill" id="castleLevelBar" style="width: 10%"></div>
                             </div>
+                        </div>
+
+                        <!-- Gebäude Info Panel -->
+                        <div id="buildingInfoPanel"></div>
+
+                        <!-- Kamera Steuerung -->
+                        <div class="camera-controls">
+                            <button class="camera-btn" onclick="rotateCameraLeft()" title="Links drehen">⬅️</button>
+                            <button class="camera-btn" onclick="zoomCameraOut()" title="Herauszoomen">➖</button>
+                            <button class="camera-btn" onclick="resetCameraView()" title="Ansicht zurücksetzen">🏠</button>
+                            <button class="camera-btn" onclick="zoomCameraIn()" title="Hineinzoomen">➕</button>
+                            <button class="camera-btn" onclick="rotateCameraRight()" title="Rechts drehen">➡️</button>
                         </div>
                     </div>
 
-                    <div class="castle-info">
-                        <div class="castle-stats">
-                            <h3>Burg-Status</h3>
-                            <div class="castle-stat">
-                                <span>Ausbaustufe:</span>
-                                <strong id="castleLevel">1/7</strong>
+                    <!-- Burg Info Sidebar -->
+                    <div class="castle-sidebar">
+                        <!-- Statistiken -->
+                        <div class="castle-stats-3d">
+                            <div class="stat-card">
+                                <span class="stat-value" id="totalBuildings">2</span>
+                                <span class="stat-label">Gebäude</span>
                             </div>
-                            <div class="castle-stat">
-                                <span>Nächster Ausbau:</span>
-                                <strong id="nextUpgradeCost">100 🐄</strong>
+                            <div class="stat-card">
+                                <span class="stat-value" id="coinsDisplay">0</span>
+                                <span class="stat-label">🐄 Münzen</span>
                             </div>
-                        </div>
-
-                        <div class="castle-shop">
-                            <h3>🛒 Burg-Shop</h3>
-                            <div class="shop-items" id="shopItems">
-                                <div class="shop-item">
-                                    <span class="shop-icon">🧱</span>
-                                    <span class="shop-name">Mauer</span>
-                                    <span class="shop-price">50 🐄</span>
-                                    <button class="btn btn-small" onclick="buyUpgrade('wall')">Kaufen</button>
-                                </div>
-                                <div class="shop-item">
-                                    <span class="shop-icon">🗼</span>
-                                    <span class="shop-name">Turm</span>
-                                    <span class="shop-price">100 🐄</span>
-                                    <button class="btn btn-small" onclick="buyUpgrade('tower')">Kaufen</button>
-                                </div>
-                                <div class="shop-item">
-                                    <span class="shop-icon">🏰</span>
-                                    <span class="shop-name">Bergfried</span>
-                                    <span class="shop-price">200 🐄</span>
-                                    <button class="btn btn-small" onclick="buyUpgrade('keep')">Kaufen</button>
-                                </div>
+                            <div class="stat-card">
+                                <span class="stat-value" id="currentRankDisplay">🌾</span>
+                                <span class="stat-label">Rang</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-value" id="streakDisplay">0</span>
+                                <span class="stat-label">🔥 Streak</span>
                             </div>
                         </div>
 
-                        <div class="rank-info">
-                            <h3>⚔️ Rang-Übersicht</h3>
-                            <div class="ranks-list">
+                        <!-- Shop -->
+                        <div class="castle-shop-3d" id="castle3DShop">
+                            <h3>🛒 Verfügbare Gebäude</h3>
+                            <p style="color: var(--text-secondary);">Wird geladen...</p>
+                        </div>
+
+                        <!-- Rang Übersicht -->
+                        <div class="rank-info-3d">
+                            <h3>⚔️ Ränge</h3>
+                            <div class="ranks-list" id="ranksList">
                                 <div class="rank-item current">🌾 Tagelöhner</div>
                                 <div class="rank-item">🌾 Bauer</div>
                                 <div class="rank-item">🔨 Handwerker</div>
@@ -619,6 +625,11 @@
                                 <div class="rank-item">⚡ Legende</div>
                             </div>
                         </div>
+
+                        <!-- Achievements Button -->
+                        <button class="btn btn-secondary btn-full" onclick="showAllAchievements()" style="margin-top: 15px;">
+                            🏆 Alle Auszeichnungen
+                        </button>
                     </div>
                 </div>
             </section>
@@ -730,6 +741,7 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="js/data.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
@@ -740,6 +752,7 @@
     <script src="js/timeline.js"></script>
     <script src="js/exercises.js"></script>
     <script src="js/gamification.js"></script>
+    <script src="js/castle3d.js"></script>
     <script src="js/admin.js"></script>
 </body>
 </html>
