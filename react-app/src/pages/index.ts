@@ -1,0 +1,10 @@
+export { default as AuthPage } from './AuthPage';
+export { default as DashboardPage } from './DashboardPage';
+export { default as QuizPage } from './QuizPage';
+export { default as ChatPage } from './ChatPage';
+export { default as TimerPage } from './TimerPage';
+export { default as TimelinePage } from './TimelinePage';
+export { default as CastlePage } from './CastlePage';
+export { default as OperatorsPage } from './OperatorsPage';
+export { default as StrategiesPage } from './StrategiesPage';
+export { default as SettingsPage } from './SettingsPage';

@@ -1,0 +1,6 @@
+name = "histolearn"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "./dist"
+
+# Environment variables for production
+# Set OPENAI_API_KEY in Cloudflare Dashboard > Pages > Settings > Environment variables

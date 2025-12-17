@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+/* Medieval Theme Colors */
+:root {
+  --color-primary: #8B4513;
+  --color-primary-dark: #5D2E0C;
+  --color-secondary: #D4AF37;
+  --color-background: #1a1a2e;
+  --color-surface: #16213e;
+  --color-surface-light: #1f2b4d;
+  --color-text: #e8e8e8;
+  --color-text-muted: #a0a0a0;
+  --color-accent: #f0c674;
+  --color-success: #4ade80;
+  --color-error: #f87171;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, var(--color-background) 0%, #0f0f1a 100%);
+  color: var(--color-text);
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary);
+}
+
+/* Utility classes for medieval theme */
+.medieval-border {
+  border: 2px solid var(--color-secondary);
+  border-radius: 8px;
+}
+
+.medieval-gradient {
+  background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-light) 100%);
+}
+
+.gold-text {
+  color: var(--color-secondary);
+}
+
+.glow-gold {
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-pulse-custom {
+  animation: pulse 2s infinite;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Confetti Animation */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  top: 0;
+  animation: confetti-fall 3s linear forwards;
+  z-index: 1000;
+  pointer-events: none;
+}
