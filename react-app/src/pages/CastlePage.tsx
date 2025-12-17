@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Castle, Lock, Check, Coins, Sparkles, ShoppingCart } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useToastContext } from '../contexts/ToastContext';
-import { Card, CardContent, CardHeader, Button, Modal, ProgressBar } from '../components/common';
-import { CastleParts, CastleUpgrade } from '../types';
+import { Card, CardContent, Button, Modal, ProgressBar } from '../components/common';
+import type { CastleUpgrade } from '../types';
 import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
@@ -55,7 +55,6 @@ const castleUpgrades: CastleUpgrade[] = [
 const CastlePage: React.FC = () => {
   const { userData, currentUser, updateProgress, addCoins } = useAuth();
   const toast = useToastContext();
-  const [selectedUpgrade, setSelectedUpgrade] = useState<CastleUpgrade | null>(null);
   const [showShop, setShowShop] = useState(false);
 
   if (!userData) return null;
@@ -63,7 +62,6 @@ const CastlePage: React.FC = () => {
   const { progress } = userData;
   const ownedParts = Object.entries(progress.castleParts).filter(([_, owned]) => owned).length;
   const totalParts = castleUpgrades.length;
-  const castleProgress = (ownedParts / totalParts) * 100;
 
   const handlePurchase = async (upgrade: CastleUpgrade) => {
     if (!currentUser) return;
@@ -105,7 +103,6 @@ const CastlePage: React.FC = () => {
     });
 
     toast.success(`${upgrade.name} gekauft! 🏰`);
-    setSelectedUpgrade(null);
 
     // Check for complete castle
     if (newCastleLevel === totalParts) {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Pause, RotateCcw, Settings, Coffee, BookOpen, Trophy, Volume2, VolumeX } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useToastContext } from '../contexts/ToastContext';
-import { Card, CardContent, CardHeader, Button, Modal, ProgressBar } from '../components/common';
+import { Card, CardContent, Button, Modal } from '../components/common';
 import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
@@ -94,7 +94,7 @@ const TimerPage: React.FC = () => {
   }, [userData, currentUser, sessionsCompleted, workDuration, addCoins, addXP, updateProgress, toast]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
+    let interval: ReturnType<typeof setInterval> | null = null;
 
     if (isRunning && timeLeft > 0) {
       interval = setInterval(() => {

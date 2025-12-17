@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Lightbulb, ChevronRight, Search } from 'lucide-react';
 import { Card, CardContent, Modal } from '../components/common';
 import { learningStrategies } from '../data/strategiesData';
-import { LearningStrategy } from '../types';
+import type { LearningStrategy } from '../types';
 
 const StrategiesPage: React.FC = () => {
   const [selectedStrategy, setSelectedStrategy] = useState<LearningStrategy | null>(null);

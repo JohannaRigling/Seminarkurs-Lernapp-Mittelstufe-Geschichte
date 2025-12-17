@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Brain, ChevronRight, Search, Filter } from 'lucide-react';
-import { Card, CardContent, CardHeader, Modal } from '../components/common';
+import { Brain, ChevronRight, Search } from 'lucide-react';
+import { Card, CardContent, Modal } from '../components/common';
 import { operators, operatorLevels } from '../data/operatorsData';
-import { Operator } from '../types';
+import type { Operator } from '../types';
 
 const OperatorsPage: React.FC = () => {
   const [selectedOperator, setSelectedOperator] = useState<Operator | null>(null);

@@ -1,4 +1,4 @@
-import { Operator } from '../types';
+import type { Operator } from '../types';
 
 export const operators: Operator[] = [
   // AFB 1 - Reproduktion

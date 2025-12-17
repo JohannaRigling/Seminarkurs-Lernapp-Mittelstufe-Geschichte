@@ -14,15 +14,13 @@ import {
   Loader2,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { useToastContext } from '../contexts/ToastContext';
-import { Card, CardContent, CardHeader, Button, Input } from '../components/common';
-import { ChatMessage } from '../types';
+import { Card, Button } from '../components/common';
+import type { ChatMessage } from '../types';
 
 type AIMode = 'tutor' | 'critic' | 'discussion';
 
 const ChatPage: React.FC = () => {
-  const { userData, updateUserData } = useAuth();
-  const toast = useToastContext();
+  const { userData } = useAuth();
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');

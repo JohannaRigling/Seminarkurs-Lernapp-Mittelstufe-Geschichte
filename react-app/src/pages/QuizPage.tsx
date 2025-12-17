@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useToastContext } from '../contexts/ToastContext';
 import { Card, CardContent, CardHeader, Button, ProgressBar } from '../components/common';
 import { quizTopics } from '../data/quizData';
-import { QuizTopic, QuizQuestion } from '../types';
+import type { QuizTopic } from '../types';
 import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '../config/firebase';
 

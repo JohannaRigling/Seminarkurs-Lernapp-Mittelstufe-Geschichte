@@ -1,4 +1,4 @@
-import { LearningStrategy } from '../types';
+import type { LearningStrategy } from '../types';
 
 export const learningStrategies: LearningStrategy[] = [
   {

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Calendar, ChevronDown, ChevronUp, Filter, Clock } from 'lucide-react';
+import { Calendar, ChevronDown, ChevronUp, Clock, Filter } from 'lucide-react';
 import { Card, CardContent, Modal } from '../components/common';
 import { timelineEvents, eras } from '../data/timelineData';
-import { TimelineEvent } from '../types';
+import type { TimelineEvent } from '../types';
 
 const TimelinePage: React.FC = () => {
   const [selectedEra, setSelectedEra] = useState('all');
