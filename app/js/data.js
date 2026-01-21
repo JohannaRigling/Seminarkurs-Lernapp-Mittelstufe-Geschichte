@@ -663,15 +663,21 @@ const TIMELINE_EVENTS = [
     { year: 1517, title: 'Reformation', era: 'fruehe-neuzeit', description: 'Luther veröffentlicht seine 95 Thesen.' },
     { year: 1618, title: 'Dreißigjähriger Krieg beginnt', era: 'fruehe-neuzeit', description: 'Prager Fenstersturz löst europäischen Krieg aus.' },
     { year: 1648, title: 'Westfälischer Frieden', era: 'fruehe-neuzeit', description: 'Ende des Dreißigjährigen Krieges, neues Staatensystem.' },
+    { year: 1769, title: 'Watts Dampfmaschine', era: 'fruehe-neuzeit', description: 'James Watt verbessert die Dampfmaschine - Motor der Industrialisierung.' },
     { year: 1789, title: 'Französische Revolution', era: 'fruehe-neuzeit', description: 'Sturm auf die Bastille. Beginn einer neuen Ära.' },
 
     // 19. Jahrhundert
     { year: 1804, title: 'Napoleon wird Kaiser', era: '19jh', description: 'Napoleon krönt sich selbst zum Kaiser der Franzosen.' },
     { year: 1815, title: 'Wiener Kongress', era: '19jh', description: 'Neuordnung Europas nach Napoleon.' },
+    { year: 1825, title: 'Erste Eisenbahn in England', era: '19jh', description: 'Stockton-Darlington-Eisenbahn - Beginn des Eisenbahnzeitalters.' },
     { year: 1848, title: 'Märzrevolution', era: '19jh', description: 'Revolutionen in ganz Europa für Freiheit und Einheit.' },
+    { year: 1848, title: 'Kommunistisches Manifest', era: '19jh', description: 'Marx und Engels veröffentlichen das Kommunistische Manifest.' },
     { year: 1861, title: 'Einigung Italiens', era: '19jh', description: 'Viktor Emanuel II. wird König von Italien.' },
+    { year: 1863, title: 'Gründung des ADAV', era: '19jh', description: 'Ferdinand Lassalle gründet den Allgemeinen Deutschen Arbeiterverein - erste Arbeiterpartei.' },
+    { year: 1869, title: 'Gründung der SDAP', era: '19jh', description: 'August Bebel und Wilhelm Liebknecht gründen die Sozialdemokratische Arbeiterpartei.' },
     { year: 1871, title: 'Deutsche Reichsgründung', era: '19jh', description: 'Wilhelm I. wird Kaiser. Deutschland vereint.' },
     { year: 1884, title: 'Berliner Konferenz', era: '19jh', description: 'Europa teilt Afrika unter sich auf.' },
+    { year: 1890, title: 'Ende der Ära Bismarck', era: '19jh', description: 'Wilhelm II. entlässt Bismarck. Beginn der Weltpolitik.' },
 
     // 20. Jahrhundert
     { year: 1914, title: 'Beginn Erster Weltkrieg', era: '20jh', description: 'Attentat von Sarajevo löst Weltkrieg aus.' },
@@ -685,7 +691,61 @@ const TIMELINE_EVENTS = [
     { year: 1949, title: 'Gründung BRD und DDR', era: '20jh', description: 'Deutschland wird in zwei Staaten geteilt.' },
     { year: 1961, title: 'Bau der Berliner Mauer', era: '20jh', description: 'Die DDR riegelt West-Berlin ab.' },
     { year: 1989, title: 'Fall der Berliner Mauer', era: '20jh', description: 'Die Mauer fällt. Ende des Kalten Krieges.' },
-    { year: 1990, title: 'Deutsche Wiedervereinigung', era: '20jh', description: 'Deutschland ist wieder vereint.' }
+    { year: 1990, title: 'Deutsche Wiedervereinigung', era: '20jh', description: 'Deutschland ist wieder vereint.' },
+
+    // Zusätzliche Events für Klasse 8
+    { year: 1806, title: 'Ende des Heiligen Römischen Reiches', era: '19jh', description: 'Franz II. legt die Kaiserkrone nieder. Ende des HRR nach über 800 Jahren.' },
+    { year: 1813, title: 'Völkerschlacht bei Leipzig', era: '19jh', description: 'Entscheidende Niederlage Napoleons gegen die Koalition.' },
+    { year: 1817, title: 'Wartburgfest', era: '19jh', description: 'Studentenversammlung fordert nationale Einheit und Freiheit.' },
+    { year: 1832, title: 'Hambacher Fest', era: '19jh', description: 'Größte politische Demonstration des Vormärz für Einheit und Freiheit.' },
+    { year: 1835, title: 'Erste deutsche Eisenbahn', era: '19jh', description: 'Die "Adler" fährt von Nürnberg nach Fürth - Beginn des Eisenbahnzeitalters.' },
+    { year: 1862, title: 'Bismarck wird preußischer Ministerpräsident', era: '19jh', description: 'Beginn der Bismarckschen Politik zur deutschen Einigung.' },
+    { year: 1864, title: 'Deutsch-Dänischer Krieg', era: '19jh', description: 'Erster der drei Einigungskriege.' },
+    { year: 1866, title: 'Deutscher Krieg (Preußen vs. Österreich)', era: '19jh', description: 'Preußen siegt bei Königgrätz und übernimmt die Führung.' },
+    { year: 1870, title: 'Deutsch-Französischer Krieg', era: '19jh', description: 'Dritter Einigungskrieg führt zur Reichsgründung.' },
+    { year: 1878, title: 'Sozialistengesetze', era: '19jh', description: 'Bismarck verbietet sozialdemokratische Organisationen.' },
+    { year: 1883, title: 'Beginn der Sozialgesetzgebung', era: '19jh', description: 'Krankenversicherung als erstes Sozialgesetz.' },
+
+    // Zusätzliche Events für Klasse 9
+    { year: 1935, title: 'Nürnberger Rassengesetze', era: '20jh', description: 'Juden werden systematisch aus der Gesellschaft ausgeschlossen.' },
+    { year: 1938, title: 'Reichspogromnacht', era: '20jh', description: 'Organisierte Gewalt gegen jüdische Geschäfte und Synagogen.' },
+    { year: 1941, title: 'Angriff auf die Sowjetunion', era: '20jh', description: 'Unternehmen Barbarossa beginnt den Vernichtungskrieg im Osten.' },
+    { year: 1942, title: 'Wannseekonferenz', era: '20jh', description: 'Planung der "Endlösung der Judenfrage".' },
+    { year: 1944, title: 'D-Day - Landung in der Normandie', era: '20jh', description: 'Die Alliierten eröffnen die zweite Front im Westen.' },
+    { year: 1948, title: 'Berlin-Blockade und Luftbrücke', era: '20jh', description: 'Die Sowjetunion blockiert West-Berlin, die Alliierten versorgen es per Luftbrücke.' },
+    { year: 1953, title: 'Volksaufstand in der DDR', era: '20jh', description: 'Arbeiterproteste werden von sowjetischen Panzern niedergeschlagen.' },
+    { year: 1962, title: 'Kubakrise', era: '20jh', description: 'Die Welt steht am Rand eines Atomkriegs.' },
+    { year: 1963, title: 'Kennedy in Berlin', era: '20jh', description: '"Ich bin ein Berliner" - Symbol der amerikanischen Solidarität.' },
+    { year: 1968, title: 'Prager Frühling', era: '20jh', description: 'Reformversuch in der Tschechoslowakei wird von Warschauer-Pakt-Truppen beendet.' },
+    { year: 1972, title: 'Grundlagenvertrag BRD-DDR', era: '20jh', description: 'Beide deutsche Staaten erkennen sich de facto an.' },
+
+    // Zusätzliche Events für Klasse 10 (Russland, China, Türkei)
+    { year: 1839, title: 'Erster Opiumkrieg beginnt', era: '19jh', description: 'Großbritannien erzwingt die Öffnung Chinas.' },
+    { year: 1861, title: 'Abschaffung der Leibeigenschaft in Russland', era: '19jh', description: 'Zar Alexander II. befreit die Bauern.' },
+    { year: 1905, title: 'Russische Revolution', era: '20jh', description: 'Erste Revolution in Russland nach dem "Blutsonntag".' },
+    { year: 1908, title: 'Jungtürkische Revolution', era: '20jh', description: 'Die Jungtürken erzwingen eine konstitutionelle Regierung.' },
+    { year: 1911, title: 'Xinhai-Revolution in China', era: '20jh', description: 'Ende der Qing-Dynastie und der 2000-jährigen Kaiserzeit.' },
+    { year: 1912, title: 'Republik China gegründet', era: '20jh', description: 'Sun Yat-sen wird erster Präsident der Republik China.' },
+    { year: 1915, title: 'Völkermord an den Armeniern', era: '20jh', description: 'Systematische Vernichtung der armenischen Bevölkerung im Osmanischen Reich.' },
+    { year: 1922, title: 'Ende des Osmanischen Reiches', era: '20jh', description: 'Das Sultanat wird abgeschafft.' },
+    { year: 1923, title: 'Gründung der Republik Türkei', era: '20jh', description: 'Atatürk gründet die moderne Türkei mit säkularer Verfassung.' },
+    { year: 1924, title: 'Tod Lenins', era: '20jh', description: 'Beginn des Machtkampfes, den Stalin gewinnt.' },
+    { year: 1934, title: 'Langer Marsch in China', era: '20jh', description: 'Rückzug der Kommunisten unter Mao - Mythos der KP China.' },
+    { year: 1937, title: 'Großer Terror in der Sowjetunion', era: '20jh', description: 'Stalins Säuberungen erreichen ihren Höhepunkt.' },
+    { year: 1949, title: 'Gründung der Volksrepublik China', era: '20jh', description: 'Mao Zedong ruft die Volksrepublik aus.' },
+    { year: 1953, title: 'Tod Stalins', era: '20jh', description: 'Ende der stalinistischen Ära in der Sowjetunion.' },
+    { year: 1958, title: 'Großer Sprung nach vorn', era: '20jh', description: 'Maos Industrialisierungskampagne verursacht Hungersnot.' },
+    { year: 1966, title: 'Kulturrevolution beginnt', era: '20jh', description: 'Mao startet die Kulturrevolution mit den Roten Garden.' },
+    { year: 1976, title: 'Tod Maos', era: '20jh', description: 'Ende der Mao-Ära, Beginn der Reformen unter Deng Xiaoping.' },
+    { year: 1985, title: 'Gorbatschow kommt an die Macht', era: '20jh', description: 'Beginn von Glasnost und Perestroika.' },
+    { year: 1989, title: 'Tiananmen-Massaker', era: '20jh', description: 'Gewaltsame Niederschlagung der Demokratiebewegung in Peking.' },
+    { year: 1991, title: 'Auflösung der Sowjetunion', era: '20jh', description: 'Das Ende der UdSSR und des Kalten Krieges.' },
+
+    // Europäische Integration
+    { year: 1951, title: 'Gründung der Montanunion (EGKS)', era: '20jh', description: 'Erster Schritt zur europäischen Integration.' },
+    { year: 1957, title: 'Römische Verträge', era: '20jh', description: 'Gründung der EWG - Vorläufer der EU.' },
+    { year: 1993, title: 'Vertrag von Maastricht', era: '20jh', description: 'Die Europäische Union entsteht.' },
+    { year: 2002, title: 'Einführung des Euro', era: '20jh', description: 'Die gemeinsame Währung wird Bargeld.' }
 ];
 
 // ===== QUIZ FRAGEN =====
@@ -840,74 +900,6 @@ const QUIZ_TOPICS = [
         ]
     },
     {
-        id: 'mittelalter',
-        name: 'Mittelalter',
-        icon: '🏰',
-        questions: [
-            {
-                question: 'Wann wurde Karl der Große zum Kaiser gekrönt?',
-                options: ['768', '800', '843', '962'],
-                correct: 1,
-                explanation: 'Karl der Große wurde am 25. Dezember 800 in Rom zum Kaiser gekrönt.'
-            },
-            {
-                question: 'Was war die Ständegesellschaft?',
-                options: ['Eine demokratische Ordnung', 'Eine Gliederung in Klerus, Adel, Bauern', 'Eine Wirtschaftsform', 'Eine Regierungsform'],
-                correct: 1,
-                explanation: 'Die mittelalterliche Gesellschaft war in drei Stände gegliedert: Klerus, Adel und den Rest.'
-            },
-            {
-                question: 'Was waren die Kreuzzüge?',
-                options: ['Handelsrouten', 'Militärische Unternehmungen nach Jerusalem', 'Pilgerreisen', 'Wissenschaftliche Expeditionen'],
-                correct: 1,
-                explanation: 'Die Kreuzzüge waren militärische Unternehmungen zur Eroberung des Heiligen Landes.'
-            },
-            {
-                question: 'Was war die Pest (Schwarzer Tod)?',
-                options: ['Eine Hungersnot', 'Eine Seuche die 1/3 Europas tötete', 'Ein Krieg', 'Eine Naturkatastrophe'],
-                correct: 1,
-                explanation: 'Die Pest tötete zwischen 1347-1353 etwa ein Drittel der europäischen Bevölkerung.'
-            },
-            {
-                question: 'Was bedeutet "Lehnswesen"?',
-                options: ['Ein Kreditsystem', 'Landvergabe gegen Dienste', 'Ein Handelssystem', 'Eine Zunftordnung'],
-                correct: 1,
-                explanation: 'Im Lehnswesen vergab der König Land an Vasallen, die dafür Kriegsdienste leisteten.'
-            }
-        ]
-    },
-    {
-        id: 'reformation',
-        name: 'Reformation',
-        icon: '⛪',
-        questions: [
-            {
-                question: 'Wann veröffentlichte Luther seine 95 Thesen?',
-                options: ['1517', '1521', '1530', '1555'],
-                correct: 0,
-                explanation: 'Am 31. Oktober 1517 soll Luther seine Thesen an die Schlosskirche zu Wittenberg geschlagen haben.'
-            },
-            {
-                question: 'Was war der Ablasshandel?',
-                options: ['Handel mit Reliquien', 'Verkauf von Sündenvergebung', 'Handel mit Bibeln', 'Verkauf von Kirchenämtern'],
-                correct: 1,
-                explanation: 'Beim Ablasshandel verkaufte die Kirche die Vergebung von Sünden gegen Geld.'
-            },
-            {
-                question: 'Was geschah auf dem Reichstag zu Worms 1521?',
-                options: ['Luther wurde hingerichtet', 'Luther widerrief', 'Luther verweigerte den Widerruf', 'Die Reformation wurde beendet'],
-                correct: 2,
-                explanation: 'Luther weigerte sich, seine Lehren zu widerrufen: "Hier stehe ich, ich kann nicht anders."'
-            },
-            {
-                question: 'Was besagte der Augsburger Religionsfrieden 1555?',
-                options: ['Verbot der Reformation', 'Cuius regio, eius religio', 'Einheit der Kirche', 'Verbot des Ablasshandels'],
-                correct: 1,
-                explanation: '"Cuius regio, eius religio" - Wessen Gebiet, dessen Religion. Landesherren bestimmten die Konfession.'
-            }
-        ]
-    },
-    {
         id: 'industrialisierung',
         name: 'Industrialisierung',
         icon: '🏭',
@@ -975,40 +967,424 @@ const QUIZ_TOPICS = [
             }
         ]
     },
+    // ===== KLASSE 8 THEMEN =====
     {
-        id: 'antike',
-        name: 'Antike',
-        icon: '🏛️',
+        id: 'wiener-kongress',
+        name: 'Wiener Kongress',
+        icon: '👑',
+        grade: 8,
         questions: [
             {
-                question: 'Wann wurde die Demokratie in Athen eingeführt?',
-                options: ['um 800 v. Chr.', 'um 500 v. Chr.', 'um 200 v. Chr.', 'um 100 n. Chr.'],
+                question: 'Wann fand der Wiener Kongress statt?',
+                options: ['1804-1805', '1814-1815', '1848-1849', '1871'],
                 correct: 1,
-                explanation: 'Die attische Demokratie entstand um 500 v. Chr. unter Kleisthenes.'
+                explanation: 'Der Wiener Kongress tagte von September 1814 bis Juni 1815 und ordnete Europa nach Napoleon neu.'
             },
             {
-                question: 'Wer war Alexander der Große?',
-                options: ['Ein römischer Kaiser', 'Ein makedonischer König und Eroberer', 'Ein griechischer Philosoph', 'Ein ägyptischer Pharao'],
-                correct: 1,
-                explanation: 'Alexander der Große (356-323 v. Chr.) eroberte ein Weltreich von Griechenland bis Indien.'
+                question: 'Wer war der führende Politiker Österreichs auf dem Wiener Kongress?',
+                options: ['Napoleon', 'Bismarck', 'Metternich', 'Talleyrand'],
+                correct: 2,
+                explanation: 'Fürst Metternich war der österreichische Außenminister und Gastgeber des Kongresses.'
             },
             {
-                question: 'Wann endete das Weströmische Reich?',
-                options: ['27 v. Chr.', '117 n. Chr.', '395 n. Chr.', '476 n. Chr.'],
-                correct: 3,
-                explanation: 'Das Weströmische Reich endete 476 n. Chr. mit der Absetzung des letzten Kaisers Romulus Augustulus.'
+                question: 'Was war das Hauptziel des Wiener Kongresses?',
+                options: ['Revolution fördern', 'Restauration der alten Ordnung', 'Nationalstaaten gründen', 'Demokratie einführen'],
+                correct: 1,
+                explanation: 'Das Ziel war die Restauration, also die Wiederherstellung der vorrevolutionären monarchischen Ordnung.'
             },
             {
-                question: 'Was war das Forum Romanum?',
-                options: ['Ein Tempel', 'Das politische Zentrum Roms', 'Ein Amphitheater', 'Ein Palast'],
+                question: 'Was wurde durch den Wiener Kongress gegründet?',
+                options: ['Das Deutsche Kaiserreich', 'Der Deutsche Bund', 'Die EU', 'Die NATO'],
                 correct: 1,
-                explanation: 'Das Forum Romanum war das politische, religiöse und wirtschaftliche Zentrum des antiken Rom.'
+                explanation: 'Der Deutsche Bund war ein loser Zusammenschluss deutscher Staaten unter österreichischer Führung.'
             },
             {
-                question: 'Wer war Julius Caesar?',
-                options: ['Erster römischer Kaiser', 'Römischer Feldherr und Diktator', 'Griechischer Philosoph', 'Ägyptischer König'],
+                question: 'Welches Prinzip war zentral für den Wiener Kongress?',
+                options: ['Volkssouveränität', 'Legitimität', 'Nationalismus', 'Liberalismus'],
                 correct: 1,
-                explanation: 'Julius Caesar war ein römischer Staatsmann und Feldherr, der 44 v. Chr. ermordet wurde.'
+                explanation: 'Das Legitimitätsprinzip bedeutete, dass nur "rechtmäßige" (legitime) Herrscher regieren sollten.'
+            }
+        ]
+    },
+    {
+        id: 'revolution-1848',
+        name: 'Revolution 1848',
+        icon: '⚔️',
+        grade: 8,
+        questions: [
+            {
+                question: 'Wo tagte die erste deutsche Nationalversammlung 1848?',
+                options: ['Berlin', 'Wien', 'Frankfurt (Paulskirche)', 'München'],
+                correct: 2,
+                explanation: 'Die Nationalversammlung tagte in der Frankfurter Paulskirche und erarbeitete eine Verfassung.'
+            },
+            {
+                question: 'Was forderten die Revolutionäre 1848?',
+                options: ['Monarchie stärken', 'Freiheit und nationale Einheit', 'Ständegesellschaft', 'Absolutismus'],
+                correct: 1,
+                explanation: 'Die Hauptforderungen waren Freiheitsrechte (Pressefreiheit, Versammlungsfreiheit) und nationale Einheit.'
+            },
+            {
+                question: 'Warum scheiterte die Revolution 1848?',
+                options: ['Militärische Niederlage', 'König nahm Kaiserkrone nicht an', 'Ausländische Invasion', 'Pest-Epidemie'],
+                correct: 1,
+                explanation: 'Friedrich Wilhelm IV. lehnte die "Krone aus der Gosse" ab, was das Scheitern besiegelte.'
+            },
+            {
+                question: 'Welches Land löste die Revolutionswelle 1848 aus?',
+                options: ['Deutschland', 'Österreich', 'Frankreich', 'Italien'],
+                correct: 2,
+                explanation: 'Die Februarrevolution in Frankreich war der Auslöser für die europaweiten Revolutionen.'
+            },
+            {
+                question: 'Was waren die "Märzforderungen"?',
+                options: ['Höhere Steuern', 'Pressefreiheit, Parlament, Verfassung', 'Krieg gegen Frankreich', 'Abschaffung der Religion'],
+                correct: 1,
+                explanation: 'Die Märzforderungen umfassten Grundrechte, Pressefreiheit, Parlament und eine Verfassung.'
+            }
+        ]
+    },
+    {
+        id: 'imperialismus',
+        name: 'Imperialismus',
+        icon: '🌍',
+        grade: 8,
+        questions: [
+            {
+                question: 'Was versteht man unter Imperialismus?',
+                options: ['Friedliche Zusammenarbeit', 'Streben nach Kolonien und Weltmacht', 'Demokratisierung', 'Industrialisierung'],
+                correct: 1,
+                explanation: 'Imperialismus bezeichnet das Streben von Staaten nach Kolonien, Einflusszonen und Weltmacht.'
+            },
+            {
+                question: 'Wann fand die Berliner Konferenz ("Kongo-Konferenz") statt?',
+                options: ['1871', '1884-1885', '1914', '1919'],
+                correct: 1,
+                explanation: 'Die Berliner Konferenz 1884/85 regelte die Aufteilung Afrikas unter den europäischen Mächten.'
+            },
+            {
+                question: 'Wie nannte man den Konkurrenzkampf der Großmächte um Kolonien in Afrika?',
+                options: ['Kalter Krieg', 'Wettlauf um Afrika', 'Weltkrieg', 'Kreuzzug'],
+                correct: 1,
+                explanation: 'Der "Wettlauf um Afrika" (Scramble for Africa) war die Aufteilung des Kontinents unter europäischen Mächten.'
+            },
+            {
+                question: 'Welche Ideologie rechtfertigte den Imperialismus?',
+                options: ['Sozialismus', 'Sozialdarwinismus', 'Liberalismus', 'Pazifismus'],
+                correct: 1,
+                explanation: 'Der Sozialdarwinismus übertrug Darwins Theorien auf Gesellschaften und rechtfertigte die "Überlegenheit" Europas.'
+            },
+            {
+                question: 'Was war ein "Schutzgebiet"?',
+                options: ['Ein Nationalpark', 'Eine deutsche Kolonie', 'Ein Kriegsgefangenenlager', 'Ein Naturreservat'],
+                correct: 1,
+                explanation: 'Das Deutsche Reich bezeichnete seine Kolonien euphemistisch als "Schutzgebiete".'
+            }
+        ]
+    },
+    // ===== KLASSE 9 THEMEN =====
+    {
+        id: 'holocaust',
+        name: 'Holocaust',
+        icon: '✡️',
+        grade: 9,
+        questions: [
+            {
+                question: 'Was waren die Nürnberger Gesetze?',
+                options: ['Wirtschaftsgesetze', 'Rassengesetze gegen Juden', 'Militärgesetze', 'Schulgesetze'],
+                correct: 1,
+                explanation: 'Die Nürnberger Gesetze von 1935 entzogen Juden ihre Bürgerrechte und verboten "Mischehen".'
+            },
+            {
+                question: 'Wann war die Reichspogromnacht?',
+                options: ['30. Januar 1933', '9. November 1938', '1. September 1939', '20. Juli 1944'],
+                correct: 1,
+                explanation: 'In der Nacht vom 9. auf 10. November 1938 wurden Synagogen zerstört und Juden ermordet und deportiert.'
+            },
+            {
+                question: 'Was war die Wannseekonferenz?',
+                options: ['Friedensverhandlung', 'Planung des Holocaust', 'Wirtschaftskonferenz', 'Militärbesprechung'],
+                correct: 1,
+                explanation: 'Auf der Wannseekonferenz 1942 wurde die systematische Ermordung der europäischen Juden organisiert.'
+            },
+            {
+                question: 'Was bedeutet der Begriff "Shoah"?',
+                options: ['Krieg', 'Vernichtung/Katastrophe', 'Frieden', 'Revolution'],
+                correct: 1,
+                explanation: 'Shoah (hebräisch für "Katastrophe") ist die jüdische Bezeichnung für den Holocaust.'
+            },
+            {
+                question: 'Wie viele Juden wurden im Holocaust ermordet?',
+                options: ['Etwa 1 Million', 'Etwa 3 Millionen', 'Etwa 6 Millionen', 'Etwa 10 Millionen'],
+                correct: 2,
+                explanation: 'Etwa 6 Millionen Juden wurden während des Holocaust systematisch ermordet.'
+            }
+        ]
+    },
+    {
+        id: 'brd-ddr',
+        name: 'BRD und DDR',
+        icon: '🇩🇪',
+        grade: 9,
+        questions: [
+            {
+                question: 'Wann wurden BRD und DDR gegründet?',
+                options: ['1945', '1949', '1953', '1961'],
+                correct: 1,
+                explanation: 'Die BRD wurde am 23. Mai 1949 gegründet, die DDR am 7. Oktober 1949.'
+            },
+            {
+                question: 'Was war die Stasi?',
+                options: ['Eine Partei', 'Der Geheimdienst der DDR', 'Eine Zeitung', 'Eine Gewerkschaft'],
+                correct: 1,
+                explanation: 'Die Stasi (Staatssicherheit) war der Geheimdienst der DDR, der die Bevölkerung überwachte.'
+            },
+            {
+                question: 'Was geschah am 17. Juni 1953?',
+                options: ['Mauerfall', 'Volksaufstand in der DDR', 'Gründung der BRD', 'Wiedervereinigung'],
+                correct: 1,
+                explanation: 'Am 17. Juni 1953 kam es zu einem Volksaufstand in der DDR, der von sowjetischen Truppen niedergeschlagen wurde.'
+            },
+            {
+                question: 'Was war die "Hallstein-Doktrin"?',
+                options: ['Wirtschaftsplan', 'Keine diplomatischen Beziehungen zu DDR-Anerkennern', 'Militärstrategie', 'Bildungsreform'],
+                correct: 1,
+                explanation: 'Die Hallstein-Doktrin drohte Staaten, die die DDR anerkannten, mit dem Abbruch diplomatischer Beziehungen.'
+            },
+            {
+                question: 'Was war die "Soziale Marktwirtschaft"?',
+                options: ['Planwirtschaft', 'Wirtschaftsordnung der BRD', 'Kommunismus', 'Feudalismus'],
+                correct: 1,
+                explanation: 'Die Soziale Marktwirtschaft kombinierte freien Markt mit sozialer Absicherung und prägte die BRD.'
+            }
+        ]
+    },
+    {
+        id: 'zweiter-weltkrieg',
+        name: 'Zweiter Weltkrieg',
+        icon: '💥',
+        grade: 9,
+        questions: [
+            {
+                question: 'Wann begann der Zweite Weltkrieg?',
+                options: ['1. September 1938', '1. September 1939', '22. Juni 1941', '7. Dezember 1941'],
+                correct: 1,
+                explanation: 'Der Zweite Weltkrieg begann am 1. September 1939 mit dem deutschen Überfall auf Polen.'
+            },
+            {
+                question: 'Was war das "Unternehmen Barbarossa"?',
+                options: ['Invasion Frankreichs', 'Angriff auf die Sowjetunion', 'Luftschlacht um England', 'Landung in der Normandie'],
+                correct: 1,
+                explanation: 'Unternehmen Barbarossa war der deutsche Angriff auf die Sowjetunion am 22. Juni 1941.'
+            },
+            {
+                question: 'Was war der D-Day?',
+                options: ['Kriegsbeginn', 'Kapitulation Deutschlands', 'Landung der Alliierten in der Normandie', 'Atombombenabwurf'],
+                correct: 2,
+                explanation: 'Am D-Day (6. Juni 1944) landeten die Alliierten in der Normandie und eröffneten die Westfront.'
+            },
+            {
+                question: 'Wann endete der Zweite Weltkrieg in Europa?',
+                options: ['30. April 1945', '8. Mai 1945', '2. September 1945', '9. November 1945'],
+                correct: 1,
+                explanation: 'Am 8. Mai 1945 kapitulierte Deutschland bedingungslos. Dieser Tag ist als "Tag der Befreiung" bekannt.'
+            },
+            {
+                question: 'Was war der "Totale Krieg"?',
+                options: ['Nur Soldaten kämpfen', 'Mobilisierung aller Ressourcen für den Krieg', 'Kurzer Krieg', 'Defensivkrieg'],
+                correct: 1,
+                explanation: 'Der Totale Krieg bedeutete die vollständige Mobilisierung aller Ressourcen und der Zivilbevölkerung.'
+            }
+        ]
+    },
+    // ===== KLASSE 10 THEMEN =====
+    {
+        id: 'russland-imperium',
+        name: 'Russland - Imperium im Wandel',
+        icon: '🇷🇺',
+        grade: 10,
+        questions: [
+            {
+                question: 'Wann fand die Oktoberrevolution statt?',
+                options: ['Februar 1917', 'Oktober/November 1917', '1918', '1922'],
+                correct: 1,
+                explanation: 'Die Oktoberrevolution fand im November 1917 (nach altem russischen Kalender: Oktober) statt.'
+            },
+            {
+                question: 'Wer führte die Bolschewiki?',
+                options: ['Stalin', 'Trotzki', 'Lenin', 'Zar Nikolaus II.'],
+                correct: 2,
+                explanation: 'Wladimir Lenin führte die Bolschewiki und wurde erster Regierungschef Sowjetrusslands.'
+            },
+            {
+                question: 'Was war der Stalinismus?',
+                options: ['Demokratie', 'Totalitäre Diktatur mit Personenkult', 'Monarchie', 'Anarchie'],
+                correct: 1,
+                explanation: 'Der Stalinismus war eine totalitäre Herrschaftsform mit Terror, Personenkult und Zwangskollektivierung.'
+            },
+            {
+                question: 'Was war der "Große Vaterländische Krieg"?',
+                options: ['Erster Weltkrieg', 'Bürgerkrieg', 'Sowjetischer Name für den Krieg gegen NS-Deutschland', 'Afghanistankrieg'],
+                correct: 2,
+                explanation: 'So nannten die Sowjets den Kampf gegen NS-Deutschland (1941-1945).'
+            },
+            {
+                question: 'Was versteht man unter "Glasnost"?',
+                options: ['Planwirtschaft', 'Offenheit/Transparenz unter Gorbatschow', 'Geheimpolizei', 'Raumfahrtprogramm'],
+                correct: 1,
+                explanation: 'Glasnost (Offenheit) war eine Reformpolitik Gorbatschows in den 1980er Jahren.'
+            }
+        ]
+    },
+    {
+        id: 'china-imperium',
+        name: 'China - Imperium im Wandel',
+        icon: '🇨🇳',
+        grade: 10,
+        questions: [
+            {
+                question: 'Was war der Opiumkrieg?',
+                options: ['Bürgerkrieg', 'Krieg zwischen China und Großbritannien', 'Religionskrieg', 'Handelskrieg mit Japan'],
+                correct: 1,
+                explanation: 'Die Opiumkriege (1839-1842, 1856-1860) führte Großbritannien gegen China wegen des Opiumhandels.'
+            },
+            {
+                question: 'Wer war Mao Zedong?',
+                options: ['Letzter Kaiser', 'Gründer der Volksrepublik China', 'Taiwanesischer Präsident', 'Japanischer General'],
+                correct: 1,
+                explanation: 'Mao Zedong gründete 1949 die Volksrepublik China und war bis 1976 ihr Führer.'
+            },
+            {
+                question: 'Was war die Kulturrevolution?',
+                options: ['Kunstbewegung', 'Politische Kampagne Maos gegen "Klassenfeinde"', 'Bildungsreform', 'Wirtschaftsprogramm'],
+                correct: 1,
+                explanation: 'Die Kulturrevolution (1966-1976) war eine politische Kampagne mit Massenverfolgungen.'
+            },
+            {
+                question: 'Was war der "Große Sprung nach vorn"?',
+                options: ['Raumfahrtprogramm', 'Gescheiterte Industrialisierungskampagne', 'Demokratisierung', 'Militäroffensive'],
+                correct: 1,
+                explanation: 'Der "Große Sprung nach vorn" (1958-1961) war eine gescheiterte Kampagne, die Millionen Hungertote forderte.'
+            },
+            {
+                question: 'Was geschah 1989 auf dem Tiananmen-Platz?',
+                options: ['Olympische Spiele', 'Niederschlagung der Demokratiebewegung', 'Wirtschaftsreform', 'Kaiserkrönung'],
+                correct: 1,
+                explanation: 'Am 4. Juni 1989 wurde die Demokratiebewegung auf dem Tiananmen-Platz gewaltsam niedergeschlagen.'
+            }
+        ]
+    },
+    {
+        id: 'osmanisches-reich-tuerkei',
+        name: 'Osmanisches Reich & Türkei',
+        icon: '🇹🇷',
+        grade: 10,
+        questions: [
+            {
+                question: 'Wann eroberten die Osmanen Konstantinopel?',
+                options: ['1299', '1453', '1683', '1923'],
+                correct: 1,
+                explanation: 'Die Osmanen unter Mehmed II. eroberten Konstantinopel 1453 und beendeten das Byzantinische Reich.'
+            },
+            {
+                question: 'Was bedeutet "Laizismus" in der Türkei?',
+                options: ['Islamische Staatsreligion', 'Trennung von Staat und Religion', 'Theokratie', 'Monarchie'],
+                correct: 1,
+                explanation: 'Laizismus bedeutet die strikte Trennung von Staat und Religion, eingeführt von Atatürk.'
+            },
+            {
+                question: 'Wer gründete die moderne Türkei?',
+                options: ['Sultan Mehmed', 'Enver Pascha', 'Mustafa Kemal Atatürk', 'Erdoğan'],
+                correct: 2,
+                explanation: 'Mustafa Kemal Atatürk gründete 1923 die Republik Türkei und führte weitreichende Reformen durch.'
+            },
+            {
+                question: 'Was waren die "Jungtürken"?',
+                options: ['Kinderarmee', 'Reformbewegung im Osmanischen Reich', 'Religiöse Sekte', 'Handelsgesellschaft'],
+                correct: 1,
+                explanation: 'Die Jungtürken waren eine politische Bewegung, die das Osmanische Reich modernisieren wollte.'
+            },
+            {
+                question: 'Wann endete das Osmanische Reich?',
+                options: ['1918', '1922/1923', '1945', '1991'],
+                correct: 1,
+                explanation: 'Das Sultanat wurde 1922 abgeschafft, 1923 wurde die Republik Türkei ausgerufen.'
+            }
+        ]
+    },
+    {
+        id: 'europaeische-union',
+        name: 'Europäische Union',
+        icon: '🇪🇺',
+        grade: 10,
+        questions: [
+            {
+                question: 'Was war die Montanunion (EGKS)?',
+                options: ['Militärbündnis', 'Wirtschaftsgemeinschaft für Kohle und Stahl', 'Umweltorganisation', 'Kulturprogramm'],
+                correct: 1,
+                explanation: 'Die EGKS (1951) war der erste Schritt zur europäischen Integration durch gemeinsame Verwaltung von Kohle und Stahl.'
+            },
+            {
+                question: 'Wann wurden die Römischen Verträge unterzeichnet?',
+                options: ['1945', '1951', '1957', '1992'],
+                correct: 2,
+                explanation: 'Die Römischen Verträge von 1957 gründeten die EWG und EURATOM.'
+            },
+            {
+                question: 'Wann wurde aus der EG die EU?',
+                options: ['1957', '1979', '1993 (Vertrag von Maastricht)', '2002'],
+                correct: 2,
+                explanation: 'Mit dem Vertrag von Maastricht 1993 wurde die Europäische Union gegründet.'
+            },
+            {
+                question: 'Was ist das Schengen-Abkommen?',
+                options: ['Militärpakt', 'Abschaffung der Grenzkontrollen', 'Handelsabkommen', 'Währungsunion'],
+                correct: 1,
+                explanation: 'Das Schengen-Abkommen ermöglicht freies Reisen ohne Grenzkontrollen innerhalb der Mitgliedsstaaten.'
+            },
+            {
+                question: 'Welche Werte sind Grundlage der EU?',
+                options: ['Nur Wirtschaftsinteressen', 'Menschenwürde, Freiheit, Demokratie, Rechtsstaatlichkeit', 'Militärische Stärke', 'Religiöse Einheit'],
+                correct: 1,
+                explanation: 'Die EU basiert auf Werten wie Menschenwürde, Freiheit, Demokratie, Gleichheit und Rechtsstaatlichkeit.'
+            }
+        ]
+    },
+    {
+        id: 'marxismus-kommunismus',
+        name: 'Marxismus & Kommunismus',
+        icon: '☭',
+        grade: 10,
+        questions: [
+            {
+                question: 'Wer schrieb das "Kommunistische Manifest"?',
+                options: ['Lenin und Stalin', 'Marx und Engels', 'Mao und Ho Chi Minh', 'Trotzki und Luxemburg'],
+                correct: 1,
+                explanation: 'Karl Marx und Friedrich Engels verfassten 1848 das Kommunistische Manifest.'
+            },
+            {
+                question: 'Was ist der "Klassenkampf"?',
+                options: ['Schulwettbewerb', 'Konflikt zwischen Bourgeoisie und Proletariat', 'Sportereignis', 'Religionskrieg'],
+                correct: 1,
+                explanation: 'Nach Marx ist die Geschichte ein Kampf zwischen besitzender Klasse (Bourgeoisie) und Arbeiterklasse (Proletariat).'
+            },
+            {
+                question: 'Was bedeutet "Diktatur des Proletariats"?',
+                options: ['Demokratie', 'Herrschaft der Arbeiterklasse als Übergangsstadium', 'Monarchie', 'Anarchie'],
+                correct: 1,
+                explanation: 'Die Diktatur des Proletariats sollte nach Marx die Übergangsphase zum Kommunismus sein.'
+            },
+            {
+                question: 'Was ist "Historischer Materialismus"?',
+                options: ['Archäologie', 'Geschichtstheorie basierend auf wirtschaftlichen Verhältnissen', 'Kunstrichtung', 'Religionsphilosophie'],
+                correct: 1,
+                explanation: 'Der Historische Materialismus erklärt Geschichte durch die Entwicklung der Produktionsverhältnisse.'
+            },
+            {
+                question: 'Was war die Planwirtschaft?',
+                options: ['Freie Marktwirtschaft', 'Staatlich gelenkte Wirtschaft', 'Tauschwirtschaft', 'Feudalwirtschaft'],
+                correct: 1,
+                explanation: 'In der Planwirtschaft plant der Staat Produktion und Verteilung aller Güter zentral.'
             }
         ]
     }
@@ -1016,21 +1392,19 @@ const QUIZ_TOPICS = [
 
 // ===== FUN FACTS =====
 const FUN_FACTS = [
-    'Die Pyramiden von Gizeh waren über 3.800 Jahre lang die höchsten Bauwerke der Welt!',
-    'Kleopatra lebte näher an der Mondlandung als am Bau der Pyramiden.',
     'Die kürzeste Kriegserklärung dauerte nur 38 Minuten (Großbritannien vs. Sansibar, 1896).',
     'Napoleon war nicht klein! Mit 1,68m war er für seine Zeit durchschnittlich groß.',
     'Die Chinesische Mauer ist vom Mond aus NICHT sichtbar - das ist ein Mythos.',
-    'Im alten Rom wurde Urin zum Wäschewaschen und Zähneputzen verwendet.',
     'Die Wikinger nannten Amerika "Vinland" und erreichten es 500 Jahre vor Kolumbus.',
-    'Im Mittelalter glaubte man, Tomaten seien giftig.',
     'Der Hundertjährige Krieg dauerte eigentlich 116 Jahre (1337-1453).',
-    'Cäsar wurde nicht am 15. März geboren - er wurde an diesem Tag ermordet.',
     'Die erste U-Bahn der Welt wurde 1863 in London eröffnet.',
-    'Das Römische Reich existierte länger als die USA bisher.',
-    'Im alten Ägypten wurden Katzen so verehrt, dass bei deren Tod die Familie trauerte.',
     'Die Azteken nutzten Kakaobohnen als Währung.',
-    'Der Eiffelturm sollte ursprünglich nach 20 Jahren abgerissen werden.'
+    'Der Eiffelturm sollte ursprünglich nach 20 Jahren abgerissen werden.',
+    'Albert Einstein konnte bis zum Alter von 3 Jahren nicht sprechen.',
+    'Die Berliner Mauer war 155 km lang.',
+    'Der Erste Weltkrieg hatte über 17 Millionen Tote.',
+    'Die Sowjetunion existierte nur 69 Jahre (1922-1991).',
+    'Das Deutsche Kaiserreich bestand nur 47 Jahre (1871-1918).'
 ];
 
 // ===== RÄNGE =====
@@ -1095,13 +1469,6 @@ const OPERATOR_EXERCISES = {
             expectedPoints: 5,
             sampleAnswer: 'Die Märzrevolution begann im März 1848 mit Unruhen in verschiedenen deutschen Staaten. Inspiriert von der Februarrevolution in Frankreich forderten Bürger politische Reformen, Pressefreiheit und nationale Einheit. In Berlin kam es zu Barrikadenkämpfen, woraufhin Friedrich Wilhelm IV. Zugeständnisse machte. Die Nationalversammlung trat in der Frankfurter Paulskirche zusammen, um eine Verfassung auszuarbeiten.',
             tips: 'Strukturiere chronologisch: Beginn, Verlauf, wichtige Stationen.'
-        },
-        {
-            id: 'beschreiben-2',
-            question: 'Beschreiben Sie das Leben in einem mittelalterlichen Dorf.',
-            expectedPoints: 5,
-            sampleAnswer: 'Das Leben im mittelalterlichen Dorf war geprägt von harter landwirtschaftlicher Arbeit. Die Bauern lebten in einfachen Häusern und arbeiteten auf den Feldern des Grundherrn. Sie mussten Abgaben leisten und Frondienste verrichten. Die Dorfgemeinschaft war eng mit der Kirche verbunden, Feste wurden gemeinsam gefeiert. Das Leben folgte dem Rhythmus der Jahreszeiten.',
-            tips: 'Beschreibe verschiedene Aspekte: Wohnen, Arbeit, Gesellschaft, Religion.'
         }
     ],
     analysieren: [
@@ -1190,8 +1557,6 @@ const SOUNDS = {
 
 // ===== BIBLIOTHEK KATEGORIEN =====
 const LIBRARY_CATEGORIES = [
-    { id: 'antike', name: 'Antike', icon: '🏛️', color: '#e8d5b7' },
-    { id: 'mittelalter', name: 'Mittelalter', icon: '🏰', color: '#8b4513' },
     { id: 'fruehe-neuzeit', name: 'Frühe Neuzeit', icon: '⚓', color: '#daa520' },
     { id: 'neuzeit', name: '19. Jahrhundert', icon: '🏭', color: '#4a4a4a' },
     { id: 'zeitgeschichte', name: '20. Jahrhundert', icon: '🌍', color: '#2c3e50' },
@@ -1287,6 +1652,169 @@ Nach der Novemberrevolution 1918 wurde am 9. November die Republik ausgerufen.
         readTime: 5
     }
 ];
+
+// ===== GESCHICHTSLEXIKON =====
+const HISTORY_LEXICON = {
+    // Klasse 8 Begriffe
+    'absolutismus': {
+        term: 'Absolutismus',
+        definition: 'Regierungsform, in der der Herrscher (meist König) alle Macht in sich vereint ohne Kontrolle durch Parlament oder Verfassung.',
+        example: 'Ludwig XIV. von Frankreich: "Der Staat bin ich!"',
+        grade: 8
+    },
+    'aufklaerung': {
+        term: 'Aufklärung',
+        definition: 'Geistige Bewegung des 18. Jahrhunderts, die Vernunft und Wissenschaft über Tradition und Aberglauben stellte.',
+        example: 'Kant: "Habe Mut, dich deines eigenen Verstandes zu bedienen!"',
+        grade: 8
+    },
+    'restauration': {
+        term: 'Restauration',
+        definition: 'Wiederherstellung der politischen Ordnung vor der Französischen Revolution nach 1815.',
+        example: 'Der Wiener Kongress stellte die alten Monarchien wieder her.',
+        grade: 8
+    },
+    'nationalismus': {
+        term: 'Nationalismus',
+        definition: 'Ideologie, die die eigene Nation über andere stellt und nationale Einheit und Unabhängigkeit fordert.',
+        example: 'Die deutsche Einigungsbewegung im 19. Jahrhundert.',
+        grade: 8
+    },
+    'liberalismus': {
+        term: 'Liberalismus',
+        definition: 'Politische Weltanschauung, die individuelle Freiheit, Rechtsstaatlichkeit und freie Marktwirtschaft betont.',
+        example: 'Forderungen der Revolution 1848 nach Grundrechten.',
+        grade: 8
+    },
+    'industrialisierung': {
+        term: 'Industrialisierung',
+        definition: 'Übergang von der Agrar- zur Industriegesellschaft durch Mechanisierung und Fabrikproduktion.',
+        example: 'Die Erfindung der Dampfmaschine durch James Watt.',
+        grade: 8
+    },
+    'soziale-frage': {
+        term: 'Soziale Frage',
+        definition: 'Bezeichnung für die sozialen Probleme der Arbeiterschaft während der Industrialisierung.',
+        example: 'Kinderarbeit, niedrige Löhne, schlechte Wohnverhältnisse.',
+        grade: 8
+    },
+    'imperialismus': {
+        term: 'Imperialismus',
+        definition: 'Streben von Staaten nach Kolonien, Einflusszonen und Weltmacht im späten 19. Jahrhundert.',
+        example: 'Der "Wettlauf um Afrika" nach der Berliner Konferenz 1884/85.',
+        grade: 8
+    },
+    // Klasse 9 Begriffe
+    'antisemitismus': {
+        term: 'Antisemitismus',
+        definition: 'Feindschaft und Hass gegen Juden als religiöse oder angebliche "rassische" Gruppe.',
+        example: 'Die Nürnberger Rassengesetze von 1935.',
+        grade: 9
+    },
+    'gleichschaltung': {
+        term: 'Gleichschaltung',
+        definition: 'Unterordnung aller gesellschaftlichen Bereiche unter die NS-Ideologie nach 1933.',
+        example: 'Auflösung von Parteien, Gewerkschaften, Vereinen.',
+        grade: 9
+    },
+    'holocaust': {
+        term: 'Holocaust/Shoah',
+        definition: 'Systematische Ermordung von etwa 6 Millionen Juden durch das NS-Regime.',
+        example: 'Vernichtungslager Auschwitz-Birkenau.',
+        grade: 9
+    },
+    'kalter-krieg': {
+        term: 'Kalter Krieg',
+        definition: 'Konflikt zwischen USA und UdSSR (1947-1991) ohne direkte militärische Auseinandersetzung.',
+        example: 'Berliner Mauer, Kubakrise, Wettrüsten.',
+        grade: 9
+    },
+    'planwirtschaft': {
+        term: 'Planwirtschaft',
+        definition: 'Wirtschaftssystem, in dem der Staat Produktion und Verteilung aller Güter zentral plant.',
+        example: 'Die Wirtschaft der DDR und der Sowjetunion.',
+        grade: 9
+    },
+    'propaganda': {
+        term: 'Propaganda',
+        definition: 'Gezielte Beeinflussung der öffentlichen Meinung durch einseitige Information.',
+        example: 'NS-Propaganda durch das Reichspropagandaministerium unter Goebbels.',
+        grade: 9
+    },
+    // Klasse 10 Begriffe
+    'bolschewiki': {
+        term: 'Bolschewiki',
+        definition: 'Radikale Fraktion der russischen Sozialdemokraten unter Lenin, die 1917 die Macht übernahm.',
+        example: 'Die Oktoberrevolution 1917.',
+        grade: 10
+    },
+    'stalinismus': {
+        term: 'Stalinismus',
+        definition: 'Totalitäre Herrschaftsform in der Sowjetunion unter Stalin mit Terror, Personenkult und Zwangskollektivierung.',
+        example: 'Der Große Terror 1937/38 mit Millionen Opfern.',
+        grade: 10
+    },
+    'marxismus': {
+        term: 'Marxismus',
+        definition: 'Von Karl Marx begründete Gesellschaftstheorie, die Geschichte als Klassenkampf erklärt.',
+        example: 'Das Kommunistische Manifest von 1848.',
+        grade: 10
+    },
+    'maoismus': {
+        term: 'Maoismus',
+        definition: 'Chinesische Variante des Kommunismus unter Mao Zedong mit Betonung der Bauernschaft.',
+        example: 'Die Kulturrevolution in China (1966-1976).',
+        grade: 10
+    },
+    'laizismus': {
+        term: 'Laizismus',
+        definition: 'Strikte Trennung von Staat und Religion.',
+        example: 'Die Reformen Atatürks in der Türkei ab 1923.',
+        grade: 10
+    },
+    'glasnost': {
+        term: 'Glasnost',
+        definition: 'Politik der Offenheit und Transparenz unter Gorbatschow in der Sowjetunion.',
+        example: 'Lockerung der Zensur in den 1980er Jahren.',
+        grade: 10
+    },
+    'perestroika': {
+        term: 'Perestroika',
+        definition: 'Umgestaltung und Reform des sowjetischen Systems unter Gorbatschow.',
+        example: 'Wirtschaftsreformen und begrenzte Marktöffnung.',
+        grade: 10
+    },
+    'europaeische-integration': {
+        term: 'Europäische Integration',
+        definition: 'Prozess der politischen und wirtschaftlichen Vereinigung europäischer Staaten seit 1951.',
+        example: 'Von der Montanunion zur Europäischen Union.',
+        grade: 10
+    },
+    'nato': {
+        term: 'NATO',
+        definition: 'North Atlantic Treaty Organization - westliches Verteidigungsbündnis seit 1949.',
+        example: 'Gegenpol zum Warschauer Pakt während des Kalten Krieges.',
+        grade: 10
+    },
+    'warschauer-pakt': {
+        term: 'Warschauer Pakt',
+        definition: 'Militärbündnis der sozialistischen Staaten Osteuropas unter sowjetischer Führung (1955-1991).',
+        example: 'Niederschlagung des Prager Frühlings 1968.',
+        grade: 10
+    },
+    'voelkermord': {
+        term: 'Völkermord (Genozid)',
+        definition: 'Systematische Zerstörung einer nationalen, ethnischen, rassischen oder religiösen Gruppe.',
+        example: 'Holocaust, Völkermord an den Armeniern 1915.',
+        grade: 10
+    },
+    'ost-west-konflikt': {
+        term: 'Ost-West-Konflikt',
+        definition: 'Systemkonflikt zwischen kapitalistischem Westen und kommunistischem Osten nach 1945.',
+        example: 'Die Teilung Deutschlands in BRD und DDR.',
+        grade: 10
+    }
+};
 
 // ===== TÄGLICHE CHALLENGES =====
 const DAILY_CHALLENGES = [

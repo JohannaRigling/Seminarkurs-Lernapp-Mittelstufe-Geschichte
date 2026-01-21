@@ -7,7 +7,9 @@ let currentAIMode = 'tutor';
 const AI_MODES = {
     tutor: {
         name: 'Tutor',
-        systemPrompt: `Du bist ein freundlicher und geduldiger Geschichtslehrer für Schüler der Mittelstufe (Klasse 7-10).
+        systemPrompt: `Du bist ein freundlicher und geduldiger Geschichtslehrer für Schüler der Klassen 8-10.
+        Deine Themen basieren auf dem Schulbuch und umfassen: Französische Revolution, Industrialisierung, Imperialismus,
+        Erster Weltkrieg, Weimarer Republik, Nationalsozialismus, BRD/DDR, Russland, China, Osmanisches Reich/Türkei und Europäische Union.
         Erkläre Konzepte einfach und verständlich. Nutze Beispiele und Vergleiche aus dem Alltag.
         Ermutige den Schüler und gib konstruktives Feedback. Halte deine Antworten kurz und prägnant (max. 150 Wörter).
         Antworte immer auf Deutsch.`
@@ -427,60 +429,361 @@ Kein direkter Krieg, aber: Wettrüsten, Spionage, Propaganda, Stellvertreterkrie
 🎉 **Ende:** Der friedliche Zusammenbruch des Ostblocks 1989-1991`;
     }
 
-    // Mittelalter
-    if (lowerMessage.includes('mittelalter')) {
-        return `Das **Mittelalter** (ca. 500-1500) - 1000 Jahre europäischer Geschichte
+    // ===== KLASSE 8 THEMEN =====
 
-📅 **Einteilung:**
-• **Frühmittelalter** (500-1000): Völkerwanderung, Karl der Große
-• **Hochmittelalter** (1000-1250): Kreuzzüge, Städtegründungen
-• **Spätmittelalter** (1250-1500): Pest, Reformation beginnt
+    // Wiener Kongress
+    if (lowerMessage.includes('wiener kongress') || lowerMessage.includes('metternich') || lowerMessage.includes('restauration')) {
+        return `Der **Wiener Kongress** (1814-1815) - Europa wird neu geordnet
 
-🏰 **Gesellschaft (Ständeordnung):**
-• 1. Stand: Klerus (Geistliche)
-• 2. Stand: Adel (Ritter, Fürsten)
-• 3. Stand: Bauern und Bürger
+🎭 **Was war das Ziel?**
+Nach der Niederlage Napoleons sollte Europa "restauriert" werden - also die alte Ordnung wiederhergestellt.
 
-⚔️ **Wichtige Ereignisse:**
-• 800: Kaiserkrönung Karls des Großen
-• 1077: Gang nach Canossa
-• 1096-1291: Kreuzzüge
-• 1347-1351: Die Pest tötet 1/3 der Bevölkerung
+👑 **Wichtige Akteure:**
+• **Metternich** (Österreich): Gastgeber und wichtigster Politiker
+• **Zar Alexander I.** (Russland)
+• **Talleyrand** (Frankreich): Geschickter Diplomat des besiegten Landes
+• **Hardenberg** (Preußen)
 
-🏠 **Leben im Mittelalter:**
-• Landwirtschaft prägt das Leben
-• Burgen als Herrschaftszentren
-• Kirche bestimmt das geistige Leben
-• Städte wachsen (Handel, Handwerk)
+⚖️ **Die drei Prinzipien:**
+1. **Legitimität**: Nur "rechtmäßige" Herrscher dürfen regieren
+2. **Restauration**: Wiederherstellung der vorrevolutionären Ordnung
+3. **Gleichgewicht**: Keine Macht soll dominieren
 
-Welcher Aspekt interessiert dich besonders?`;
+📜 **Ergebnisse:**
+• Gründung des **Deutschen Bundes** (loser Staatenbund)
+• Neuordnung der europäischen Grenzen
+• "Heilige Allianz" (Russland, Österreich, Preußen)
+
+⚠️ **Kritik:** Die Ideen von Freiheit und Nationalismus wurden unterdrückt!`;
     }
 
-    // Römisches Reich
-    if (lowerMessage.includes('rom') || lowerMessage.includes('römisch') || lowerMessage.includes('caesar') || lowerMessage.includes('antike')) {
-        return `Das **Römische Reich** - Von der Gründung bis zum Untergang
+    // Revolution 1848
+    if (lowerMessage.includes('1848') || lowerMessage.includes('märzrevolution') || lowerMessage.includes('paulskirche') || lowerMessage.includes('vormärz')) {
+        return `Die **Revolution 1848** - Der Kampf um Freiheit und Einheit
 
-📅 **Geschichte Roms:**
-• **753 v. Chr.**: Legendäre Gründung (Romulus & Remus)
-• **509-27 v. Chr.**: Römische Republik
-• **27 v. Chr. - 476 n. Chr.**: Römisches Kaiserreich
+🔥 **Auslöser:**
+• Februarrevolution in Frankreich (1848)
+• Wirtschaftskrise und Hungersnöte
+• Unterdrückung im "Vormärz" (Zeit vor März 1848)
 
-🏛️ **Wichtige Persönlichkeiten:**
-• **Julius Caesar**: Eroberer Galliens, ermordet 44 v. Chr.
-• **Augustus**: Erster Kaiser, Pax Romana
-• **Nero**: Berüchtigter Kaiser, Brand Roms
-• **Konstantin**: Machte Christentum zur Staatsreligion
+✊ **Märzforderungen:**
+• Pressefreiheit
+• Versammlungsfreiheit
+• Verfassung
+• Deutsches Parlament
 
-⚔️ **Errungenschaften:**
-• Straßenbau und Aquädukte
-• Römisches Recht (Grundlage unserer Gesetze)
-• Latein (Grundlage romanischer Sprachen)
-• Architektur (Kolosseum, Pantheon)
+🏛️ **Frankfurter Nationalversammlung:**
+• Tagte in der **Paulskirche**
+• Erste demokratisch gewählte Versammlung
+• Erarbeitete die "Paulskirchenverfassung"
 
-💫 **Untergang:**
-• 395: Teilung in West- und Ostrom
-• 476: Ende des Weströmischen Reiches
-• Ursachen: Völkerwanderung, innere Krisen, Überdehnung`;
+👑 **Warum scheiterte die Revolution?**
+• Friedrich Wilhelm IV. lehnte die Kaiserkrone ab ("Krone aus der Gosse")
+• Militär blieb den Fürsten treu
+• Spaltung zwischen Liberalen und Demokraten
+
+💡 **Langfristige Folgen:**
+• Grundrechte wurden später aufgegriffen
+• Erfahrung der Demokratiebewegung
+• Vorbild für spätere Verfassungen`;
+    }
+
+    // Imperialismus
+    if (lowerMessage.includes('imperialismus') || lowerMessage.includes('koloni') || lowerMessage.includes('wettlauf um afrika') || lowerMessage.includes('berliner konferenz')) {
+        return `Der **Imperialismus** (ca. 1880-1914) - Europas Griff nach der Welt
+
+🌍 **Was ist Imperialismus?**
+Das Streben von Staaten nach Kolonien, Einflusszonen und Weltmacht.
+
+🏃 **Der "Wettlauf um Afrika":**
+• Europäische Mächte teilen Afrika unter sich auf
+• **Berliner Konferenz 1884/85**: Regeln für die Aufteilung
+• Innerhalb von 30 Jahren wird fast ganz Afrika kolonisiert
+
+🇩🇪 **Deutsche Kolonien ("Schutzgebiete"):**
+• Deutsch-Südwestafrika (heute Namibia)
+• Deutsch-Ostafrika (heute Tansania)
+• Kamerun, Togo
+• Pazifische Inseln
+
+💭 **Rechtfertigung durch:**
+• **Sozialdarwinismus**: "Überlegenheit" der europäischen "Rasse"
+• "Zivilisierungsmission": angebliche Pflicht, "Wilde" zu "erziehen"
+• Wirtschaftliche Interessen: Rohstoffe und Absatzmärkte
+
+⚠️ **Folgen:**
+• Ausbeutung der Kolonien
+• Zerstörung lokaler Kulturen
+• Konflikte zwischen Kolonialmächten
+• Grundlage für den Ersten Weltkrieg`;
+    }
+
+    // Industrialisierung
+    if (lowerMessage.includes('industrialisierung') || lowerMessage.includes('industrielle revolution') || lowerMessage.includes('dampfmaschine') || lowerMessage.includes('fabrik') || lowerMessage.includes('soziale frage')) {
+        return `**Die Industrialisierung** - Der Durchbruch der Moderne
+
+🏭 **Was war die Industrialisierung?**
+Übergang von der Agrargesellschaft zur Industriegesellschaft ab ca. 1750 (England), in Deutschland ab 1830er Jahren.
+
+⚙️ **Technische Neuerungen:**
+• **Dampfmaschine** (James Watt, 1769): Antrieb für Maschinen
+• **Eisenbahn** (ab 1835 in Deutschland): Schneller Transport
+• **Mechanische Webstühle**: Massenproduktion von Textilien
+• **Stahl- und Kohleproduktion**: Grundlage der Industrie
+
+📊 **Wirtschaftliche Veränderungen:**
+• **Kapitalismus** entsteht: Privatbesitz an Produktionsmitteln
+• **Fabriken** ersetzen Handwerk
+• Verstädterung: Menschen ziehen in Städte
+• Neue Berufe: Fabrikarbeiter, Ingenieure
+
+😢 **Die "Soziale Frage":**
+• Arbeiter leben in Armut (Proletariat)
+• 12-16 Stunden Arbeit pro Tag, 6 Tage/Woche
+• Kinderarbeit
+• Keine soziale Absicherung
+• Schlechte Wohnverhältnisse in Mietskasernen
+
+💡 **Lösungsansätze:**
+• **Gewerkschaften**: Arbeiter organisieren sich
+• **Sozialgesetzgebung** (Bismarck ab 1883): Kranken-, Unfall-, Rentenversicherung
+• **Arbeiterbewegung**: SPD, sozialistische Ideen
+• **Kirchen**: Caritative Arbeit
+
+🌍 **Folgen:**
+• Deutschland wird zur Industriemacht
+• Bürgertum gewinnt an Einfluss
+• Lebensstandard steigt langfristig
+• Umweltprobleme (Luftverschmutzung)
+• Grundlage für moderne Gesellschaft`;
+    }
+
+    // ===== KLASSE 9 THEMEN =====
+
+    // Holocaust
+    if (lowerMessage.includes('holocaust') || lowerMessage.includes('shoah') || lowerMessage.includes('judenverfolgung') || lowerMessage.includes('konzentrationslager')) {
+        return `Der **Holocaust** (1933-1945) - Der Völkermord an den europäischen Juden
+
+⚠️ **Was war der Holocaust?**
+Die systematische Ermordung von etwa 6 Millionen Juden durch das NS-Regime.
+
+📅 **Stufen der Verfolgung:**
+1. **1933**: Boykott jüdischer Geschäfte, erste Gesetze
+2. **1935**: Nürnberger Rassengesetze (Entrechtung)
+3. **1938**: Reichspogromnacht (9./10. November)
+4. **1941**: Beginn der systematischen Ermordung
+5. **1942**: Wannseekonferenz - Planung der "Endlösung"
+
+🏭 **Vernichtungslager:**
+• Auschwitz-Birkenau (größtes Lager)
+• Treblinka, Sobibor, Belzec
+• Chelmno, Majdanek
+
+✡️ **"Shoah"** ist die jüdische Bezeichnung (hebräisch: "Katastrophe")
+
+📚 **Warum erinnern?**
+• Aus der Geschichte lernen
+• Mahnung gegen Rassismus und Antisemitismus
+• Verantwortung für die Zukunft
+
+"Wer die Vergangenheit nicht kennt, ist dazu verurteilt, sie zu wiederholen."`;
+    }
+
+    // BRD und DDR
+    if (lowerMessage.includes('brd') || lowerMessage.includes('ddr') || lowerMessage.includes('deutsche teilung') || lowerMessage.includes('stasi')) {
+        return `**BRD und DDR** (1949-1990) - Deutschland geteilt
+
+🇩🇪 **Die Teilung:**
+• **23. Mai 1949**: Gründung der BRD (Bundesrepublik Deutschland)
+• **7. Oktober 1949**: Gründung der DDR (Deutsche Demokratische Republik)
+
+📊 **Unterschiede:**
+
+| | **BRD** | **DDR** |
+|---|---|---|
+| System | Demokratie | SED-Diktatur |
+| Wirtschaft | Soziale Marktwirtschaft | Planwirtschaft |
+| Bündnis | NATO | Warschauer Pakt |
+| Verbündeter | USA | Sowjetunion |
+
+🕵️ **Die Stasi:**
+• Ministerium für Staatssicherheit
+• Überwachte die eigene Bevölkerung
+• 91.000 hauptamtliche + ~180.000 inoffizielle Mitarbeiter
+
+📅 **Wichtige Ereignisse:**
+• **1953**: Volksaufstand in der DDR (niedergeschlagen)
+• **1961**: Bau der Berliner Mauer
+• **1989**: Friedliche Revolution
+• **1990**: Wiedervereinigung (3. Oktober)
+
+Die Teilung dauerte **41 Jahre**!`;
+    }
+
+    // ===== KLASSE 10 THEMEN =====
+
+    // Russland
+    if (lowerMessage.includes('russland') || lowerMessage.includes('sowjetunion') || lowerMessage.includes('lenin') || lowerMessage.includes('stalin') || lowerMessage.includes('bolschewiki')) {
+        return `**Russland - Ein Imperium im Wandel**
+
+👑 **Zarenreich bis 1917:**
+• Autokratie (Alleinherrschaft des Zaren)
+• Rückständige Agrargesellschaft
+• 1861: Abschaffung der Leibeigenschaft
+
+🔴 **Die Revolutionen 1917:**
+• **Februar**: Sturz des Zaren
+• **Oktober/November**: Bolschewiki unter **Lenin** übernehmen die Macht
+
+☭ **Der Marxismus:**
+• Klassenkampf: Bourgeoisie vs. Proletariat
+• Ziel: Kommunistische Gesellschaft ohne Klassen
+• "Diktatur des Proletariats" als Übergangsphase
+
+😨 **Stalinismus (1924-1953):**
+• Totalitäre Diktatur mit Personenkult
+• **Zwangskollektivierung**: Millionen Hungertote
+• **Großer Terror**: Säuberungen, Gulags
+• **Industrialisierung**: "Fünfjahrespläne"
+
+⚔️ **Der "Große Vaterländische Krieg" (1941-1945):**
+• 27 Millionen sowjetische Tote
+• Sieg über NS-Deutschland
+
+🔄 **Ende der UdSSR:**
+• **Gorbatschow**: Glasnost & Perestroika
+• **1991**: Auflösung der Sowjetunion`;
+    }
+
+    // China
+    if (lowerMessage.includes('china') || lowerMessage.includes('mao') || lowerMessage.includes('kulturrevolution') || lowerMessage.includes('opiumkrieg')) {
+        return `**China - Ein Imperium im Wandel**
+
+🏯 **Das alte China:**
+• Jahrtausendealte Kaiserreiche
+• "Reich der Mitte" - sah sich als Zentrum der Welt
+• Isolationspolitik gegenüber dem Westen
+
+💊 **Die Opiumkriege (1839-1860):**
+• Großbritannien erzwingt Öffnung Chinas
+• "Ungleiche Verträge" demütigen China
+• Beginn des "Jahrhunderts der Demütigung"
+
+🔄 **Revolution und Bürgerkrieg:**
+• **1911**: Ende der Kaiserzeit (Xinhai-Revolution)
+• Bürgerkrieg: Nationalisten vs. Kommunisten
+• **1949**: Mao gründet die **Volksrepublik China**
+
+☭ **Unter Mao Zedong (1949-1976):**
+• **Großer Sprung nach vorn** (1958-1961): Gescheiterte Industrialisierung, Millionen Hungertote
+• **Kulturrevolution** (1966-1976): Verfolgung durch Rote Garden
+
+📈 **Nach Mao:**
+• **Deng Xiaoping**: Wirtschaftsreformen
+• **1989**: Tiananmen-Massaker
+• Aufstieg zur Wirtschaftsmacht bei politischer Diktatur`;
+    }
+
+    // Osmanisches Reich und Türkei
+    if (lowerMessage.includes('osmanisch') || lowerMessage.includes('türkei') || lowerMessage.includes('atatürk') || lowerMessage.includes('sultan')) {
+        return `**Osmanisches Reich & Türkei** - Vom Imperium zum Nationalstaat
+
+🌙 **Das Osmanische Reich (1299-1922):**
+• Eines der größten Imperien der Geschichte
+• **1453**: Eroberung Konstantinopels
+• Herrschaft über Südosteuropa, Naher Osten, Nordafrika
+• Kalifat: Sultan als religiöser Führer der Muslime
+
+📉 **Der "kranke Mann am Bosporus":**
+• 19. Jahrhundert: Niedergang und Gebietsverluste
+• Balkanvölker werden unabhängig
+• **Jungtürken**: Reformbewegung ab 1908
+
+⚔️ **Erster Weltkrieg:**
+• Osmanisches Reich kämpft auf Seiten Deutschlands
+• **1915**: Völkermord an den Armeniern
+• 1918: Niederlage und Zusammenbruch
+
+🇹🇷 **Gründung der Republik Türkei (1923):**
+• **Mustafa Kemal Atatürk** als Gründer
+• Radikale Reformen:
+  - **Laizismus**: Trennung von Staat und Religion
+  - Lateinisches Alphabet statt arabischer Schrift
+  - Gleichberechtigung der Frauen
+  - Westliche Kleidung
+
+💡 **Atatürks Motto:** "Frieden im Land, Frieden in der Welt"`;
+    }
+
+    // Europäische Union
+    if (lowerMessage.includes('europäische union') || lowerMessage.includes(' eu ') || lowerMessage.includes('europa') || lowerMessage.includes('maastricht') || lowerMessage.includes('montanunion')) {
+        return `**Die Europäische Union** - Einigung nach Jahrhunderten der Kriege
+
+🕊️ **Idee:**
+Nach zwei Weltkriegen: "Nie wieder Krieg in Europa!"
+
+📅 **Stationen der Integration:**
+• **1951**: Montanunion (EGKS) - Kohle & Stahl gemeinsam verwaltet
+• **1957**: Römische Verträge - EWG gegründet
+• **1993**: Vertrag von Maastricht - EU entsteht
+• **2002**: Euro wird Bargeld
+
+🏛️ **EU-Institutionen:**
+• **Europäisches Parlament** (gewählt von den Bürgern)
+• **Europäische Kommission** (Exekutive)
+• **Europäischer Rat** (Staats- und Regierungschefs)
+• **Europäischer Gerichtshof**
+
+✨ **Errungenschaften:**
+• **Schengen**: Reisen ohne Grenzkontrollen
+• **Erasmus**: Studieren im Ausland
+• **Euro**: Gemeinsame Währung
+• Längste Friedensperiode in Europa
+
+🎯 **Werte der EU:**
+• Menschenwürde
+• Freiheit
+• Demokratie
+• Rechtsstaatlichkeit
+• Menschenrechte
+
+Die EU hat 2012 den **Friedensnobelpreis** erhalten!`;
+    }
+
+    // Marxismus
+    if (lowerMessage.includes('marxismus') || lowerMessage.includes('kommunismus') || lowerMessage.includes('marx') || lowerMessage.includes('klassenkampf') || lowerMessage.includes('proletariat')) {
+        return `**Marxismus & Kommunismus** - Eine Ideologie verändert die Welt
+
+📚 **Die Begründer:**
+• **Karl Marx** (1818-1883) und **Friedrich Engels** (1820-1895)
+• Hauptwerk: "Das Kapital"
+• 1848: "Kommunistisches Manifest"
+
+💡 **Kernideen:**
+
+**1. Historischer Materialismus:**
+Geschichte wird durch wirtschaftliche Verhältnisse bestimmt.
+
+**2. Klassenkampf:**
+• **Bourgeoisie** (Kapitalisten): Besitzen Produktionsmittel
+• **Proletariat** (Arbeiter): Besitzen nur ihre Arbeitskraft
+• Der Konflikt treibt die Geschichte voran
+
+**3. Mehrwerttheorie:**
+Arbeiter produzieren mehr Wert als sie als Lohn erhalten → Ausbeutung
+
+**4. Revolution:**
+Das Proletariat stürzt die Bourgeoisie
+→ "Diktatur des Proletariats"
+→ Klassenlose Gesellschaft (Kommunismus)
+
+🌍 **Umsetzung:**
+• **Sowjetunion** (1917-1991)
+• **China** (ab 1949)
+• **Kuba, Nordkorea, Vietnam...**
+
+⚠️ **Kritik:**
+In der Praxis führten kommunistische Regime oft zu Diktatur, Terror und wirtschaftlichem Versagen.`;
     }
 
     // Grußformeln
@@ -521,8 +824,11 @@ Hast du noch weitere Fragen zur Geschichte? Ich bin hier, um zu helfen!
 • Weimarer Republik
 • Nationalsozialismus
 • Kalter Krieg
-• Mittelalter
-• Antikes Rom
+• BRD/DDR & Wiedervereinigung
+• Industrialisierung & Soziale Frage
+• Imperialismus
+• Russland, China, Türkei
+• Europäische Union
 
 **Tipp:** Nutze die **Quick-Buttons** für schnelle Hilfe!
 
@@ -536,13 +842,15 @@ Was möchtest du lernen?`;
     return `${randomResponse}
 
 Ich kann dir bei vielen Geschichtsthemen helfen:
-• Französische Revolution
-• Weltkriege
-• Weimarer Republik
-• Nationalsozialismus
-• Kalter Krieg
-• Mittelalter
-• Antike
+• Französische Revolution & Napoleon
+• Wiener Kongress & Revolution 1848
+• Industrialisierung & Soziale Frage
+• Imperialismus & Erster Weltkrieg
+• Weimarer Republik & Nationalsozialismus
+• Zweiter Weltkrieg & Holocaust
+• BRD/DDR & Kalter Krieg
+• Russland, China, Osmanisches Reich/Türkei
+• Europäische Union
 
 **Nutze die Quick-Buttons** oben für:
 🐴 Eselsbrücken | 📋 Zusammenfassungen | ❓ Quiz

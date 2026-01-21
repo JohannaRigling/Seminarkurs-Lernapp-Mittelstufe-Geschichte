@@ -70,6 +70,11 @@ function showSection(sectionId) {
                 loadTimeline();
             }
             break;
+        case 'glossary':
+            if (!document.querySelector('.glossary-item')) {
+                initGlossary();
+            }
+            break;
     }
 }
 
@@ -312,12 +317,6 @@ function loadFolders() {
             <span>✅</span> Gelernt ${learnedCount > 0 ? `<span class="folder-count">${learnedCount}</span>` : ''}
         </div>
         <hr style="border-color: var(--border-color); margin: 10px 0;">
-        <div class="folder-item" onclick="openFolder('antike')">
-            <span>🏛️</span> Antike
-        </div>
-        <div class="folder-item" onclick="openFolder('mittelalter')">
-            <span>🏰</span> Mittelalter
-        </div>
         <div class="folder-item" onclick="openFolder('fruehe-neuzeit')">
             <span>⚓</span> Frühe Neuzeit
         </div>
@@ -509,8 +508,6 @@ function getCategoryName(category) {
         if (cat) return cat.name;
     }
     const names = {
-        antike: 'Antike',
-        mittelalter: 'Mittelalter',
         'fruehe-neuzeit': 'Frühe Neuzeit',
         neuzeit: '19. Jahrhundert',
         zeitgeschichte: '20. Jahrhundert',
@@ -690,8 +687,6 @@ function createNote() {
             <div class="form-group" style="margin-top: 15px;">
                 <label>Kategorie:</label>
                 <select id="noteCategory" style="width: 100%; padding: 12px; border-radius: 10px; border: 2px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
-                    <option value="antike">Antike</option>
-                    <option value="mittelalter">Mittelalter</option>
                     <option value="fruehe-neuzeit">Frühe Neuzeit</option>
                     <option value="neuzeit">19. Jahrhundert</option>
                     <option value="zeitgeschichte">20. Jahrhundert</option>
@@ -805,8 +800,6 @@ function editNote(noteId) {
             <div class="form-group" style="margin-top: 15px;">
                 <label>Kategorie:</label>
                 <select id="noteCategory" style="width: 100%; padding: 12px; border-radius: 10px; border: 2px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
-                    <option value="antike" ${note.category === 'antike' ? 'selected' : ''}>Antike</option>
-                    <option value="mittelalter" ${note.category === 'mittelalter' ? 'selected' : ''}>Mittelalter</option>
                     <option value="fruehe-neuzeit" ${note.category === 'fruehe-neuzeit' ? 'selected' : ''}>Frühe Neuzeit</option>
                     <option value="neuzeit" ${note.category === 'neuzeit' ? 'selected' : ''}>19. Jahrhundert</option>
                     <option value="zeitgeschichte" ${note.category === 'zeitgeschichte' ? 'selected' : ''}>20. Jahrhundert</option>
@@ -1122,8 +1115,9 @@ function startMatchingGame() {
     const pairs = [
         { person: 'Napoleon', event: 'Kaiserkrönung 1804' },
         { person: 'Bismarck', event: 'Deutsche Einigung' },
-        { person: 'Luther', event: 'Reformation' },
-        { person: 'Caesar', event: 'Römische Republik' }
+        { person: 'Hitler', event: 'Nationalsozialismus' },
+        { person: 'Konrad Adenauer', event: 'Erster Bundeskanzler der BRD' },
+        { person: 'Willy Brandt', event: 'Ostpolitik und Entspannung' }
     ];
 
     const persons = shuffleArray(pairs.map(p => p.person));
@@ -1197,8 +1191,9 @@ function checkMatch() {
     const correctPairs = {
         'Napoleon': 'Kaiserkrönung 1804',
         'Bismarck': 'Deutsche Einigung',
-        'Luther': 'Reformation',
-        'Caesar': 'Römische Republik'
+        'Hitler': 'Nationalsozialismus',
+        'Konrad Adenauer': 'Erster Bundeskanzler der BRD',
+        'Willy Brandt': 'Ostpolitik und Entspannung'
     };
 
     const isCorrect = correctPairs[selectedPerson] === selectedEvent;
@@ -1213,7 +1208,7 @@ function checkMatch() {
         eventEl.classList.add('matched');
         matchedCount++;
 
-        if (matchedCount >= 4) {
+        if (matchedCount >= 5) {
             showToast('🎉 Alle richtig zugeordnet!', 'success');
             addCoins(10, 'Zuordnungs-Spiel gewonnen');
             addXP(15);

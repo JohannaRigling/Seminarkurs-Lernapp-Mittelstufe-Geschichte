@@ -118,6 +118,10 @@
                     <span class="nav-icon">📚</span>
                     <span class="nav-text">Bibliothek</span>
                 </button>
+                <button class="nav-item" data-section="glossary" onclick="showSection('glossary')">
+                    <span class="nav-icon">📖</span>
+                    <span class="nav-text">Glossar</span>
+                </button>
                 <button class="nav-item" data-section="castle" onclick="showSection('castle')">
                     <span class="nav-icon">🏰</span>
                     <span class="nav-text">Meine Burg</span>
@@ -549,6 +553,34 @@
                 </div>
             </section>
 
+            <!-- Glossary Section -->
+            <section id="glossary" class="content-section">
+                <div class="section-header">
+                    <h1>📖 Glossar</h1>
+                    <p>Wichtige Fachbegriffe aus den Klassen 8, 9 und 10</p>
+                </div>
+
+                <div class="glossary-layout">
+                    <div class="glossary-header">
+                        <div class="glossary-filters">
+                            <button class="glossary-filter-btn active" data-filter="alle">Alle Begriffe</button>
+                            <button class="glossary-filter-btn" data-filter="klasse8">Klasse 8</button>
+                            <button class="glossary-filter-btn" data-filter="klasse9">Klasse 9</button>
+                            <button class="glossary-filter-btn" data-filter="klasse10">Klasse 10</button>
+                        </div>
+                        <div class="glossary-search">
+                            <input type="text" id="glossarySearch" placeholder="Begriff suchen..." onkeyup="searchGlossary(this.value)">
+                        </div>
+                    </div>
+
+                    <div class="glossary-content">
+                        <div class="glossary-list" id="glossaryList">
+                            <!-- Filled by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Castle Section (Gamification) -->
             <section id="castle" class="content-section">
                 <div class="section-header">
@@ -736,6 +768,7 @@
     <script src="js/app.js"></script>
     <script src="js/timer.js"></script>
     <script src="js/chat.js"></script>
+    <script src="js/glossary.js"></script>
     <script src="js/operators.js"></script>
     <script src="js/strategies.js"></script>
     <script src="js/timeline.js"></script>
