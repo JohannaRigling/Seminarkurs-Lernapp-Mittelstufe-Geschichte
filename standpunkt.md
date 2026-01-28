@@ -481,31 +481,11 @@ Beim nächsten Mal starten mit:
 
 ---
 
-## 🎯 Session vom 28.01.2026 - Bildarchiv & Umfangreiches Übungssystem
+## 🎯 Session vom 28.01.2026 - Umfangreiches Themenübungssystem
 
 ### ✅ Durchgeführte Änderungen:
 
-**1. Bildarchiv implementiert (`app/js/data.js`):**
-- ✅ IMAGE_ARCHIVE-Objekt mit 33 katalogisierten Schulbuch-Bildern erstellt
-- **Klasse 8:** 13 Bilder (Inhaltsverzeichnis, Glossare, Operatoren, Zeitleisten, Grafiken, Karten)
-- **Klasse 9:** 6 Bilder (Inhaltsverzeichnis, Glossare, Methodenverzeichnisse)
-- **Klasse 10.1:** 7 Bilder (Glossare, Geschichtslexikon A-Z, Zeitleisten)
-- **Klasse 10.2:** 7 Bilder (Bildquellenverzeichnisse für alle Themen)
-
-**Metadaten pro Bild:**
-```javascript
-{
-    id: 'k8-img-1',
-    filename: 'IMG_2191.jpeg',
-    title: 'Inhaltsverzeichnis Klasse 8',
-    description: 'Übersicht der Themen...',
-    category: 'overview', // overview, glossar, methoden, zeitleiste, grafik, karte, quelle
-    topics: ['französische-revolution', 'industrialisierung'],
-    type: 'document' // document, reference, method, timeline, infographic, map, source
-}
-```
-
-**2. Umfangreiches Übungssystem erstellt (320+ Übungen):**
+**1. Umfangreiches Übungssystem erstellt (320+ Übungen):**
 
 Jeder Themenbereich hat **genau 20 Übungen** mit verschiedenen Operatoren und AFB-Niveaus:
 
@@ -567,15 +547,13 @@ Jeder Themenbereich hat **genau 20 Übungen** mit verschiedenen Operatoren und A
 - Kartenanalyse
 - Vergleichende Betrachtung
 
-**3. Integration und UI-Funktionen (`app/js/integration.js`):**
-- ✅ `showImageArchive()` - Zeigt Bildarchiv-Übersicht
-- ✅ `filterImageArchive(level)` - Filtert nach Klassenstufe (8, 9, 10)
-- ✅ `filterByCategory(category)` - Filtert nach Kategorie (glossar, methoden, etc.)
-- ✅ `renderImageGrid(level, category)` - Rendert Bildkarten
-- ✅ `viewImage(imageId)` - Zeigt Bild in Modal
-- ✅ `showTopicExercises(topic)` - Zeigt Übungen zu einem Thema
+**2. Integration und UI-Funktionen (`app/js/integration.js`):**
+- ✅ `showTopicExercises(topic)` - Zeigt Übungen zu einem Thema in Modal
+- ✅ `filterExercisesByAFB(filter, topic)` - Filtert Übungen nach AFB-Niveau
+- ✅ `renderExerciseList(exercises, filter)` - Rendert Übungsliste
+- ✅ `getTopicName(topic)` - Liefert deutschen Themennamen
 
-**4. HTML-Integration (`app/index.html`):**
+**3. HTML-Integration (`app/index.html`):**
 ```html
 <!-- Neue Übungssysteme -->
 <script src="js/topic-exercises.js"></script>
@@ -587,22 +565,28 @@ Jeder Themenbereich hat **genau 20 Übungen** mit verschiedenen Operatoren und A
 <script src="js/integration.js"></script>
 ```
 
-**5. Git-Commit und GitHub-Push:**
-- ✅ Commit-Hash: 0e493a4
-- ✅ 8 Dateien geändert, 1.767 Zeilen hinzugefügt
-- ✅ Erfolgreich auf GitHub gepusht (origin/main)
+**4. HTML-Integration erweitert - Neuer Tab "Themenübungen":**
+- Neuer Tab "📚 Themenübungen" im Exercises-Bereich
+- 16 Themenkarten mit direktem Zugriff auf je 20 Übungen
+- Übungen werden in Modal mit AFB-Filtern angezeigt
+
+**5. Bildarchiv - Temporär erstellt, dann wieder entfernt:**
+- ❌ IMAGE_ARCHIVE wurde initial mit 33 Schulbuch-Bildern erstellt
+- ❌ Auf User-Wunsch komplett wieder entfernt
+- ✅ Nur Themenübungen bleiben in der finalen Version
+
+**6. Git-Commits und GitHub-Pushes:**
+- ✅ Commit 0e493a4: Bildarchiv + Übungssystem hinzugefügt (8 Dateien, +1.767 Zeilen)
+- ✅ Commit c7e94d2: Dokumentation aktualisiert
+- ✅ Commit a45d7d4: UI-Integration für Bildarchiv und Themenübungen
+- ✅ Commit 3a4b2a3: Bildarchiv entfernt - nur Themenübungen behalten (3 Dateien, -791 Zeilen)
+- ✅ Alle Änderungen erfolgreich auf GitHub gepusht (origin/main)
 
 ---
 
 ## 📊 Aktuelle Statistik (Stand 28.01.2026)
 
-**Bildarchiv:**
-- 33 Schulbuch-Bilder vollständig katalogisiert
-- 4 Klassenstufen-Ordner (Klasse 8, 9, 10.1, 10.2)
-- 7 Kategorien (overview, glossar, methoden, zeitleiste, grafik, karte, quelle)
-- 6 Typen (document, reference, method, timeline, infographic, map, source)
-
-**Übungssystem:**
+**Themenübungssystem:**
 - 320+ themenspezifische Übungen
 - 16 Themenbereiche mit je 20 Übungen
 - 3 AFB-Niveaus (I: Reproduktion, II: Transfer, III: Reflexion)
@@ -632,22 +616,23 @@ Jeder Themenbereich hat **genau 20 Übungen** mit verschiedenen Operatoren und A
 ## 🎯 Nächste mögliche Erweiterungen
 
 ### Kurzfristig:
-1. UI für Bildarchiv-Viewer optimieren (Zoom, Navigation)
-2. Übungen mit Bildarchiv verknüpfen (z.B. Bildanalyse-Übungen zeigen entsprechendes Bild)
-3. Filterung und Suchfunktion für Übungen
-
-### Mittelfristig:
 1. Fortschrittstracking für Übungen (welche wurden gemacht)
 2. Bewertungssystem für Übungen
-3. Lösungsabgabe und Feedback-System
-4. Lehrer-/Admin-Bereich zum Erstellen weiterer Übungen
+3. Filterung und Suchfunktion für Übungen erweitern
+4. Lösungsabgabe und Feedback-System
+
+### Mittelfristig:
+1. Lehrer-/Admin-Bereich zum Erstellen weiterer Übungen
+2. Übungen mit Schulbuch-Bildern verknüpfen (z.B. Bildanalyse)
+3. PDF-Export von Übungen
+4. Druckbare Arbeitsblätter generieren
 
 ### Langfristig:
-1. PDF-Export von Übungen
-2. Druckbare Arbeitsblätter generieren
-3. Interaktive Übungen (Multiple Choice, Drag & Drop)
+1. Interaktive Übungen (Multiple Choice, Drag & Drop, Lückentexte)
+2. Spaced Repetition System für Übungen
+3. Peer-Review System für Schülerantworten
 
 ---
 
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 28.01.2026 - Bildarchiv & Übungssystem implementiert
+**Letzte Aktualisierung:** 28.01.2026 - Themenübungssystem mit 320+ Übungen implementiert (Bildarchiv wurde verworfen)
