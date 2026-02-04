@@ -75,6 +75,10 @@ function showSection(sectionId) {
                 initGlossary();
             }
             break;
+        case 'settings':
+            loadProfileSettings();
+            updateAllAvatarDisplays();
+            break;
     }
 }
 
@@ -1714,5 +1718,53 @@ function closeAdaptiveLearningModal() {
     const modal = document.getElementById('adaptiveLearningModal');
     if (modal) {
         modal.style.display = 'none';
+    }
+}
+
+// ========================================
+// PROFIL FUNKTIONEN
+// ========================================
+
+/**
+ * Speichert Anzeigenamen
+ */
+function saveDisplayName() {
+    const input = document.getElementById('displayNameInput');
+    if (!input) return;
+
+    const newName = input.value.trim();
+
+    if (updateDisplayName(newName)) {
+        // Erfolg - bereits durch updateDisplayName behandelt
+        loadProfileSettings(); // Refresh anzeige
+    }
+}
+
+/**
+ * Lädt Profil-Einstellungen in UI
+ */
+function loadProfileSettings() {
+    if (!currentUser) return;
+
+    // Display Name
+    const displayNameInput = document.getElementById('displayNameInput');
+    if (displayNameInput) {
+        displayNameInput.value = getDisplayName();
+    }
+
+    // Username-Hint
+    const usernameHint = document.getElementById('profileUsername');
+    if (usernameHint) {
+        usernameHint.textContent = currentUser.username;
+    }
+
+    // Avatar Preview
+    const avatarPreview = document.getElementById('profileAvatarPreview');
+    if (avatarPreview) {
+        if (currentUser.avatar) {
+            avatarPreview.innerHTML = renderAvatarSVG(currentUser.avatar, 100);
+        } else {
+            avatarPreview.innerHTML = '<div class="no-avatar-placeholder">👤</div>';
+        }
     }
 }

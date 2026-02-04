@@ -471,6 +471,14 @@ body::before {
     align-items: center;
     gap: 15px;
     margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.user-info:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.02);
 }
 
 .user-avatar {

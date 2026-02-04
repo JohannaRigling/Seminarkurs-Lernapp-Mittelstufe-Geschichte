@@ -44,7 +44,9 @@ function handleRegister(event) {
         username: username,
         email: email,
         password: password, // In Produktion: hashen!
+        displayName: username, // Anzeigename (kann später geändert werden)
         class: userClass,
+        avatar: null, // Avatar-Konfiguration
         createdAt: new Date().toISOString(),
         progress: {
             coins: 0,
@@ -336,10 +338,10 @@ function addActivity(type, text) {
 function updateUserUI() {
     if (!currentUser) return;
 
-    // Benutzername
+    // Benutzername/Anzeigename
     const usernameElements = document.querySelectorAll('#displayUsername, #welcomeName');
     usernameElements.forEach(el => {
-        if (el) el.textContent = currentUser.username;
+        if (el) el.textContent = getDisplayName();
     });
 
     // Münzen
@@ -382,6 +384,11 @@ function updateUserUI() {
 
     // Burg aktualisieren
     updateCastleDisplay();
+
+    // Avatar aktualisieren
+    if (typeof updateAllAvatarDisplays === 'function') {
+        updateAllAvatarDisplays();
+    }
 }
 
 // Aktivitätsliste aktualisieren
@@ -990,4 +997,46 @@ function checkConsecutivePerfect(user, count) {
 
     const lastN = allAttempts.slice(0, count);
     return lastN.every(attempt => attempt.score === attempt.maxScore);
+}
+
+// ========================================
+// PROFIL & AVATAR FUNKTIONEN
+// ========================================
+
+/**
+ * Aktualisiert Anzeigenamen
+ * @param {string} newDisplayName - Neuer Anzeigename
+ */
+function updateDisplayName(newDisplayName) {
+    if (!currentUser) return false;
+
+    if (!newDisplayName || newDisplayName.trim().length < 2) {
+        showToast('Anzeigename muss mindestens 2 Zeichen lang sein!', 'error');
+        return false;
+    }
+
+    if (newDisplayName.trim().length > 20) {
+        showToast('Anzeigename darf maximal 20 Zeichen lang sein!', 'error');
+        return false;
+    }
+
+    currentUser.displayName = newDisplayName.trim();
+
+    updateUserProgress({ displayName: currentUser.displayName });
+
+    showToast('Anzeigename aktualisiert!', 'success');
+
+    // UI aktualisieren
+    updateUserUI();
+
+    return true;
+}
+
+/**
+ * Gibt aktuellen Anzeigenamen zurück
+ * @returns {string} Anzeigename oder Username als Fallback
+ */
+function getDisplayName() {
+    if (!currentUser) return 'Gast';
+    return currentUser.displayName || currentUser.username;
 }

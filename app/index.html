@@ -74,7 +74,7 @@
         <!-- Sidebar -->
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="user-info">
+                <div class="user-info" onclick="showSection('settings')" style="cursor: pointer;" title="Profil bearbeiten">
                     <div class="user-avatar" id="userAvatar">👤</div>
                     <div class="user-details">
                         <span class="username" id="displayUsername">Benutzer</span>
@@ -133,10 +133,6 @@
                 <button class="nav-item" data-section="castle" onclick="showSection('castle')">
                     <span class="nav-icon">🏰</span>
                     <span class="nav-text">Meine Burg</span>
-                </button>
-                <button class="nav-item" data-section="settings" onclick="showSection('settings')">
-                    <span class="nav-icon">⚙️</span>
-                    <span class="nav-text">Einstellungen</span>
                 </button>
             </div>
 
@@ -745,6 +741,27 @@
                 </div>
 
                 <div class="settings-grid">
+                    <!-- Profil Card -->
+                    <div class="settings-card profile-card">
+                        <h3>👤 Mein Profil</h3>
+                        <div class="profile-display">
+                            <div id="profileAvatarPreview" class="profile-avatar-container">
+                                <!-- Avatar wird hier angezeigt -->
+                            </div>
+                            <div class="profile-info">
+                                <div class="setting-item">
+                                    <label>Anzeigename</label>
+                                    <input type="text" id="displayNameInput" placeholder="Dein Anzeigename" maxlength="20">
+                                    <button class="btn btn-secondary" onclick="saveDisplayName()">Speichern</button>
+                                </div>
+                                <p class="profile-username-hint">Login-Name: <span id="profileUsername"></span></p>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" onclick="openAvatarEditor()">
+                            🎨 Avatar gestalten
+                        </button>
+                    </div>
+
                     <div class="settings-card">
                         <h3>🎨 Erscheinungsbild</h3>
                         <div class="setting-item">
@@ -859,6 +876,14 @@
         </div>
     </div>
 
+    <!-- Avatar Editor Modal -->
+    <div class="modal" id="avatarEditorModal">
+        <div class="modal-content modal-large">
+            <button class="modal-close" onclick="closeAvatarEditor()">×</button>
+            <div id="avatarEditorContent"></div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="js/data.js"></script>
     <!-- Neue Übungssysteme -->
@@ -881,6 +906,7 @@
     <script src="js/gamification.js"></script>
     <script src="js/adaptive-learning.js"></script>
     <script src="js/study-notes.js"></script>
+    <script src="js/avatar-editor.js"></script>
     <script src="js/admin.js"></script>
 </body>
 </html>
