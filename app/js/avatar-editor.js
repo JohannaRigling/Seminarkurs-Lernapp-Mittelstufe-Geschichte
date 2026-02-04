@@ -28,20 +28,36 @@ const AVATAR_OPTIONS = {
     ],
 
     hairColors: [
-        { id: 'black', name: 'Schwarz', color: '#2C2C2C' },
-        { id: 'dark-brown', name: 'Dunkelbraun', color: '#5C3A21' },
-        { id: 'brown', name: 'Braun', color: '#8B4513' },
+        { id: 'black', name: 'Schwarz', color: '#000000' },
+        { id: 'jet-black', name: 'Tiefschwarz', color: '#0C0C0C' },
+        { id: 'dark-brown', name: 'Dunkelbraun', color: '#3B2414' },
+        { id: 'brown', name: 'Braun', color: '#5C3A21' },
+        { id: 'chestnut', name: 'Kastanienbraun', color: '#8B4513' },
         { id: 'light-brown', name: 'Hellbraun', color: '#A0522D' },
-        { id: 'blonde', name: 'Blond', color: '#F0E68C' },
-        { id: 'light-blonde', name: 'Hellblond', color: '#FFF8DC' },
+        { id: 'golden-brown', name: 'Goldbraun', color: '#B8860B' },
+        { id: 'dark-blonde', name: 'Dunkelblond', color: '#C9A961' },
+        { id: 'blonde', name: 'Blond', color: '#E6C28F' },
+        { id: 'light-blonde', name: 'Hellblond', color: '#F0E68C' },
+        { id: 'platinum', name: 'Platinblond', color: '#FFF8DC' },
+        { id: 'strawberry', name: 'Erdbeerblond', color: '#D4916C' },
+        { id: 'ginger', name: 'Ingwer', color: '#C85A38' },
         { id: 'red', name: 'Rot', color: '#B94E48' },
         { id: 'auburn', name: 'Rotbraun', color: '#A52A2A' },
-        { id: 'gray', name: 'Grau', color: '#A9A9A9' },
+        { id: 'burgundy', name: 'Burgunderrot', color: '#8B0A50' },
+        { id: 'copper', name: 'Kupfer', color: '#B87333' },
+        { id: 'silver', name: 'Silber', color: '#C0C0C0' },
+        { id: 'gray', name: 'Grau', color: '#808080' },
         { id: 'white', name: 'Weiß', color: '#F5F5F5' },
         { id: 'blue', name: 'Blau', color: '#4169E1' },
+        { id: 'navy', name: 'Marineblau', color: '#000080' },
+        { id: 'teal', name: 'Türkis', color: '#008080' },
         { id: 'pink', name: 'Pink', color: '#FF69B4' },
+        { id: 'hot-pink', name: 'Hot Pink', color: '#FF1493' },
         { id: 'purple', name: 'Lila', color: '#9370DB' },
-        { id: 'green', name: 'Grün', color: '#32CD32' }
+        { id: 'violet', name: 'Violett', color: '#8B00FF' },
+        { id: 'green', name: 'Grün', color: '#32CD32' },
+        { id: 'mint', name: 'Mint', color: '#98FF98' },
+        { id: 'orange', name: 'Orange', color: '#FF8C00' }
     ],
 
     eyeShapes: [
@@ -54,13 +70,24 @@ const AVATAR_OPTIONS = {
     ],
 
     eyeColors: [
-        { id: 'brown', name: 'Braun', color: '#8B4513' },
-        { id: 'dark-brown', name: 'Dunkelbraun', color: '#5C4033' },
+        { id: 'dark-brown', name: 'Dunkelbraun', color: '#3B2414' },
+        { id: 'brown', name: 'Braun', color: '#5C4033' },
+        { id: 'light-brown', name: 'Hellbraun', color: '#8B4513' },
         { id: 'hazel', name: 'Haselnuss', color: '#9A7B4F' },
+        { id: 'amber', name: 'Bernstein', color: '#FFBF00' },
+        { id: 'honey', name: 'Honig', color: '#D4A017' },
+        { id: 'dark-green', name: 'Dunkelgrün', color: '#013220' },
         { id: 'green', name: 'Grün', color: '#228B22' },
+        { id: 'light-green', name: 'Hellgrün', color: '#90EE90' },
+        { id: 'emerald', name: 'Smaragd', color: '#50C878' },
+        { id: 'dark-blue', name: 'Dunkelblau', color: '#00008B' },
         { id: 'blue', name: 'Blau', color: '#4169E1' },
+        { id: 'light-blue', name: 'Hellblau', color: '#87CEEB' },
         { id: 'gray', name: 'Grau', color: '#708090' },
-        { id: 'amber', name: 'Bernstein', color: '#FFBF00' }
+        { id: 'blue-gray', name: 'Blaugrau', color: '#6699CC' },
+        { id: 'violet', name: 'Violett', color: '#8B00FF' },
+        { id: 'red', name: 'Rot', color: '#DC143C' },
+        { id: 'black', name: 'Schwarz', color: '#000000' }
     ],
 
     mouthStyles: [
@@ -145,6 +172,32 @@ const DEFAULT_AVATAR = {
 // ========================================
 
 /**
+ * Hilfsfunktion: Merged User-Avatar mit Default-Avatar
+ */
+function mergeWithDefault(userAvatar) {
+    const defaultCopy = JSON.parse(JSON.stringify(DEFAULT_AVATAR));
+    if (!userAvatar) return defaultCopy;
+
+    const merged = JSON.parse(JSON.stringify(userAvatar));
+
+    // Stelle sicher dass alle Nested Objects existieren
+    if (!merged.hair) merged.hair = defaultCopy.hair;
+    if (!merged.eyes) merged.eyes = defaultCopy.eyes;
+    if (!merged.eyebrows) merged.eyebrows = defaultCopy.eyebrows;
+    if (!merged.features) merged.features = defaultCopy.features;
+    if (!merged.accessories) merged.accessories = defaultCopy.accessories;
+
+    // Merge nested properties
+    merged.hair = { ...defaultCopy.hair, ...merged.hair };
+    merged.eyes = { ...defaultCopy.eyes, ...merged.eyes };
+    merged.eyebrows = { ...defaultCopy.eyebrows, ...merged.eyebrows };
+    merged.features = { ...defaultCopy.features, ...merged.features };
+    merged.accessories = { ...defaultCopy.accessories, ...merged.accessories };
+
+    return merged;
+}
+
+/**
  * Öffnet Avatar-Editor
  */
 function openAvatarEditor() {
@@ -155,8 +208,8 @@ function openAvatarEditor() {
 
     if (!modal || !content) return;
 
-    // Lade aktuellen Avatar oder Default
-    const currentAvatar = currentUser.avatar || { ...DEFAULT_AVATAR };
+    // Lade aktuellen Avatar oder Default (mit vollständiger Struktur)
+    const currentAvatar = mergeWithDefault(currentUser.avatar);
 
     content.innerHTML = `
         <div class="avatar-editor">
@@ -581,7 +634,7 @@ function updateAvatarPreview() {
 }
 
 /**
- * Rendert Avatar als SVG
+ * Rendert Avatar als SVG im flachen Cartoon-Stil
  */
 function renderAvatarSVG(avatar, size = 100) {
     if (!avatar) avatar = DEFAULT_AVATAR;
@@ -591,46 +644,36 @@ function renderAvatarSVG(avatar, size = 100) {
     const eyeColor = AVATAR_OPTIONS.eyeColors.find(c => c.id === avatar.eyes.color)?.color || '#8B4513';
 
     return `
-        <svg width="${size}" height="${size}" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <svg width="${size}" height="${size}" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
             <!-- Background -->
-            <circle cx="100" cy="100" r="100" fill="#e8e8e8"/>
+            <rect width="240" height="240" fill="#6b6b6b" rx="0"/>
 
-            <!-- Hair Back (behind head) -->
-            ${renderHairBack(avatar.hair, hairColor)}
+            <!-- Clothing/Body -->
+            <rect x="70" y="180" width="100" height="60" fill="#333" rx="10"/>
 
-            <!-- Neck (minimal, at bottom) -->
-            <ellipse cx="100" cy="180" rx="35" ry="25" fill="${adjustBrightness(skinColor, -10)}"/>
-
-            <!-- Shoulders (just hints at bottom edge) -->
-            <ellipse cx="50" cy="195" rx="60" ry="30" fill="${adjustBrightness(skinColor, -15)}"/>
-            <ellipse cx="150" cy="195" rx="60" ry="30" fill="${adjustBrightness(skinColor, -15)}"/>
-
-            <!-- Head (large, centered) -->
-            <circle cx="100" cy="100" r="75" fill="${skinColor}" stroke="#333" stroke-width="2"/>
-
-            <!-- Ears -->
-            <ellipse cx="30" cy="100" rx="12" ry="18" fill="${adjustBrightness(skinColor, -5)}" stroke="#333" stroke-width="1.5"/>
-            <ellipse cx="170" cy="100" rx="12" ry="18" fill="${adjustBrightness(skinColor, -5)}" stroke="#333" stroke-width="1.5"/>
-            <ellipse cx="32" cy="100" rx="6" ry="9" fill="${adjustBrightness(skinColor, -15)}"/>
-            <ellipse cx="168" cy="100" rx="6" ry="9" fill="${adjustBrightness(skinColor, -15)}"/>
-
-            <!-- Hair Front (over head) -->
+            <!-- Hair (komplett - eng am Kopf anliegend) -->
             ${renderHair(avatar.hair, hairColor)}
 
-            <!-- Eyebrows -->
-            <path d="M 60 80 Q 72 77 84 79" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round"/>
-            <path d="M 116 79 Q 128 77 140 80" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Head (breiter und höher) -->
+            <rect x="60" y="60" width="120" height="130" fill="${skinColor}" rx="60"/>
 
-            <!-- Eyes -->
-            ${renderEyes(avatar.eyes, eyeColor, avatar.eyebrows)}
+            <!-- Ears (smaller) -->
+            <ellipse cx="50" cy="110" rx="12" ry="16" fill="${adjustBrightness(skinColor, -5)}"/>
+            <ellipse cx="190" cy="110" rx="12" ry="16" fill="${adjustBrightness(skinColor, -5)}"/>
+            <ellipse cx="54" cy="110" rx="6" ry="9" fill="${adjustBrightness(skinColor, -15)}"/>
+            <ellipse cx="186" cy="110" rx="6" ry="9" fill="${adjustBrightness(skinColor, -15)}"/>
 
-            <!-- Nose -->
-            <ellipse cx="100" cy="110" rx="6" ry="9" fill="${adjustBrightness(skinColor, -20)}"/>
-            <ellipse cx="95" cy="115" rx="3" ry="2" fill="${adjustBrightness(skinColor, -25)}"/>
-            <ellipse cx="105" cy="115" rx="3" ry="2" fill="${adjustBrightness(skinColor, -25)}"/>
+            <!-- Eyes (large, simple style) -->
+            ${renderEyes(avatar.eyes, eyeColor)}
+
+            <!-- Eyebrows (verschiedene Stile) -->
+            ${renderEyebrows(avatar.eyebrows, hairColor)}
+
+            <!-- Nose (small, simple) -->
+            <ellipse cx="120" cy="125" rx="6" ry="8" fill="${adjustBrightness(skinColor, -15)}" opacity="0.7"/>
 
             <!-- Mouth -->
-            ${renderMouth(avatar.mouth, skinColor)}
+            ${renderMouth(avatar.mouth)}
 
             <!-- Features -->
             ${avatar.features.freckles ? renderFreckles(skinColor) : ''}
@@ -644,158 +687,309 @@ function renderAvatarSVG(avatar, size = 100) {
 }
 
 /**
- * Rendert Haare hinten (hinter dem Kopf)
+ * Rendert Haare - KEINE separate Funktion mehr, wird in renderHair integriert
  */
 function renderHairBack(hair, color) {
-    switch (hair.style) {
-        case 'medium-straight':
-        case 'medium-wavy':
-            return `<path d="M 35 85 L 32 115 L 30 145 M 165 85 L 168 115 L 170 145" fill="none" stroke="${color}" stroke-width="18" stroke-linecap="round"/>`;
-
-        case 'long-straight':
-            return `<path d="M 35 85 L 32 120 L 28 155 L 25 185 M 165 85 L 168 120 L 172 155 L 175 185" fill="none" stroke="${color}" stroke-width="20" stroke-linecap="round"/>`;
-
-        case 'long-wavy':
-            return `<path d="M 35 85 Q 28 110 35 135 Q 26 160 30 185 M 165 85 Q 172 110 165 135 Q 174 160 170 185" fill="none" stroke="${color}" stroke-width="20" stroke-linecap="round"/>`;
-
-        case 'long-curly':
-            return `<path d="M 35 85 Q 25 110 38 135 Q 22 160 32 185 M 165 85 Q 175 110 162 135 Q 178 160 168 185" fill="none" stroke="${color}" stroke-width="22" stroke-linecap="round"/>`;
-
-        case 'ponytail':
-            return `<ellipse cx="100" cy="20" rx="18" ry="45" fill="${color}" stroke="#333" stroke-width="2"/>`;
-
-        case 'braids':
-            return `
-                <path d="M 33 85 L 28 110 L 24 135 L 20 160 L 16 185" fill="none" stroke="${color}" stroke-width="16" stroke-linecap="round"/>
-                <path d="M 167 85 L 172 110 L 176 135 L 180 160 L 184 185" fill="none" stroke="${color}" stroke-width="16" stroke-linecap="round"/>
-            `;
-
-        default:
-            return '';
-    }
+    // Diese Funktion wird nicht mehr verwendet, bleibt nur für Kompatibilität
+    return '';
 }
 
 /**
- * Rendert Haare vorne (über dem Kopf)
+ * Rendert Haare - eng am Kopf anliegend wie eine Kappe
+ * Kopf: x=60, y=60, width=120, height=130, rx=60
  */
 function renderHair(hair, color) {
+    // Basis-Haarform: folgt der Kopfform eng
+    const baseHair = `
+        <!-- Haar-Hauptform (oben und Seiten) -->
+        <ellipse cx="120" cy="60" rx="70" ry="45" fill="${color}"/>
+        <rect x="50" y="60" width="140" height="80" fill="${color}"/>
+    `;
+
     switch (hair.style) {
         case 'short-straight':
-            return `<path d="M 40 65 Q 32 35 55 28 Q 77 24 100 24 Q 123 24 145 28 Q 168 35 160 65 L 155 70 L 45 70 Z" fill="${color}" stroke="#333" stroke-width="2.5"/>`;
+            return `
+                ${baseHair}
+                <!-- Kurze Haare enden am Ohr -->
+                <ellipse cx="50" cy="100" rx="8" ry="15" fill="${color}"/>
+                <ellipse cx="190" cy="100" rx="8" ry="15" fill="${color}"/>
+            `;
 
         case 'short-curly':
-            return `<path d="M 40 67 Q 32 38 52 30 Q 65 26 78 28 Q 89 24 100 24 Q 111 24 122 28 Q 135 26 148 30 Q 168 38 160 67 L 155 72 L 45 72 Z" fill="${color}" stroke="#333" stroke-width="2.5"/>`;
+            return `
+                <ellipse cx="120" cy="60" rx="70" ry="48" fill="${color}"/>
+                <rect x="50" y="60" width="140" height="80" fill="${color}"/>
+                <!-- Lockige Textur -->
+                <circle cx="75" cy="70" r="12" fill="${color}"/>
+                <circle cx="120" cy="65" r="14" fill="${color}"/>
+                <circle cx="165" cy="70" r="12" fill="${color}"/>
+                <ellipse cx="50" cy="100" rx="10" ry="18" fill="${color}"/>
+                <ellipse cx="190" cy="100" rx="10" ry="18" fill="${color}"/>
+            `;
 
         case 'medium-straight':
-            return `<path d="M 38 65 Q 30 32 52 26 Q 76 22 100 22 Q 124 22 148 26 Q 170 32 162 65 L 162 75 L 38 75 Z" fill="${color}" stroke="#333" stroke-width="2.5"/>`;
+            return `
+                ${baseHair}
+                <!-- Mittellange Haare über die Ohren -->
+                <rect x="40" y="100" width="20" height="50" fill="${color}" rx="10"/>
+                <rect x="180" y="100" width="20" height="50" fill="${color}" rx="10"/>
+            `;
 
         case 'medium-wavy':
-            return `<path d="M 38 65 Q 30 32 52 26 Q 76 22 100 22 Q 124 22 148 26 Q 170 32 162 65 L 162 75 L 38 75 Z" fill="${color}" stroke="#333" stroke-width="2.5"/>`;
+            return `
+                ${baseHair}
+                <!-- Mittellange wellige Haare -->
+                <ellipse cx="45" cy="120" rx="15" ry="35" fill="${color}"/>
+                <ellipse cx="195" cy="120" rx="15" ry="35" fill="${color}"/>
+            `;
 
         case 'long-straight':
-            return `<path d="M 36 65 Q 28 28 50 22 Q 75 18 100 18 Q 125 18 150 22 Q 172 28 164 65 L 164 75 L 36 75 Z" fill="${color}" stroke="#333" stroke-width="2.5"/>`;
+            return `
+                ${baseHair}
+                <!-- Lange Haare - gerade nach unten -->
+                <rect x="45" y="100" width="20" height="80" fill="${color}" rx="10"/>
+                <rect x="175" y="100" width="20" height="80" fill="${color}" rx="10"/>
+            `;
 
         case 'long-wavy':
-            return `<path d="M 36 65 Q 28 28 50 22 Q 75 18 100 18 Q 125 18 150 22 Q 172 28 164 65 L 164 75 L 36 75 Z" fill="${color}" stroke="#333" stroke-width="2.5"/>`;
+            return `
+                ${baseHair}
+                <!-- Lange wellige Haare - gerade nach unten -->
+                <ellipse cx="55" cy="135" rx="15" ry="55" fill="${color}"/>
+                <ellipse cx="185" cy="135" rx="15" ry="55" fill="${color}"/>
+            `;
 
         case 'long-curly':
-            return `<path d="M 36 67 Q 26 30 50 23 Q 73 18 100 18 Q 127 18 150 23 Q 174 30 164 67 L 164 75 L 36 75 Z" fill="${color}" stroke="#333" stroke-width="2.5"/>`;
+            return `
+                ${baseHair}
+                <!-- Lange lockige Haare - gerade nach unten -->
+                <ellipse cx="55" cy="135" rx="16" ry="50" fill="${color}"/>
+                <ellipse cx="185" cy="135" rx="16" ry="50" fill="${color}"/>
+                <circle cx="58" cy="150" r="12" fill="${color}"/>
+                <circle cx="182" cy="150" r="12" fill="${color}"/>
+            `;
 
         case 'ponytail':
-            return `<path d="M 38 65 Q 30 32 52 26 Q 76 22 100 22 Q 124 22 148 26 Q 170 32 162 65 L 162 75 L 38 75 Z" fill="${color}" stroke="#333" stroke-width="2.5"/>`;
+            return `
+                ${baseHair}
+                <!-- Pferdeschwanz hinten -->
+                <ellipse cx="120" cy="40" rx="30" ry="50" fill="${color}"/>
+            `;
 
         case 'bun':
             return `
-                <path d="M 40 65 Q 32 35 55 28 Q 77 24 100 24 Q 123 24 145 28 Q 168 35 160 65 L 155 70 L 45 70 Z" fill="${color}" stroke="#333" stroke-width="2.5"/>
-                <circle cx="100" cy="24" r="22" fill="${color}" stroke="#333" stroke-width="2.5"/>
+                ${baseHair}
+                <!-- Dutt oben -->
+                <circle cx="120" cy="45" r="25" fill="${color}"/>
             `;
 
         case 'braids':
-            return `<path d="M 38 65 Q 30 32 52 26 Q 76 22 100 22 Q 124 22 148 26 Q 170 32 162 65 L 162 75 L 38 75 Z" fill="${color}" stroke="#333" stroke-width="2.5"/>`;
+            return `
+                ${baseHair}
+                <!-- Zöpfe - gerade nach unten -->
+                <rect x="45" y="100" width="18" height="70" fill="${color}" rx="9"/>
+                <rect x="177" y="100" width="18" height="70" fill="${color}" rx="9"/>
+            `;
 
         case 'buzz':
-            return `<path d="M 48 73 Q 42 48 62 40 Q 80 34 100 34 Q 120 34 138 40 Q 158 48 152 73" fill="${color}" stroke="#333" stroke-width="2.5"/>`;
+            return `
+                <!-- Sehr kurze Haare -->
+                <ellipse cx="120" cy="65" rx="65" ry="40" fill="${color}"/>
+                <rect x="55" y="65" width="130" height="60" fill="${color}"/>
+            `;
 
         case 'bald':
             return '';
 
         default:
-            return `<path d="M 40 65 Q 32 35 55 28 Q 77 24 100 24 Q 123 24 145 28 Q 168 35 160 65 L 155 70 L 45 70 Z" fill="${color}" stroke="#333" stroke-width="2.5"/>`;
+            return baseHair;
     }
 }
 
 /**
- * Rendert Augen
+ * Rendert Augen - verschiedene Formen basierend auf eyes.shape
  */
-function renderEyes(eyes, eyeColor, eyebrows) {
+function renderEyes(eyes, eyeColor) {
     let eyeShape = '';
+    let topEdgeLeft = 92;  // Y-Position des oberen Augenrands (links)
+    let topEdgeRight = 92; // Y-Position des oberen Augenrands (rechts)
 
+    // Verschiedene Augenformen
     switch (eyes.shape) {
         case 'round':
+            // Runde Augen (Standard)
             eyeShape = `
-                <ellipse cx="70" cy="95" rx="12" ry="14" fill="white" stroke="#333" stroke-width="2"/>
-                <ellipse cx="130" cy="95" rx="12" ry="14" fill="white" stroke="#333" stroke-width="2"/>
+                <circle cx="90" cy="110" r="18" fill="white"/>
+                <circle cx="150" cy="110" r="18" fill="white"/>
             `;
+            topEdgeLeft = 92;
+            topEdgeRight = 92;
             break;
+
         case 'almond':
+            // Mandelförmige Augen
             eyeShape = `
-                <ellipse cx="70" cy="95" rx="14" ry="12" fill="white" stroke="#333" stroke-width="2"/>
-                <ellipse cx="130" cy="95" rx="14" ry="12" fill="white" stroke="#333" stroke-width="2"/>
+                <ellipse cx="90" cy="110" rx="20" ry="16" fill="white"/>
+                <ellipse cx="150" cy="110" rx="20" ry="16" fill="white"/>
             `;
+            topEdgeLeft = 94;
+            topEdgeRight = 94;
             break;
-        default:
+
+        case 'hooded':
+            // Schlupflider
             eyeShape = `
-                <ellipse cx="70" cy="95" rx="13" ry="13" fill="white" stroke="#333" stroke-width="2"/>
-                <ellipse cx="130" cy="95" rx="13" ry="13" fill="white" stroke="#333" stroke-width="2"/>
+                <ellipse cx="90" cy="112" rx="18" ry="14" fill="white"/>
+                <ellipse cx="150" cy="112" rx="18" ry="14" fill="white"/>
             `;
+            topEdgeLeft = 98;
+            topEdgeRight = 98;
+            break;
+
+        case 'upturned':
+            // Aufwärts gerichtete Augen
+            eyeShape = `
+                <ellipse cx="90" cy="110" rx="18" ry="16" fill="white" transform="rotate(-10 90 110)"/>
+                <ellipse cx="150" cy="110" rx="18" ry="16" fill="white" transform="rotate(10 150 110)"/>
+            `;
+            topEdgeLeft = 94;
+            topEdgeRight = 94;
+            break;
+
+        case 'downturned':
+            // Abwärts gerichtete Augen
+            eyeShape = `
+                <ellipse cx="90" cy="110" rx="18" ry="16" fill="white" transform="rotate(10 90 110)"/>
+                <ellipse cx="150" cy="110" rx="18" ry="16" fill="white" transform="rotate(-10 150 110)"/>
+            `;
+            topEdgeLeft = 94;
+            topEdgeRight = 94;
+            break;
+
+        case 'monolid':
+            // Monolid
+            eyeShape = `
+                <ellipse cx="90" cy="111" rx="19" ry="13" fill="white"/>
+                <ellipse cx="150" cy="111" rx="19" ry="13" fill="white"/>
+            `;
+            topEdgeLeft = 98;
+            topEdgeRight = 98;
+            break;
+
+        default:
+            // Standard rund
+            eyeShape = `
+                <circle cx="90" cy="110" r="18" fill="white"/>
+                <circle cx="150" cy="110" r="18" fill="white"/>
+            `;
+            topEdgeLeft = 92;
+            topEdgeRight = 92;
     }
 
-    // Iris
-    const iris = `
-        <circle cx="70" cy="95" r="7" fill="${eyeColor}"/>
-        <circle cx="130" cy="95" r="7" fill="${eyeColor}"/>
-        <circle cx="70" cy="95" r="3.5" fill="#000"/>
-        <circle cx="130" cy="95" r="3.5" fill="#000"/>
-        <circle cx="71" cy="94" r="2" fill="white"/>
-        <circle cx="131" cy="94" r="2" fill="white"/>
+    // Farbige Iris
+    eyeShape += `
+        <circle cx="90" cy="110" r="10" fill="${eyeColor}"/>
+        <circle cx="150" cy="110" r="10" fill="${eyeColor}"/>
     `;
 
-    // Wimpern
-    let lashes = '';
-    if (eyes.lashes !== 'short') {
-        lashes = `
-            <path d="M 64 88 Q 62 86 64 84" fill="none" stroke="#333" stroke-width="1.2"/>
-            <path d="M 70 87 Q 69 84 70 82" fill="none" stroke="#333" stroke-width="1.2"/>
-            <path d="M 76 88 Q 78 86 76 84" fill="none" stroke="#333" stroke-width="1.2"/>
-            <path d="M 124 88 Q 122 86 124 84" fill="none" stroke="#333" stroke-width="1.2"/>
-            <path d="M 130 87 Q 131 84 130 82" fill="none" stroke="#333" stroke-width="1.2"/>
-            <path d="M 136 88 Q 138 86 136 84" fill="none" stroke="#333" stroke-width="1.2"/>
+    // Schwarze Pupille
+    eyeShape += `
+        <circle cx="90" cy="110" r="5" fill="#000"/>
+        <circle cx="150" cy="110" r="5" fill="#000"/>
+    `;
+
+    // Highlight (weiße Reflexion)
+    eyeShape += `
+        <circle cx="92" cy="107" r="3" fill="white"/>
+        <circle cx="152" cy="107" r="3" fill="white"/>
+    `;
+
+    // Wimpern am Augenlid (Position angepasst an Augenform)
+    if (eyes.lashes && eyes.lashes !== 'short') {
+        const lashLength = eyes.lashes === 'dramatic' ? 8 : eyes.lashes === 'long' ? 6 : 4;
+        eyeShape += `
+            <path d="M 78 ${topEdgeLeft} Q 76 ${topEdgeLeft - lashLength} 78 ${topEdgeLeft - lashLength + 2}" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M 90 ${topEdgeLeft - 2} Q 90 ${topEdgeLeft - lashLength - 2} 90 ${topEdgeLeft - lashLength}" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M 102 ${topEdgeLeft} Q 104 ${topEdgeLeft - lashLength} 102 ${topEdgeLeft - lashLength + 2}" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+
+            <path d="M 138 ${topEdgeRight} Q 136 ${topEdgeRight - lashLength} 138 ${topEdgeRight - lashLength + 2}" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M 150 ${topEdgeRight - 2} Q 150 ${topEdgeRight - lashLength - 2} 150 ${topEdgeRight - lashLength}" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M 162 ${topEdgeRight} Q 164 ${topEdgeRight - lashLength} 162 ${topEdgeRight - lashLength + 2}" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
         `;
     }
 
-    return eyeShape + iris + lashes;
+    return eyeShape;
 }
 
 /**
- * Rendert Mund
+ * Rendert Augenbrauen - verschiedene Stile (höher platziert, keine Überschneidung mit Wimpern)
  */
-function renderMouth(style, skinColor) {
-    const lipColor = adjustBrightness(skinColor, -30);
+function renderEyebrows(eyebrows, hairColor) {
+    const browColor = adjustBrightness(hairColor, -30);
+    const thickness = eyebrows.thickness === 'thick' ? 4 : eyebrows.thickness === 'thin' ? 2 : 3;
 
+    switch (eyebrows.style) {
+        case 'natural':
+            // Natürlich geschwungen
+            return `
+                <path d="M 82 87 Q 95 84 108 87" fill="none" stroke="${browColor}" stroke-width="${thickness}" stroke-linecap="round"/>
+                <path d="M 132 87 Q 145 84 158 87" fill="none" stroke="${browColor}" stroke-width="${thickness}" stroke-linecap="round"/>
+            `;
+
+        case 'arched':
+            // Stark geschwungen
+            return `
+                <path d="M 82 89 Q 95 81 108 88" fill="none" stroke="${browColor}" stroke-width="${thickness}" stroke-linecap="round"/>
+                <path d="M 132 88 Q 145 81 158 89" fill="none" stroke="${browColor}" stroke-width="${thickness}" stroke-linecap="round"/>
+            `;
+
+        case 'straight':
+            // Gerade
+            return `
+                <path d="M 82 86 L 108 85" fill="none" stroke="${browColor}" stroke-width="${thickness}" stroke-linecap="round"/>
+                <path d="M 132 85 L 158 86" fill="none" stroke="${browColor}" stroke-width="${thickness}" stroke-linecap="round"/>
+            `;
+
+        case 'round':
+            // Rund
+            return `
+                <path d="M 82 88 Q 95 83 108 88" fill="none" stroke="${browColor}" stroke-width="${thickness}" stroke-linecap="round"/>
+                <path d="M 132 88 Q 145 83 158 88" fill="none" stroke="${browColor}" stroke-width="${thickness}" stroke-linecap="round"/>
+            `;
+
+        case 'angled':
+            // Eckig
+            return `
+                <path d="M 82 89 L 95 82 L 108 86" fill="none" stroke="${browColor}" stroke-width="${thickness}" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M 132 86 L 145 82 L 158 89" fill="none" stroke="${browColor}" stroke-width="${thickness}" stroke-linecap="round" stroke-linejoin="round"/>
+            `;
+
+        default:
+            return `
+                <path d="M 82 87 Q 95 84 108 87" fill="none" stroke="${browColor}" stroke-width="${thickness}" stroke-linecap="round"/>
+                <path d="M 132 87 Q 145 84 158 87" fill="none" stroke="${browColor}" stroke-width="${thickness}" stroke-linecap="round"/>
+            `;
+    }
+}
+
+/**
+ * Rendert Mund - einfacher Cartoon-Stil wie im Bild
+ */
+function renderMouth(style) {
     switch (style) {
         case 'smile':
-            return `<path d="M 75 130 Q 100 142 125 130" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>`;
+            return `<path d="M 95 145 Q 120 153 145 145" fill="none" stroke="#b8866f" stroke-width="3" stroke-linecap="round"/>`;
         case 'grin':
             return `
-                <path d="M 75 130 Q 100 142 125 130" fill="white" stroke="#333" stroke-width="3"/>
-                <line x1="85" y1="136" x2="115" y2="136" stroke="#333" stroke-width="2"/>
+                <path d="M 95 145 Q 120 155 145 145" fill="none" stroke="#b8866f" stroke-width="3" stroke-linecap="round"/>
+                <ellipse cx="120" cy="150" rx="20" ry="8" fill="#FF69B4"/>
             `;
         case 'slight-smile':
-            return `<path d="M 80 132 Q 100 138 120 132" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>`;
+            return `<path d="M 100 147 Q 120 152 140 147" fill="none" stroke="#b8866f" stroke-width="3" stroke-linecap="round"/>`;
         case 'smirk':
-            return `<path d="M 75 132 Q 92 136 110 130" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>`;
+            return `<path d="M 95 147 Q 115 152 135 147" fill="none" stroke="#b8866f" stroke-width="3" stroke-linecap="round"/>`;
         default:
-            return `<line x1="80" y1="132" x2="120" y2="132" stroke="#333" stroke-width="3" stroke-linecap="round"/>`;
+            return `<line x1="100" y1="147" x2="140" y2="147" stroke="#b8866f" stroke-width="3" stroke-linecap="round"/>`;
     }
 }
 
@@ -805,86 +999,121 @@ function renderMouth(style, skinColor) {
 function renderFreckles(skinColor) {
     const freckleColor = adjustBrightness(skinColor, -40);
     return `
-        <circle cx="55" cy="100" r="1.5" fill="${freckleColor}"/>
-        <circle cx="62" cy="104" r="1.5" fill="${freckleColor}"/>
-        <circle cx="70" cy="102" r="1.5" fill="${freckleColor}"/>
-        <circle cx="130" cy="102" r="1.5" fill="${freckleColor}"/>
-        <circle cx="138" cy="104" r="1.5" fill="${freckleColor}"/>
-        <circle cx="145" cy="100" r="1.5" fill="${freckleColor}"/>
-        <circle cx="88" cy="115" r="1.5" fill="${freckleColor}"/>
-        <circle cx="112" cy="115" r="1.5" fill="${freckleColor}"/>
+        <circle cx="70" cy="120" r="2" fill="${freckleColor}"/>
+        <circle cx="78" cy="125" r="2" fill="${freckleColor}"/>
+        <circle cx="65" cy="128" r="2" fill="${freckleColor}"/>
+        <circle cx="162" cy="125" r="2" fill="${freckleColor}"/>
+        <circle cx="170" cy="120" r="2" fill="${freckleColor}"/>
+        <circle cx="175" cy="128" r="2" fill="${freckleColor}"/>
     `;
 }
 
 /**
- * Rendert Rouge/Wangen
+ * Rendert Rouge/Wangen - Cartoon-Stil
  */
 function renderBlush() {
     return `
-        <ellipse cx="48" cy="110" rx="12" ry="9" fill="#FFB6C1" opacity="0.5"/>
-        <ellipse cx="152" cy="110" rx="12" ry="9" fill="#FFB6C1" opacity="0.5"/>
+        <ellipse cx="65" cy="125" rx="14" ry="10" fill="#FFB6C1" opacity="0.5"/>
+        <ellipse cx="175" cy="125" rx="14" ry="10" fill="#FFB6C1" opacity="0.5"/>
     `;
 }
 
 /**
- * Rendert Muttermale
+ * Rendert Muttermale - Cartoon-Stil
  */
 function renderMoles(skinColor) {
     const moleColor = adjustBrightness(skinColor, -60);
     return `
-        <circle cx="125" cy="118" r="2.5" fill="${moleColor}"/>
+        <circle cx="160" cy="135" r="3" fill="${moleColor}"/>
     `;
 }
 
 /**
- * Rendert Accessoires
+ * Rendert Accessoires - angepasst an höheres Layout
  */
 function renderAccessories(accessories) {
     let svg = '';
 
-    // Brille
+    // Brille (alle Stile)
     if (accessories.glasses && accessories.glasses !== 'none') {
         switch (accessories.glasses) {
             case 'round':
                 svg += `
-                    <circle cx="70" cy="95" r="18" fill="none" stroke="#333" stroke-width="3"/>
-                    <circle cx="130" cy="95" r="18" fill="none" stroke="#333" stroke-width="3"/>
-                    <line x1="88" y1="95" x2="112" y2="95" stroke="#333" stroke-width="3"/>
-                    <line x1="52" y1="95" x2="38" y2="92" stroke="#333" stroke-width="2.5"/>
-                    <line x1="148" y1="95" x2="162" y2="92" stroke="#333" stroke-width="2.5"/>
+                    <circle cx="90" cy="110" r="20" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <circle cx="150" cy="110" r="20" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <line x1="110" y1="110" x2="130" y2="110" stroke="#333" stroke-width="2.5"/>
+                    <line x1="70" y1="110" x2="55" y2="108" stroke="#333" stroke-width="2"/>
+                    <line x1="170" y1="110" x2="185" y2="108" stroke="#333" stroke-width="2"/>
                 `;
                 break;
             case 'square':
                 svg += `
-                    <rect x="52" y="80" width="36" height="30" fill="none" stroke="#333" stroke-width="3" rx="4"/>
-                    <rect x="112" y="80" width="36" height="30" fill="none" stroke="#333" stroke-width="3" rx="4"/>
-                    <line x1="88" y1="95" x2="112" y2="95" stroke="#333" stroke-width="3"/>
-                    <line x1="52" y1="95" x2="38" y2="92" stroke="#333" stroke-width="2.5"/>
-                    <line x1="148" y1="95" x2="162" y2="92" stroke="#333" stroke-width="2.5"/>
+                    <rect x="70" y="90" width="40" height="40" fill="none" stroke="#333" stroke-width="2.5" rx="5"/>
+                    <rect x="130" y="90" width="40" height="40" fill="none" stroke="#333" stroke-width="2.5" rx="5"/>
+                    <line x1="110" y1="110" x2="130" y2="110" stroke="#333" stroke-width="2.5"/>
+                    <line x1="70" y1="110" x2="55" y2="108" stroke="#333" stroke-width="2"/>
+                    <line x1="170" y1="110" x2="185" y2="108" stroke="#333" stroke-width="2"/>
+                `;
+                break;
+            case 'cat-eye':
+                svg += `
+                    <path d="M 70 110 Q 80 105 90 110 Q 80 115 70 110" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <path d="M 110 110 Q 100 105 90 110 Q 100 115 110 110" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <path d="M 130 110 Q 140 105 150 110 Q 140 115 130 110" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <path d="M 170 110 Q 160 105 150 110 Q 160 115 170 110" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <line x1="110" y1="110" x2="130" y2="110" stroke="#333" stroke-width="2.5"/>
+                `;
+                break;
+            case 'aviator':
+                svg += `
+                    <path d="M 70 105 Q 80 95 90 105 L 90 115 Q 80 120 70 110 Z" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <path d="M 110 105 Q 100 95 90 105 L 90 115 Q 100 120 110 110 Z" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <path d="M 130 105 Q 140 95 150 105 L 150 115 Q 140 120 130 110 Z" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <path d="M 170 105 Q 160 95 150 105 L 150 115 Q 160 120 170 110 Z" fill="none" stroke="#333" stroke-width="2.5"/>
+                    <line x1="110" y1="107" x2="130" y2="107" stroke="#333" stroke-width="2.5"/>
+                `;
+                break;
+            case 'sunglasses':
+                svg += `
+                    <rect x="70" y="95" width="40" height="30" fill="#000" opacity="0.7" rx="8"/>
+                    <rect x="130" y="95" width="40" height="30" fill="#000" opacity="0.7" rx="8"/>
+                    <line x1="110" y1="110" x2="130" y2="110" stroke="#333" stroke-width="2.5"/>
+                    <line x1="70" y1="110" x2="55" y2="108" stroke="#333" stroke-width="2"/>
+                    <line x1="170" y1="110" x2="185" y2="108" stroke="#333" stroke-width="2"/>
                 `;
                 break;
         }
     }
 
-    // Ohrringe
+    // Ohrringe (am Ohrläppchen platziert)
     if (accessories.earrings && accessories.earrings !== 'none') {
         switch (accessories.earrings) {
             case 'studs':
                 svg += `
-                    <circle cx="26" cy="103" r="4" fill="#FFD700" stroke="#333" stroke-width="1.5"/>
-                    <circle cx="174" cy="103" r="4" fill="#FFD700" stroke="#333" stroke-width="1.5"/>
+                    <circle cx="48" cy="122" r="4" fill="#FFD700"/>
+                    <circle cx="192" cy="122" r="4" fill="#FFD700"/>
+                    <circle cx="48" cy="122" r="2" fill="#FFF" opacity="0.6"/>
+                    <circle cx="192" cy="122" r="2" fill="#FFF" opacity="0.6"/>
                 `;
                 break;
             case 'hoops-small':
                 svg += `
-                    <circle cx="26" cy="103" r="6" fill="none" stroke="#FFD700" stroke-width="3"/>
-                    <circle cx="174" cy="103" r="6" fill="none" stroke="#FFD700" stroke-width="3"/>
+                    <ellipse cx="45" cy="124" rx="5" ry="7" fill="none" stroke="#FFD700" stroke-width="2.5"/>
+                    <ellipse cx="195" cy="124" rx="5" ry="7" fill="none" stroke="#FFD700" stroke-width="2.5"/>
                 `;
                 break;
             case 'hoops-large':
                 svg += `
-                    <circle cx="26" cy="108" r="10" fill="none" stroke="#FFD700" stroke-width="3"/>
-                    <circle cx="174" cy="108" r="10" fill="none" stroke="#FFD700" stroke-width="3"/>
+                    <ellipse cx="42" cy="128" rx="7" ry="11" fill="none" stroke="#FFD700" stroke-width="2.5"/>
+                    <ellipse cx="198" cy="128" rx="7" ry="11" fill="none" stroke="#FFD700" stroke-width="2.5"/>
+                `;
+                break;
+            case 'dangles':
+                svg += `
+                    <line x1="48" y1="122" x2="48" y2="135" stroke="#FFD700" stroke-width="2"/>
+                    <circle cx="48" cy="137" r="3" fill="#FFD700"/>
+                    <line x1="192" y1="122" x2="192" y2="135" stroke="#FFD700" stroke-width="2"/>
+                    <circle cx="192" cy="137" r="3" fill="#FFD700"/>
                 `;
                 break;
         }
@@ -892,20 +1121,68 @@ function renderAccessories(accessories) {
 
     // Kette
     if (accessories.necklace && accessories.necklace !== 'none') {
-        svg += `<path d="M 70 175 Q 100 182 130 175" fill="none" stroke="#FFD700" stroke-width="4"/>
-                <circle cx="100" cy="185" r="5" fill="#FFD700" stroke="#333" stroke-width="1.5"/>`;
+        svg += `
+            <circle cx="80" cy="185" r="3" fill="#FFD700"/>
+            <circle cx="95" cy="188" r="3" fill="#FFD700"/>
+            <circle cx="105" cy="190" r="3" fill="#FFD700"/>
+            <circle cx="120" cy="190" r="3" fill="#FFD700"/>
+            <circle cx="135" cy="190" r="3" fill="#FFD700"/>
+            <circle cx="145" cy="188" r="3" fill="#FFD700"/>
+            <circle cx="160" cy="185" r="3" fill="#FFD700"/>
+            <circle cx="120" cy="195" r="6" fill="#FFD700"/>
+        `;
     }
 
-    // Hut/Kopfbedeckung
+    // Hut/Kopfbedeckung (alle Stile)
     if (accessories.hat && accessories.hat !== 'none') {
         switch (accessories.hat) {
             case 'cap':
-                svg += `<path d="M 32 48 L 32 28 Q 100 18 168 28 L 168 48 Q 100 55 32 48 Z" fill="#4169E1" stroke="#333" stroke-width="2.5"/>
-                        <ellipse cx="100" cy="28" rx="68" ry="10" fill="#4169E1" stroke="#333" stroke-width="2.5"/>`;
+                svg += `
+                    <!-- Schirm -->
+                    <ellipse cx="120" cy="65" rx="50" ry="8" fill="#2E4C8B"/>
+                    <!-- Cap-Hauptteil -->
+                    <ellipse cx="120" cy="48" rx="70" ry="25" fill="#4169E1"/>
+                    <rect x="50" y="48" width="140" height="18" fill="#4169E1"/>
+                    <!-- Knopf oben -->
+                    <circle cx="120" cy="40" r="4" fill="#2E4C8B"/>
+                `;
                 break;
             case 'beanie':
-                svg += `<path d="M 28 55 Q 24 28 100 20 Q 176 28 172 55 Z" fill="#DC143C" stroke="#333" stroke-width="2.5"/>
-                        <circle cx="100" cy="16" r="6" fill="#FFF" stroke="#333" stroke-width="2"/>`;
+                svg += `
+                    <ellipse cx="120" cy="48" rx="75" ry="28" fill="#DC143C"/>
+                    <rect x="45" y="48" width="150" height="18" fill="#DC143C"/>
+                    <circle cx="120" cy="35" r="8" fill="#FFF"/>
+                    <!-- Umschlag -->
+                    <rect x="50" y="60" width="140" height="6" fill="#B71C1C"/>
+                `;
+                break;
+            case 'hat':
+                svg += `
+                    <!-- Hutkrempe -->
+                    <ellipse cx="120" cy="58" rx="90" ry="12" fill="#8B4513"/>
+                    <!-- Hut-Hauptteil -->
+                    <rect x="70" y="30" width="100" height="28" fill="#A0522D" rx="8"/>
+                    <ellipse cx="120" cy="30" rx="50" ry="10" fill="#8B4513"/>
+                    <!-- Band -->
+                    <rect x="70" y="52" width="100" height="4" fill="#654321"/>
+                `;
+                break;
+            case 'headband':
+                svg += `
+                    <rect x="50" y="62" width="140" height="8" fill="#FF69B4" rx="4"/>
+                    <circle cx="80" cy="66" r="6" fill="#FF1493"/>
+                    <circle cx="160" cy="66" r="6" fill="#FF1493"/>
+                `;
+                break;
+            case 'bow':
+                svg += `
+                    <!-- Schleife links -->
+                    <ellipse cx="90" cy="55" rx="20" ry="15" fill="#FF69B4"/>
+                    <!-- Schleife rechts -->
+                    <ellipse cx="150" cy="55" rx="20" ry="15" fill="#FF69B4"/>
+                    <!-- Mitte -->
+                    <rect x="110" y="48" width="20" height="14" fill="#FF1493" rx="3"/>
+                `;
                 break;
         }
     }
