@@ -69,8 +69,19 @@ function handleRegister(event) {
                 towerRight: false,
                 keep: false,
                 flag: false
+            },
+            learningSessions: {
+                current: null,
+                history: []
             }
         },
+        exerciseAttempts: {},
+        performanceAnalytics: {
+            byTopic: {},
+            byOperator: {},
+            byAFB: { 1: {}, 2: {}, 3: {} }
+        },
+        weaknesses: [],
         achievements: [],
         preferences: {
             theme: 'light',
@@ -477,6 +488,24 @@ function checkAchievements() {
             case 'millionaire':
                 unlocked = p.totalCoins >= 500;
                 break;
+            // Adaptive Learning Achievements
+            case 'diagnostiker':
+                unlocked = (p.learningSessions?.history || []).some(s => s.diagnosticCompleted);
+                break;
+            case 'weakness-crusher':
+                unlocked = (currentUser.weaknesses || []).filter(w => w.improved).length >= 3;
+                break;
+            case 'endurance-fighter':
+                const totalAttempts = Object.values(currentUser.exerciseAttempts || {})
+                    .reduce((sum, attempts) => sum + attempts.length, 0);
+                unlocked = totalAttempts >= 50;
+                break;
+            case 'perfectionist':
+                unlocked = checkConsecutivePerfect(currentUser, 5);
+                break;
+            case 'goal-achiever':
+                unlocked = (p.learningSessions?.history || []).some(s => s.overallScore >= 0.8);
+                break;
         }
 
         if (unlocked) {
@@ -694,4 +723,271 @@ function resetProgress() {
     updateAchievementsDisplay();
 
     showToast('Fortschritt zurückgesetzt.', 'info');
+}
+
+// ========================================
+// ADAPTIVE LEARNING HELPER FUNCTIONS
+// ========================================
+
+/**
+ * Zeichnet einen Übungsversuch auf
+ * @param {Object} attempt - Der Versuch mit exerciseId, score, maxScore, etc.
+ */
+function recordExerciseAttempt(attempt) {
+    if (!currentUser) return;
+
+    // Initialisieren falls nötig
+    if (!currentUser.exerciseAttempts) {
+        currentUser.exerciseAttempts = {};
+    }
+    if (!currentUser.performanceAnalytics) {
+        currentUser.performanceAnalytics = {
+            byTopic: {},
+            byOperator: {},
+            byAFB: { 1: {}, 2: {}, 3: {} }
+        };
+    }
+    if (!currentUser.weaknesses) {
+        currentUser.weaknesses = [];
+    }
+
+    const exerciseId = attempt.exerciseId;
+
+    // Attempt speichern
+    if (!currentUser.exerciseAttempts[exerciseId]) {
+        currentUser.exerciseAttempts[exerciseId] = [];
+    }
+    currentUser.exerciseAttempts[exerciseId].push({
+        score: attempt.score,
+        maxScore: attempt.maxScore,
+        correct: attempt.correct,
+        timestamp: attempt.timestamp || new Date().toISOString(),
+        sessionId: attempt.sessionId
+    });
+
+    // Nur letzte 10 Versuche pro Übung behalten
+    if (currentUser.exerciseAttempts[exerciseId].length > 10) {
+        currentUser.exerciseAttempts[exerciseId] =
+            currentUser.exerciseAttempts[exerciseId].slice(-10);
+    }
+
+    // Zur aktuellen Session hinzufügen
+    if (currentUser.progress.learningSessions?.current &&
+        attempt.sessionId === currentUser.progress.learningSessions.current.id) {
+        if (!currentUser.progress.learningSessions.current.exercisesDone.includes(exerciseId)) {
+            currentUser.progress.learningSessions.current.exercisesDone.push(exerciseId);
+        }
+    }
+
+    // Performance Analytics aktualisieren
+    const exercise = getExerciseById(exerciseId);
+    if (exercise) {
+        updatePerformanceAnalytics(exercise, attempt);
+    }
+
+    // Schwächen neu erkennen
+    detectWeaknesses();
+
+    // Speichern
+    updateUserProgress({
+        exerciseAttempts: currentUser.exerciseAttempts,
+        performanceAnalytics: currentUser.performanceAnalytics,
+        weaknesses: currentUser.weaknesses,
+        learningSessions: currentUser.progress.learningSessions
+    });
+}
+
+/**
+ * Aktualisiert Performance-Analytics
+ * @param {Object} exercise - Die Übung
+ * @param {Object} attempt - Der Versuch
+ */
+function updatePerformanceAnalytics(exercise, attempt) {
+    if (!currentUser || !currentUser.performanceAnalytics) return;
+
+    const scoreRatio = attempt.score / attempt.maxScore;
+
+    // By Topic
+    const topicId = exercise.topicId || 'unknown';
+    if (!currentUser.performanceAnalytics.byTopic[topicId]) {
+        currentUser.performanceAnalytics.byTopic[topicId] = {
+            attempts: 0,
+            totalScore: 0,
+            proficiency: 0
+        };
+    }
+    const topicData = currentUser.performanceAnalytics.byTopic[topicId];
+    topicData.attempts++;
+    topicData.totalScore += scoreRatio;
+    topicData.proficiency = topicData.totalScore / topicData.attempts;
+
+    // By Operator
+    if (!currentUser.performanceAnalytics.byOperator[exercise.operator]) {
+        currentUser.performanceAnalytics.byOperator[exercise.operator] = {
+            attempts: 0,
+            totalScore: 0,
+            proficiency: 0
+        };
+    }
+    const operatorData = currentUser.performanceAnalytics.byOperator[exercise.operator];
+    operatorData.attempts++;
+    operatorData.totalScore += scoreRatio;
+    operatorData.proficiency = operatorData.totalScore / operatorData.attempts;
+
+    // By AFB
+    if (!currentUser.performanceAnalytics.byAFB[exercise.afb]) {
+        currentUser.performanceAnalytics.byAFB[exercise.afb] = {};
+    }
+    if (!currentUser.performanceAnalytics.byAFB[exercise.afb][topicId]) {
+        currentUser.performanceAnalytics.byAFB[exercise.afb][topicId] = {
+            attempts: 0,
+            totalScore: 0,
+            proficiency: 0
+        };
+    }
+    const afbData = currentUser.performanceAnalytics.byAFB[exercise.afb][topicId];
+    afbData.attempts++;
+    afbData.totalScore += scoreRatio;
+    afbData.proficiency = afbData.totalScore / afbData.attempts;
+}
+
+/**
+ * Erkennt Schwächen basierend auf Performance Analytics
+ */
+function detectWeaknesses() {
+    if (!currentUser || !currentUser.performanceAnalytics) return;
+
+    const weaknessThreshold = 0.6; // <60% = Schwäche
+    const newWeaknesses = [];
+
+    // Check AFB-Levels
+    Object.keys(currentUser.performanceAnalytics.byAFB).forEach(afb => {
+        const topics = currentUser.performanceAnalytics.byAFB[afb];
+        let totalAttempts = 0;
+        let totalProficiency = 0;
+        let count = 0;
+
+        Object.values(topics).forEach(topicData => {
+            if (topicData.attempts > 0) {
+                totalAttempts += topicData.attempts;
+                totalProficiency += topicData.proficiency;
+                count++;
+            }
+        });
+
+        if (count > 0 && totalAttempts >= 3) {
+            const avgProficiency = totalProficiency / count;
+            if (avgProficiency < weaknessThreshold) {
+                // Prüfe ob Schwäche schon existiert
+                const existing = currentUser.weaknesses.find(
+                    w => w.type === 'afb' && w.identifier === afb
+                );
+
+                if (existing) {
+                    newWeaknesses.push(existing);
+                } else {
+                    newWeaknesses.push({
+                        type: 'afb',
+                        identifier: afb,
+                        name: `AFB ${afb}`,
+                        score: avgProficiency,
+                        severity: avgProficiency < 0.4 ? 'high' : 'medium',
+                        practiceCount: 0,
+                        recentScores: [],
+                        improved: false,
+                        detectedAt: new Date().toISOString()
+                    });
+                }
+            }
+        }
+    });
+
+    // Check Operators
+    Object.keys(currentUser.performanceAnalytics.byOperator).forEach(operator => {
+        const operatorData = currentUser.performanceAnalytics.byOperator[operator];
+
+        if (operatorData.attempts >= 2 && operatorData.proficiency < weaknessThreshold) {
+            const existing = currentUser.weaknesses.find(
+                w => w.type === 'operator' && w.identifier === operator
+            );
+
+            if (existing) {
+                newWeaknesses.push(existing);
+            } else {
+                newWeaknesses.push({
+                    type: 'operator',
+                    identifier: operator,
+                    name: `Operator: ${operator}`,
+                    score: operatorData.proficiency,
+                    severity: operatorData.proficiency < 0.4 ? 'high' : 'medium',
+                    practiceCount: 0,
+                    recentScores: [],
+                    improved: false,
+                    detectedAt: new Date().toISOString()
+                });
+            }
+        }
+    });
+
+    currentUser.weaknesses = newWeaknesses;
+}
+
+/**
+ * Aktualisiert Weakness mit neuem Score und prüft Verbesserung
+ * @param {Object} weakness - Die Schwäche
+ * @param {number} scoreRatio - Score 0-1
+ */
+function updateWeaknessProgress(weakness, scoreRatio) {
+    if (!weakness) return;
+
+    weakness.practiceCount++;
+    weakness.recentScores.push(scoreRatio);
+
+    // Nur letzte 5 Scores behalten
+    if (weakness.recentScores.length > 5) {
+        weakness.recentScores = weakness.recentScores.slice(-5);
+    }
+
+    // Prüfe Verbesserung (3 consecutive >75%)
+    if (weakness.recentScores.length >= 3) {
+        const lastThree = weakness.recentScores.slice(-3);
+        const allAbove75 = lastThree.every(score => score >= 0.75);
+
+        if (allAbove75 && !weakness.improved) {
+            weakness.improved = true;
+            weakness.improvedAt = new Date().toISOString();
+
+            // Celebration
+            if (typeof celebrateWeaknessImprovement === 'function') {
+                celebrateWeaknessImprovement(weakness);
+            }
+        }
+    }
+}
+
+/**
+ * Prüft consecutive perfekte Übungen für Achievement
+ * @param {Object} user - Der User
+ * @param {number} count - Anzahl consecutive
+ * @returns {boolean}
+ */
+function checkConsecutivePerfect(user, count) {
+    if (!user || !user.exerciseAttempts) return false;
+
+    // Alle Attempts sammeln und sortieren
+    const allAttempts = [];
+    Object.keys(user.exerciseAttempts).forEach(exId => {
+        user.exerciseAttempts[exId].forEach(attempt => {
+            allAttempts.push(attempt);
+        });
+    });
+
+    // Nach Timestamp sortieren
+    allAttempts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    // Letzte N prüfen
+    if (allAttempts.length < count) return false;
+
+    const lastN = allAttempts.slice(0, count);
+    return lastN.every(attempt => attempt.score === attempt.maxScore);
 }

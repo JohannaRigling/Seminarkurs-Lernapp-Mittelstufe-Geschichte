@@ -1245,3 +1245,474 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// ========================================
+// ADAPTIVE LEARNING UI FUNCTIONS
+// ========================================
+
+/**
+ * Zeigt Session Start UI
+ */
+function showLearningSessionStart() {
+    const modal = document.getElementById('adaptiveLearningModal');
+    const content = document.getElementById('adaptiveLearningContent');
+
+    if (!modal || !content) return;
+
+    content.innerHTML = `
+        <div class="learning-session-start">
+            <h2>🎯 Starte eine Lernsession</h2>
+            <p>Erzähle mir, was du lernen möchtest!</p>
+
+            <div class="goal-input">
+                <label>Dein Lernziel:</label>
+                <textarea id="learningGoal"
+                    placeholder="z.B. Ich muss Nationalsozialismus für meine Klausur am 15.03. lernen"
+                    rows="3"></textarea>
+            </div>
+
+            <div class="topic-selection">
+                <label>Thema:</label>
+                <select id="sessionTopic">
+                    <option value="">-- Wähle ein Thema --</option>
+                    ${getAvailableTopics().map(t =>
+                        `<option value="${t.id}">${t.name}</option>`
+                    ).join('')}
+                </select>
+            </div>
+
+            <div class="exam-date">
+                <label>Prüfungsdatum (optional):</label>
+                <input type="date" id="examDate" />
+            </div>
+
+            <button class="btn btn-primary" onclick="createLearningSession()">
+                Lernsession starten 🚀
+            </button>
+        </div>
+    `;
+
+    modal.style.display = 'block';
+}
+
+/**
+ * Erstellt eine neue Lernsession
+ */
+function createLearningSession() {
+    const goal = document.getElementById('learningGoal')?.value?.trim();
+    const topicId = document.getElementById('sessionTopic')?.value;
+    const examDate = document.getElementById('examDate')?.value || null;
+
+    if (!goal) {
+        showToast('Bitte gib dein Lernziel ein!', 'error');
+        return;
+    }
+
+    if (!topicId) {
+        showToast('Bitte wähle ein Thema!', 'error');
+        return;
+    }
+
+    // Session erstellen
+    const sessionId = startLearningSession(goal, topicId, examDate);
+
+    // Diagnose-Intro zeigen
+    showDiagnosticIntro(sessionId);
+}
+
+/**
+ * Zeigt Diagnose-Intro
+ * @param {string} sessionId - Die Session-ID
+ */
+function showDiagnosticIntro(sessionId) {
+    const content = document.getElementById('adaptiveLearningContent');
+    if (!content) return;
+
+    content.innerHTML = `
+        <div class="diagnostic-intro">
+            <h2>📊 Diagnose-Phase</h2>
+            <p>Ich möchte zunächst einschätzen, wo du stehst!</p>
+            <p>Du bekommst <strong>10 Aufgaben</strong> aus verschiedenen Schwierigkeitsstufen.</p>
+
+            <div class="diagnostic-tips">
+                <h4>💡 Tipps:</h4>
+                <ul>
+                    <li>Beantworte so gut du kannst</li>
+                    <li>Wenn du etwas nicht weißt, überspringe die Aufgabe</li>
+                    <li>Dauer: etwa 10-15 Minuten</li>
+                </ul>
+            </div>
+
+            <div class="diagnostic-progress-indicator">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="diagnosticProgressFill" style="width: 0%"></div>
+                </div>
+                <span class="progress-text" id="diagnosticProgressText">0 / 10 Aufgaben</span>
+            </div>
+
+            <button class="btn btn-primary" onclick="startDiagnosticExercises('${sessionId}')">
+                Los geht's! 🚀
+            </button>
+        </div>
+    `;
+}
+
+/**
+ * Startet die diagnostischen Übungen
+ * @param {string} sessionId - Die Session-ID
+ */
+function startDiagnosticExercises(sessionId) {
+    if (!currentUser || !currentUser.progress.learningSessions?.current) {
+        showToast('Keine aktive Session!', 'error');
+        return;
+    }
+
+    const session = currentUser.progress.learningSessions.current;
+    const diagnosticExercises = selectDiagnosticExercises(session.topicId);
+
+    if (diagnosticExercises.length === 0) {
+        showToast('Keine Übungen gefunden!', 'error');
+        return;
+    }
+
+    // Speichere diagnostic exercises in session
+    session.diagnosticExercises = diagnosticExercises.map(e => e.id);
+    session.currentDiagnosticIndex = 0;
+
+    // Zeige erste Übung
+    showNextDiagnosticExercise(sessionId);
+}
+
+/**
+ * Zeigt nächste Diagnose-Übung
+ * @param {string} sessionId - Die Session-ID
+ */
+function showNextDiagnosticExercise(sessionId) {
+    const session = currentUser.progress.learningSessions.current;
+    if (!session || session.id !== sessionId) return;
+
+    const index = session.currentDiagnosticIndex || 0;
+    const diagnosticIds = session.diagnosticExercises || [];
+
+    if (index >= diagnosticIds.length) {
+        // Diagnose abgeschlossen
+        completeDiagnosticPhase(sessionId);
+        return;
+    }
+
+    const exercise = getExerciseById(diagnosticIds[index]);
+    if (!exercise) {
+        session.currentDiagnosticIndex++;
+        showNextDiagnosticExercise(sessionId);
+        return;
+    }
+
+    // Update progress indicator
+    updateDiagnosticProgress(index, diagnosticIds.length);
+
+    // Zeige Übung
+    showExercisePractice(exercise, sessionId);
+}
+
+/**
+ * Aktualisiert Diagnose-Fortschritt
+ * @param {number} current - Aktueller Index
+ * @param {number} total - Gesamt-Anzahl
+ */
+function updateDiagnosticProgress(current, total) {
+    const progressFill = document.getElementById('diagnosticProgressFill');
+    const progressText = document.getElementById('diagnosticProgressText');
+
+    if (progressFill) {
+        const percent = ((current + 1) / total) * 100;
+        progressFill.style.width = `${percent}%`;
+    }
+
+    if (progressText) {
+        progressText.textContent = `${current + 1} / ${total} Aufgaben`;
+    }
+}
+
+/**
+ * Fortsetzt nach Submit in Diagnose
+ */
+function continueAdaptivePractice() {
+    const session = currentUser?.progress?.learningSessions?.current;
+    if (!session) {
+        closeAdaptiveLearningModal();
+        return;
+    }
+
+    if (session.phase === 'diagnostic') {
+        // Nächste Diagnose-Übung
+        session.currentDiagnosticIndex = (session.currentDiagnosticIndex || 0) + 1;
+        showNextDiagnosticExercise(session.id);
+    } else if (session.phase === 'practice') {
+        // Nächste adaptive Übung
+        const nextExercise = selectNextExercise(session.id);
+        if (nextExercise) {
+            showExercisePractice(nextExercise, session.id);
+        } else {
+            // Keine Schwächen mehr
+            showSessionSummary();
+        }
+    }
+}
+
+/**
+ * Schließt Diagnose-Phase ab
+ * @param {string} sessionId - Die Session-ID
+ */
+function completeDiagnosticPhase(sessionId) {
+    const session = currentUser.progress.learningSessions.current;
+    if (!session || session.id !== sessionId) return;
+
+    // Diagnose analysieren
+    const results = analyzeDiagnosticResults(session.diagnosticExercises);
+
+    if (!results) {
+        showToast('Fehler bei der Analyse!', 'error');
+        return;
+    }
+
+    // Speichern
+    session.diagnosticCompleted = true;
+    session.diagnosticResults = results;
+    session.phase = 'practice';
+
+    // Weaknesses in User-Progress speichern
+    if (!currentUser.weaknesses) {
+        currentUser.weaknesses = [];
+    }
+    currentUser.weaknesses = results.weaknesses;
+
+    updateUserProgress({
+        learningSessions: currentUser.progress.learningSessions,
+        weaknesses: currentUser.weaknesses
+    });
+
+    // Achievement prüfen
+    checkAchievements();
+
+    // Ergebnisse zeigen
+    showDiagnosticResults(results, sessionId);
+}
+
+/**
+ * Zeigt Diagnose-Ergebnisse
+ * @param {Object} results - Die Analyse-Ergebnisse
+ * @param {string} sessionId - Die Session-ID
+ */
+function showDiagnosticResults(results, sessionId) {
+    const content = document.getElementById('adaptiveLearningContent');
+    if (!content) return;
+
+    content.innerHTML = `
+        <div class="diagnostic-results">
+            <h2>📊 Diagnose-Ergebnisse</h2>
+
+            <div class="result-summary">
+                <div class="result-card main">
+                    <div class="result-icon">🎯</div>
+                    <div class="result-value">${Math.round(results.overallScore * 100)}%</div>
+                    <div class="result-label">Gesamtergebnis</div>
+                </div>
+            </div>
+
+            <div class="strength-weakness-analysis">
+                <div class="strengths-box">
+                    <h3>💪 Deine Stärken</h3>
+                    ${results.strengths.length > 0 ? `
+                        <ul>
+                            ${results.strengths.map(s =>
+                                `<li><strong>${s.name}:</strong> ${Math.round(s.score * 100)}%</li>`
+                            ).join('')}
+                        </ul>
+                    ` : '<p>Noch keine Stärken identifiziert.</p>'}
+                </div>
+
+                <div class="weaknesses-box">
+                    <h3>📚 Übungsbedarf</h3>
+                    ${results.weaknesses.length > 0 ? `
+                        <ul>
+                            ${results.weaknesses.map(w =>
+                                `<li><strong>${getWeaknessName(w)}:</strong> ${Math.round(w.score * 100)}%
+                                <span class="severity-badge ${w.severity}">${w.severity === 'high' ? 'hoch' : 'mittel'}</span></li>`
+                            ).join('')}
+                        </ul>
+                    ` : '<p>Sehr gut! Keine Schwächen gefunden.</p>'}
+                </div>
+            </div>
+
+            <div class="learning-plan">
+                <h3>🗺️ Dein Lernplan</h3>
+                <p>Ich habe <strong>${results.weaknesses.length} Bereiche</strong> gefunden,
+                   ${results.weaknesses.length > 0 ? 'die wir zusammen üben sollten.' : 'du bist gut vorbereitet!'}</p>
+                ${results.weaknesses.length > 0 ? '<p>Ich werde dir Aufgaben geben, die auf diese Bereiche abgestimmt sind!</p>' : ''}
+            </div>
+
+            <button class="btn btn-primary" onclick="startAdaptivePractice('${sessionId}')">
+                ${results.weaknesses.length > 0 ? 'Jetzt üben! 🚀' : 'Übungen machen 🎯'}
+            </button>
+        </div>
+    `;
+}
+
+/**
+ * Startet adaptive Practice-Phase
+ * @param {string} sessionId - Die Session-ID
+ */
+function startAdaptivePractice(sessionId) {
+    const session = currentUser?.progress?.learningSessions?.current;
+    if (!session || session.id !== sessionId) return;
+
+    const nextExercise = selectNextExercise(sessionId);
+    if (nextExercise) {
+        showExercisePractice(nextExercise, sessionId);
+    } else {
+        showToast('Keine weiteren Übungen verfügbar.', 'info');
+        showSessionSummary();
+    }
+}
+
+/**
+ * Zeigt Lernfortschritt-Dashboard
+ */
+function showLearningProgress() {
+    const session = currentUser?.progress?.learningSessions?.current;
+    const weaknesses = currentUser?.weaknesses || [];
+
+    if (!session) {
+        showToast('Keine aktive Session!', 'error');
+        return;
+    }
+
+    const content = document.getElementById('adaptiveLearningContent');
+    if (!content) return;
+
+    content.innerHTML = `
+        <div class="learning-progress-dashboard">
+            <h2>📈 Dein Lernfortschritt</h2>
+
+            <div class="session-info">
+                <h3>${getTopicName(session.topicId)}</h3>
+                <p>Gestartet: ${formatDate(session.startedAt)}</p>
+            </div>
+
+            <div class="progress-cards">
+                <div class="progress-card">
+                    <h4>Übungen absolviert</h4>
+                    <div class="progress-value">${getSessionExerciseCount(session.id)}</div>
+                </div>
+                <div class="progress-card">
+                    <h4>Durchschnitt</h4>
+                    <div class="progress-value">${Math.round(getSessionAverageScore(session.id) * 100)}%</div>
+                </div>
+            </div>
+
+            <div class="weakness-progress-section">
+                <h3>Schwachstellen-Training</h3>
+                ${weaknesses.length > 0 ? weaknesses.map(w => `
+                    <div class="weakness-item ${w.improved ? 'improved' : ''}">
+                        <div class="weakness-header">
+                            <span>${getWeaknessName(w)}</span>
+                            <span class="severity-badge ${w.severity}">${w.severity === 'high' ? 'hoch' : 'mittel'}</span>
+                        </div>
+                        <div class="weakness-progress-bar">
+                            <div class="progress-fill" style="width: ${calculateWeaknessProgress(w)}%"></div>
+                        </div>
+                        <div class="weakness-stats">
+                            ${w.practiceCount} Übungen ${w.improved ? '• ✅ Verbessert!' : ''}
+                        </div>
+                    </div>
+                `).join('') : '<p>Keine Schwächen identifiziert.</p>'}
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" onclick="continueAdaptivePractice()">Weiter üben</button>
+                <button class="btn btn-secondary" onclick="showSessionSummary()">Session beenden</button>
+            </div>
+        </div>
+    `;
+
+    const modal = document.getElementById('adaptiveLearningModal');
+    if (modal) modal.style.display = 'block';
+}
+
+/**
+ * Zeigt Session-Summary
+ */
+function showSessionSummary() {
+    const session = currentUser?.progress?.learningSessions?.current;
+
+    if (!session) {
+        closeAdaptiveLearningModal();
+        return;
+    }
+
+    const content = document.getElementById('adaptiveLearningContent');
+    if (!content) return;
+
+    const exerciseCount = getSessionExerciseCount(session.id);
+    const avgScore = getSessionAverageScore(session.id);
+    const weaknessesImproved = currentUser.weaknesses.filter(w => w.improved).length;
+
+    content.innerHTML = `
+        <div class="session-summary">
+            <h2>🎉 Session abgeschlossen!</h2>
+
+            <div class="summary-stats">
+                <div class="summary-card">
+                    <div class="summary-icon">🎯</div>
+                    <div class="summary-value">${exerciseCount}</div>
+                    <div class="summary-label">Übungen gemacht</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">📊</div>
+                    <div class="summary-value">${Math.round(avgScore * 100)}%</div>
+                    <div class="summary-label">Durchschnitt</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-icon">💪</div>
+                    <div class="summary-value">${weaknessesImproved}</div>
+                    <div class="summary-label">Schwächen verbessert</div>
+                </div>
+            </div>
+
+            <div class="summary-message">
+                ${avgScore >= 0.8 ? '<p>🌟 Exzellente Leistung! Du hast das Thema sehr gut verstanden.</p>' :
+                  avgScore >= 0.6 ? '<p>👍 Gute Arbeit! Mit noch etwas Übung wirst du perfekt vorbereitet sein.</p>' :
+                  '<p>💪 Weiter so! Übung macht den Meister. Bleib dran!</p>'}
+            </div>
+
+            <div class="summary-actions">
+                <button class="btn btn-primary" onclick="endLearningSessionUI()">
+                    Session beenden
+                </button>
+                <button class="btn btn-secondary" onclick="continueAdaptivePractice()">
+                    Noch weiter üben
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Beendet Session UI
+ */
+function endLearningSessionUI() {
+    endLearningSession();
+    closeAdaptiveLearningModal();
+    showToast('Session gespeichert! 🎉', 'success');
+    checkAchievements();
+}
+
+/**
+ * Schließt Adaptive Learning Modal
+ */
+function closeAdaptiveLearningModal() {
+    const modal = document.getElementById('adaptiveLearningModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}

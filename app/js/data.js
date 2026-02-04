@@ -1434,7 +1434,13 @@ const ACHIEVEMENTS = [
     { id: 'note-taker', name: 'Notizenmeister', icon: '📒', description: '10 Notizen erstellt', condition: 'notesCreated >= 10' },
     { id: 'perfect-quiz', name: 'Perfektionist', icon: '💯', description: 'Ein Quiz mit 100% abgeschlossen', condition: 'perfectQuizzes >= 1' },
     { id: 'night-owl', name: 'Nachteule', icon: '🦉', description: 'Nach 22 Uhr gelernt', condition: 'nightLearning >= 1' },
-    { id: 'early-bird', name: 'Frühaufsteher', icon: '🐦', description: 'Vor 7 Uhr gelernt', condition: 'earlyLearning >= 1' }
+    { id: 'early-bird', name: 'Frühaufsteher', icon: '🐦', description: 'Vor 7 Uhr gelernt', condition: 'earlyLearning >= 1' },
+    // Adaptive Learning Achievements
+    { id: 'diagnostiker', name: 'Diagnostiker', icon: '🔍', description: 'Erste Diagnose abgeschlossen', condition: 'diagnostic >= 1' },
+    { id: 'weakness-crusher', name: 'Schwächen-Bezwinger', icon: '💪', description: '3 Schwächen verbessert', condition: 'weaknessesImproved >= 3' },
+    { id: 'endurance-fighter', name: 'Ausdauerkämpfer', icon: '🏃', description: '50 adaptive Übungen absolviert', condition: 'adaptiveExercises >= 50' },
+    { id: 'perfectionist', name: 'Perfektionist', icon: '⭐', description: '5 Übungen in Folge mit 100%', condition: 'consecutivePerfect >= 5' },
+    { id: 'goal-achiever', name: 'Lernziel erreicht', icon: '🎯', description: 'Session mit über 80% abgeschlossen', condition: 'sessionScore >= 0.8' }
 ];
 
 // ===== OPERATOR ÜBUNGEN =====

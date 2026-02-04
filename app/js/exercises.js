@@ -482,3 +482,552 @@ quizStyles.textContent = `
     }
 `;
 document.head.appendChild(quizStyles);
+
+// ========================================
+// ADAPTIVE EXERCISE SYSTEM
+// ========================================
+
+/**
+ * Zeigt Exercise Practice Modal
+ * @param {Object} exercise - Die Übung
+ * @param {string} sessionId - Die Session-ID
+ */
+function showExercisePractice(exercise, sessionId) {
+    const modal = document.getElementById('adaptiveLearningModal');
+    const content = document.getElementById('adaptiveLearningContent');
+
+    if (!modal || !content) return;
+
+    content.innerHTML = `
+        <div class="exercise-practice">
+            <div class="exercise-header">
+                <h3>Übung</h3>
+                <div class="exercise-meta">
+                    <span class="badge afb-badge afb-${exercise.afb}">AFB ${exercise.afb}</span>
+                    <span class="badge operator-badge">${exercise.operator}</span>
+                    <span class="badge points-badge">${exercise.points} Punkte</span>
+                </div>
+            </div>
+
+            <div class="exercise-question">
+                <h4>Aufgabe:</h4>
+                <p>${exercise.question}</p>
+            </div>
+
+            ${exercise.tips ? `
+                <div class="exercise-tips">
+                    <strong>💡 Tipp:</strong> ${exercise.tips}
+                </div>
+            ` : ''}
+
+            <div class="exercise-answer-area">
+                <label for="exerciseAnswer">Deine Antwort:</label>
+                <textarea id="exerciseAnswer" rows="8" placeholder="Schreibe hier deine Antwort..."></textarea>
+            </div>
+
+            <div class="exercise-actions">
+                <button class="btn btn-primary" onclick="submitExerciseAnswer('${exercise.id}', '${sessionId}')">
+                    Antwort einreichen
+                </button>
+                <button class="btn btn-secondary" onclick="showModelAnswer('${exercise.id}')">
+                    Musterlösung zeigen
+                </button>
+                <button class="btn btn-tertiary" onclick="skipExercise('${exercise.id}', '${sessionId}')">
+                    Überspringen
+                </button>
+            </div>
+
+            <div id="feedbackArea" style="display: none;"></div>
+        </div>
+    `;
+
+    modal.style.display = 'block';
+}
+
+/**
+ * Reicht Exercise-Antwort ein und evaluiert
+ * @param {string} exerciseId - Die Exercise-ID
+ * @param {string} sessionId - Die Session-ID
+ */
+async function submitExerciseAnswer(exerciseId, sessionId) {
+    const answerTextarea = document.getElementById('exerciseAnswer');
+    const answer = answerTextarea?.value?.trim();
+
+    if (!answer) {
+        showToast('Bitte schreibe eine Antwort!', 'error');
+        return;
+    }
+
+    const exercise = getExerciseById(exerciseId);
+    if (!exercise) {
+        showToast('Übung nicht gefunden!', 'error');
+        return;
+    }
+
+    // Disable submit button
+    const submitBtn = event.target;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Wird ausgewertet...';
+
+    try {
+        // Evaluate mit AI oder Fallback
+        const apiKey = localStorage.getItem('histolearn_apiKey');
+        let feedback;
+
+        if (apiKey && (apiKey.startsWith('sk-') || apiKey.startsWith('AIza'))) {
+            feedback = await evaluateWithAI(exercise, answer, apiKey);
+        } else {
+            feedback = evaluateWithoutAI(exercise, answer);
+        }
+
+        // Record attempt
+        recordExerciseAttempt({
+            exerciseId: exerciseId,
+            sessionId: sessionId,
+            userAnswer: answer,
+            score: feedback.score,
+            maxScore: exercise.points,
+            correct: feedback.score >= exercise.points * 0.6,
+            timestamp: new Date().toISOString()
+        });
+
+        // Update weakness progress
+        if (currentUser && currentUser.weaknesses) {
+            currentUser.weaknesses.forEach(weakness => {
+                if ((weakness.type === 'afb' && weakness.identifier == exercise.afb) ||
+                    (weakness.type === 'operator' && weakness.identifier === exercise.operator)) {
+                    updateWeaknessProgress(weakness, feedback.score / exercise.points);
+                }
+            });
+        }
+
+        // Display feedback
+        displayExerciseFeedback(feedback, exercise);
+
+        // Rewards
+        if (feedback.score >= exercise.points * 0.6) {
+            addCoins(2, 'Übung gelöst');
+            addXP(exercise.points * 2);
+        } else {
+            addXP(exercise.points); // Participation XP
+        }
+
+        // Check achievements
+        checkAchievements();
+
+    } catch (error) {
+        console.error('Evaluation error:', error);
+        showToast('Fehler bei der Auswertung!', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Antwort einreichen';
+    }
+}
+
+/**
+ * Evaluiert mit AI (Claude oder Gemini)
+ * @param {Object} exercise - Die Übung
+ * @param {string} userAnswer - Die User-Antwort
+ * @param {string} apiKey - Der API-Key
+ * @returns {Object} Feedback-Objekt
+ */
+async function evaluateWithAI(exercise, userAnswer, apiKey) {
+    const sampleAnswerText = Array.isArray(exercise.sampleAnswer)
+        ? exercise.sampleAnswer.join(', ')
+        : exercise.sampleAnswer;
+
+    const prompt = `Du bist ein Geschichtslehrer. Bewerte folgende Schülerantwort:
+
+Aufgabe (Operator: ${exercise.operator}, AFB ${exercise.afb}, ${exercise.points} Punkte):
+${exercise.question}
+
+Musterantwort:
+${sampleAnswerText}
+
+Schülerantwort:
+${userAnswer}
+
+Bewerte nach:
+1. Inhaltliche Korrektheit (0-${exercise.points} Punkte)
+2. Vollständigkeit
+3. Fachsprache
+4. Struktur
+
+Antworte in folgendem Format:
+PUNKTE: [Zahl von 0 bis ${exercise.points}]
+STÄRKEN: [Was gut war, Stichpunkte]
+SCHWÄCHEN: [Was fehlt oder falsch ist, Stichpunkte]
+VERBESSERUNGSVORSCHLÄGE: [Konkrete Tipps, Stichpunkte]
+MUSTERANTWORT_ERKLÄRUNG: [Erkläre die Musterantwort kurz]`;
+
+    try {
+        let responseText;
+
+        if (apiKey.startsWith('sk-')) {
+            // Claude API
+            const response = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': apiKey,
+                    'anthropic-version': '2023-06-01'
+                },
+                body: JSON.stringify({
+                    model: 'claude-3-haiku-20240307',
+                    max_tokens: 1000,
+                    messages: [{ role: 'user', content: prompt }]
+                })
+            });
+
+            const data = await response.json();
+            if (data.content && data.content[0]) {
+                responseText = data.content[0].text;
+            } else {
+                throw new Error('Invalid AI response');
+            }
+        } else if (apiKey.startsWith('AIza')) {
+            // Gemini API
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: prompt
+                        }]
+                    }]
+                })
+            });
+
+            const data = await response.json();
+            if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                responseText = data.candidates[0].content.parts[0].text;
+            } else {
+                throw new Error('Invalid AI response');
+            }
+        }
+
+        return parseAIFeedback(responseText, exercise);
+
+    } catch (error) {
+        console.error('AI evaluation failed:', error);
+        // Fallback to non-AI evaluation
+        return evaluateWithoutAI(exercise, userAnswer);
+    }
+}
+
+/**
+ * Parst AI-Response zu Feedback-Objekt
+ * @param {string} responseText - AI-Response
+ * @param {Object} exercise - Die Übung
+ * @returns {Object} Feedback-Objekt
+ */
+function parseAIFeedback(responseText, exercise) {
+    const lines = responseText.split('\n');
+
+    let score = 0;
+    const strengths = [];
+    const weaknesses = [];
+    const suggestions = [];
+    let modelAnswerDiscussion = '';
+
+    let currentSection = '';
+
+    lines.forEach(line => {
+        line = line.trim();
+
+        if (line.startsWith('PUNKTE:')) {
+            const match = line.match(/(\d+)/);
+            if (match) {
+                score = Math.min(parseInt(match[1]), exercise.points);
+            }
+        } else if (line.startsWith('STÄRKEN:')) {
+            currentSection = 'strengths';
+        } else if (line.startsWith('SCHWÄCHEN:')) {
+            currentSection = 'weaknesses';
+        } else if (line.startsWith('VERBESSERUNGSVORSCHLÄGE:')) {
+            currentSection = 'suggestions';
+        } else if (line.startsWith('MUSTERANTWORT_ERKLÄRUNG:') || line.startsWith('MUSTERANTWORT_DISKUSSION:')) {
+            currentSection = 'model';
+        } else if (line && !line.startsWith('-') && currentSection) {
+            // Section content
+            if (currentSection === 'strengths') {
+                strengths.push(line.replace(/^[-•*]\s*/, ''));
+            } else if (currentSection === 'weaknesses') {
+                weaknesses.push(line.replace(/^[-•*]\s*/, ''));
+            } else if (currentSection === 'suggestions') {
+                suggestions.push(line.replace(/^[-•*]\s*/, ''));
+            } else if (currentSection === 'model') {
+                modelAnswerDiscussion += line + ' ';
+            }
+        }
+    });
+
+    // Fallback values
+    if (strengths.length === 0 && score >= exercise.points * 0.7) {
+        strengths.push('Gute Ansätze erkennbar');
+    }
+    if (suggestions.length === 0) {
+        suggestions.push(...getOperatorSpecificTips(exercise.operator));
+    }
+    if (!modelAnswerDiscussion) {
+        const sampleText = Array.isArray(exercise.sampleAnswer)
+            ? exercise.sampleAnswer.join('; ')
+            : exercise.sampleAnswer;
+        modelAnswerDiscussion = `Musterantwort: ${sampleText}. ${getOperatorExplanation(exercise.operator)}`;
+    }
+
+    return {
+        score,
+        maxScore: exercise.points,
+        strengths,
+        weaknesses,
+        suggestions,
+        modelAnswerDiscussion: modelAnswerDiscussion.trim()
+    };
+}
+
+/**
+ * Fallback-Evaluation ohne AI (Keyword-Matching)
+ * @param {Object} exercise - Die Übung
+ * @param {string} userAnswer - Die User-Antwort
+ * @returns {Object} Feedback-Objekt
+ */
+function evaluateWithoutAI(exercise, userAnswer) {
+    const sampleText = (Array.isArray(exercise.sampleAnswer)
+        ? exercise.sampleAnswer.join(' ')
+        : exercise.sampleAnswer).toLowerCase();
+
+    // Extract keywords
+    const keywords = extractKeywords(sampleText);
+
+    // Count matches
+    const userAnswerLower = userAnswer.toLowerCase();
+    const matchedKeywords = keywords.filter(kw => userAnswerLower.includes(kw));
+    const matchRatio = matchedKeywords.length / keywords.length;
+
+    // Length check
+    const wordsCount = userAnswer.split(/\s+/).filter(w => w.length > 0).length;
+    const minWords = exercise.afb * 20; // AFB 1: 20, AFB 2: 40, AFB 3: 60
+    const lengthRatio = Math.min(wordsCount / minWords, 1);
+
+    // Combined score
+    const combinedScore = (matchRatio * 0.7 + lengthRatio * 0.3);
+    const score = Math.round(combinedScore * exercise.points);
+
+    // Generate feedback
+    const strengths = [];
+    const weaknesses = [];
+
+    if (matchRatio > 0.6) {
+        strengths.push('Wichtige Aspekte wurden genannt');
+    }
+    if (wordsCount >= minWords) {
+        strengths.push('Ausreichende Ausführlichkeit');
+    }
+    if (matchRatio < 0.5) {
+        weaknesses.push('Mehr relevante Details erforderlich');
+    }
+    if (wordsCount < minWords * 0.7) {
+        weaknesses.push('Antwort könnte ausführlicher sein');
+    }
+
+    const sampleAnswerText = Array.isArray(exercise.sampleAnswer)
+        ? exercise.sampleAnswer.join('; ')
+        : exercise.sampleAnswer;
+
+    return {
+        score,
+        maxScore: exercise.points,
+        strengths,
+        weaknesses,
+        suggestions: getOperatorSpecificTips(exercise.operator),
+        modelAnswerDiscussion: `Musterantwort: ${sampleAnswerText}. ${getOperatorExplanation(exercise.operator)}`
+    };
+}
+
+/**
+ * Extrahiert Keywords aus Text
+ * @param {string} text - Der Text
+ * @returns {Array} Keywords
+ */
+function extractKeywords(text) {
+    const stopwords = ['der', 'die', 'das', 'und', 'oder', 'in', 'ist', 'war',
+        'wurden', 'eine', 'ein', 'von', 'zu', 'mit', 'auf', 'für', 'als', 'bei',
+        'den', 'dem', 'des', 'im', 'am', 'zum', 'zur', 'durch', 'über', 'unter'];
+
+    return text.split(/\s+/)
+        .map(word => word.replace(/[.,!?;:()]/g, ''))
+        .filter(word => word.length > 3 && !stopwords.includes(word))
+        .slice(0, 15); // Top 15 keywords
+}
+
+/**
+ * Gibt operator-spezifische Tipps
+ * @param {string} operator - Der Operator
+ * @returns {Array} Tipps
+ */
+function getOperatorSpecificTips(operator) {
+    const tips = {
+        'nennen': ['Nutze klare Stichpunkte', 'Sei präzise und konkret'],
+        'beschreiben': ['Beschreibe Details', 'Nutze beschreibende Adjektive', 'Bleibe sachlich'],
+        'zusammenfassen': ['Konzentriere dich auf Kernaussagen', 'Formuliere in eigenen Worten'],
+        'analysieren': ['Zerlege in Teile', 'Erkenne Zusammenhänge', 'Nutze Fachbegriffe'],
+        'erklaeren': ['Nutze Kausalketten ("weil")', 'Zeige Ursachen und Wirkungen'],
+        'erlaeutern': ['Erkläre ausführlich', 'Nutze Beispiele'],
+        'vergleichen': ['Finde Gemeinsamkeiten und Unterschiede', 'Nutze Vergleichswörter'],
+        'einordnen': ['Stelle in größeren Kontext', 'Zeige historische Bedeutung'],
+        'beurteilen': ['Wäge Pro und Contra ab', 'Begründe dein Urteil', 'Nutze Kriterien'],
+        'bewerten': ['Nimm begründet Stellung', 'Zeige verschiedene Perspektiven'],
+        'eroertern': ['Diskutiere verschiedene Sichtweisen', 'Gewichte Argumente'],
+        'stellung-nehmen': ['Formuliere klare Position', 'Begründe ausführlich']
+    };
+
+    return tips[operator] || ['Beantworte vollständig', 'Nutze Fachbegriffe', 'Strukturiere logisch'];
+}
+
+/**
+ * Gibt Operator-Erklärung
+ * @param {string} operator - Der Operator
+ * @returns {string} Erklärung
+ */
+function getOperatorExplanation(operator) {
+    const explanations = {
+        'nennen': 'Beim Nennen sollst du Fakten aufzählen, ohne sie zu erklären.',
+        'beschreiben': 'Beim Beschreiben sollst du sachlich und detailliert darstellen.',
+        'zusammenfassen': 'Beim Zusammenfassen reduzierst du auf die Kernaussagen.',
+        'analysieren': 'Beim Analysieren zerlegst du in Bestandteile und erkennst Strukturen.',
+        'erklaeren': 'Beim Erklären zeigst du Ursache-Wirkungs-Zusammenhänge.',
+        'erlaeutern': 'Beim Erläutern erklärst du ausführlich und mit Beispielen.',
+        'vergleichen': 'Beim Vergleichen stellst du Gemeinsamkeiten und Unterschiede gegenüber.',
+        'einordnen': 'Beim Einordnen stellst du in einen größeren historischen Kontext.',
+        'beurteilen': 'Beim Beurteilen wägst du ab und begründest ein Urteil.',
+        'bewerten': 'Beim Bewerten nimmst du begründet Stellung.',
+        'eroertern': 'Beim Erörtern diskutierst du aus verschiedenen Perspektiven.',
+        'stellung-nehmen': 'Beim Stellung nehmen formulierst du eine begründete Position.'
+    };
+
+    return explanations[operator] || 'Achte auf die Anforderungen des Operators.';
+}
+
+/**
+ * Zeigt Feedback für Exercise an
+ * @param {Object} feedback - Das Feedback-Objekt
+ * @param {Object} exercise - Die Übung
+ */
+function displayExerciseFeedback(feedback, exercise) {
+    const feedbackArea = document.getElementById('feedbackArea');
+    if (!feedbackArea) return;
+
+    const scorePercent = (feedback.score / feedback.maxScore) * 100;
+    const scoreColor = scorePercent >= 75 ? 'success' :
+                       scorePercent >= 50 ? 'warning' : 'error';
+
+    feedbackArea.innerHTML = `
+        <div class="exercise-feedback">
+            <div class="feedback-score ${scoreColor}">
+                <span class="score-value">${feedback.score}/${feedback.maxScore}</span>
+                <span class="score-label">Punkte (${Math.round(scorePercent)}%)</span>
+            </div>
+
+            ${feedback.strengths && feedback.strengths.length > 0 ? `
+                <div class="feedback-section strengths">
+                    <h4>✅ Stärken</h4>
+                    <ul>${feedback.strengths.map(s => `<li>${s}</li>`).join('')}</ul>
+                </div>
+            ` : ''}
+
+            ${feedback.weaknesses && feedback.weaknesses.length > 0 ? `
+                <div class="feedback-section weaknesses">
+                    <h4>⚠️ Verbesserungspotenzial</h4>
+                    <ul>${feedback.weaknesses.map(w => `<li>${w}</li>`).join('')}</ul>
+                </div>
+            ` : ''}
+
+            <div class="feedback-section suggestions">
+                <h4>💡 Tipps für den Operator "${exercise.operator}"</h4>
+                <ul>${feedback.suggestions.map(s => `<li>${s}</li>`).join('')}</ul>
+            </div>
+
+            <div class="feedback-section model-answer">
+                <h4>📚 Musterantwort & Erklärung</h4>
+                <p>${feedback.modelAnswerDiscussion}</p>
+            </div>
+
+            <div class="feedback-actions">
+                <button class="btn btn-primary" onclick="continueAdaptivePractice()">
+                    Nächste Übung
+                </button>
+                <button class="btn btn-secondary" onclick="retryExercise('${exercise.id}')">
+                    Nochmal versuchen
+                </button>
+            </div>
+        </div>
+    `;
+
+    feedbackArea.style.display = 'block';
+    feedbackArea.scrollIntoView({ behavior: 'smooth' });
+}
+
+/**
+ * Zeigt Musterlösung an
+ * @param {string} exerciseId - Die Exercise-ID
+ */
+function showModelAnswer(exerciseId) {
+    const exercise = getExerciseById(exerciseId);
+    if (!exercise) return;
+
+    const sampleAnswerText = Array.isArray(exercise.sampleAnswer)
+        ? exercise.sampleAnswer.join('<br>• ')
+        : exercise.sampleAnswer;
+
+    const feedbackArea = document.getElementById('feedbackArea');
+    if (!feedbackArea) return;
+
+    feedbackArea.innerHTML = `
+        <div class="model-answer-display">
+            <h4>📚 Musterlösung</h4>
+            <div class="model-answer-content">
+                ${Array.isArray(exercise.sampleAnswer) ? '• ' : ''}${sampleAnswerText}
+            </div>
+            <p class="model-answer-note">
+                <em>Hinweis: Dies ist eine Beispielantwort. Deine Antwort kann auch anders formuliert sein und trotzdem richtig sein.</em>
+            </p>
+        </div>
+    `;
+
+    feedbackArea.style.display = 'block';
+    feedbackArea.scrollIntoView({ behavior: 'smooth' });
+}
+
+/**
+ * Überspringt Übung
+ * @param {string} exerciseId - Die Exercise-ID
+ * @param {string} sessionId - Die Session-ID
+ */
+function skipExercise(exerciseId, sessionId) {
+    if (confirm('Möchtest du diese Übung wirklich überspringen?')) {
+        continueAdaptivePractice();
+    }
+}
+
+/**
+ * Retry Exercise
+ * @param {string} exerciseId - Die Exercise-ID
+ */
+function retryExercise(exerciseId) {
+    const answerTextarea = document.getElementById('exerciseAnswer');
+    const feedbackArea = document.getElementById('feedbackArea');
+
+    if (answerTextarea) {
+        answerTextarea.value = '';
+        answerTextarea.focus();
+    }
+
+    if (feedbackArea) {
+        feedbackArea.style.display = 'none';
+    }
+
+    showToast('Versuch es nochmal!', 'info');
+}

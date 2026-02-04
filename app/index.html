@@ -114,6 +114,14 @@
                     <span class="nav-icon">🎯</span>
                     <span class="nav-text">Übungen</span>
                 </button>
+                <button class="nav-item" data-section="adaptive" onclick="showLearningSessionStart()">
+                    <span class="nav-icon">🚀</span>
+                    <span class="nav-text">Adaptive Lernsession</span>
+                </button>
+                <button class="nav-item" data-section="studynotes" onclick="openStudyNotesUpload()">
+                    <span class="nav-icon">📚</span>
+                    <span class="nav-text">Lernzettel Upload</span>
+                </button>
                 <button class="nav-item" data-section="library" onclick="showSection('library')">
                     <span class="nav-icon">📚</span>
                     <span class="nav-text">Bibliothek</span>
@@ -835,6 +843,22 @@
     <!-- Notification Toast -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- Adaptive Learning Modal -->
+    <div class="modal" id="adaptiveLearningModal">
+        <div class="modal-content modal-large">
+            <button class="modal-close" onclick="closeAdaptiveLearningModal()">×</button>
+            <div id="adaptiveLearningContent"></div>
+        </div>
+    </div>
+
+    <!-- Study Notes Modal -->
+    <div class="modal" id="studyNotesModal">
+        <div class="modal-content modal-large">
+            <button class="modal-close" onclick="closeStudyNotesModal()">×</button>
+            <div id="studyNotesContent"></div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="js/data.js"></script>
     <!-- Neue Übungssysteme -->
@@ -855,6 +879,8 @@
     <script src="js/timeline.js"></script>
     <script src="js/exercises.js"></script>
     <script src="js/gamification.js"></script>
+    <script src="js/adaptive-learning.js"></script>
+    <script src="js/study-notes.js"></script>
     <script src="js/admin.js"></script>
 </body>
 </html>

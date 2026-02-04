@@ -854,3 +854,95 @@ function showConfetti(count = 50) {
         }, i * 30);
     }
 }
+
+// ========================================
+// ADAPTIVE LEARNING GAMIFICATION
+// ========================================
+
+/**
+ * Feiert Verbesserung einer Schwäche
+ * @param {Object} weakness - Die verbesserte Schwäche
+ */
+function celebrateWeaknessImprovement(weakness) {
+    // Confetti!
+    showConfetti(40);
+
+    // Sound
+    if (typeof playSound === 'function') {
+        playSound('achievement');
+    }
+
+    // Toast Notification
+    const weaknessName = typeof getWeaknessName === 'function'
+        ? getWeaknessName(weakness)
+        : weakness.name || 'Schwäche';
+
+    showToast(`🎉 Schwäche "${weaknessName}" verbessert!`, 'success');
+
+    // Bonus Rewards
+    addCoins(10, 'Schwäche verbessert');
+    addXP(50);
+
+    // Activity Log
+    addActivity('achievement', `Schwäche verbessert: ${weaknessName}`);
+
+    // Visual Celebration in UI
+    if (typeof animateWeaknessImprovement === 'function') {
+        animateWeaknessImprovement(weakness);
+    }
+}
+
+/**
+ * Animiert Weakness-Verbesserung im UI
+ * @param {Object} weakness - Die Schwäche
+ */
+function animateWeaknessImprovement(weakness) {
+    // Finde weakness element im DOM
+    const weaknessElements = document.querySelectorAll('.weakness-item');
+
+    weaknessElements.forEach(el => {
+        const weaknessText = el.querySelector('.weakness-header span:first-child')?.textContent;
+        const targetName = typeof getWeaknessName === 'function'
+            ? getWeaknessName(weakness)
+            : weakness.name;
+
+        if (weaknessText && weaknessText.includes(targetName)) {
+            // Add celebration class
+            el.classList.add('celebrating');
+
+            // Remove after animation
+            setTimeout(() => {
+                el.classList.remove('celebrating');
+            }, 2000);
+        }
+    });
+}
+
+/**
+ * Aktualisiert Weakness-Visualisierung
+ */
+function updateWeaknessVisualization() {
+    if (!currentUser || !currentUser.weaknesses) return;
+
+    const weaknessElements = document.querySelectorAll('.weakness-item');
+
+    currentUser.weaknesses.forEach((weakness, index) => {
+        if (weaknessElements[index]) {
+            const progressBar = weaknessElements[index].querySelector('.weakness-progress-bar .progress-fill');
+            const statsDiv = weaknessElements[index].querySelector('.weakness-stats');
+
+            if (progressBar && typeof calculateWeaknessProgress === 'function') {
+                const progress = calculateWeaknessProgress(weakness);
+                progressBar.style.width = `${progress}%`;
+            }
+
+            if (statsDiv) {
+                statsDiv.textContent = `${weakness.practiceCount} Übungen ${weakness.improved ? '• ✅ Verbessert!' : ''}`;
+            }
+
+            if (weakness.improved) {
+                weaknessElements[index].classList.add('improved');
+            }
+        }
+    });
+}
