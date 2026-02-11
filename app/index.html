@@ -90,50 +90,94 @@
             </div>
 
             <div class="nav-menu">
-                <button class="nav-item active" data-section="dashboard" onclick="showSection('dashboard')">
-                    <span class="nav-icon">🏠</span>
-                    <span class="nav-text">Dashboard</span>
-                </button>
-                <button class="nav-item" data-section="chat" onclick="showSection('chat')">
-                    <span class="nav-icon">💬</span>
-                    <span class="nav-text">KI-Tutor</span>
-                </button>
-                <button class="nav-item" data-section="operators" onclick="showSection('operators')">
-                    <span class="nav-icon">📝</span>
-                    <span class="nav-text">Operatoren</span>
-                </button>
-                <button class="nav-item" data-section="strategies" onclick="showSection('strategies')">
-                    <span class="nav-icon">🧠</span>
-                    <span class="nav-text">Lernstrategien</span>
-                </button>
-                <button class="nav-item" data-section="timeline" onclick="showSection('timeline')">
-                    <span class="nav-icon">📅</span>
-                    <span class="nav-text">Zeitstrahl</span>
-                </button>
-                <button class="nav-item" data-section="exercises" onclick="showSection('exercises')">
-                    <span class="nav-icon">🎯</span>
-                    <span class="nav-text">Übungen</span>
-                </button>
-                <button class="nav-item" data-section="adaptive" onclick="showLearningSessionStart()">
-                    <span class="nav-icon">🚀</span>
-                    <span class="nav-text">Adaptive Lernsession</span>
-                </button>
-                <button class="nav-item" data-section="studynotes" onclick="openStudyNotesUpload()">
-                    <span class="nav-icon">📚</span>
-                    <span class="nav-text">Lernzettel Upload</span>
-                </button>
-                <button class="nav-item" data-section="library" onclick="showSection('library')">
-                    <span class="nav-icon">📚</span>
-                    <span class="nav-text">Bibliothek</span>
-                </button>
-                <button class="nav-item" data-section="glossary" onclick="showSection('glossary')">
-                    <span class="nav-icon">📖</span>
-                    <span class="nav-text">Glossar</span>
-                </button>
-                <button class="nav-item" data-section="castle" onclick="showSection('castle')">
-                    <span class="nav-icon">🏰</span>
-                    <span class="nav-text">Meine Burg</span>
-                </button>
+                <!-- Dashboard -->
+                <div class="nav-category">
+                    <button class="nav-category-header" data-section="dashboard" onclick="showSection('dashboard')">
+                        <span class="nav-icon">🏠</span>
+                        <span class="nav-text">DASHBOARD</span>
+                    </button>
+                </div>
+
+                <!-- Adaptive Lernsession -->
+                <div class="nav-category">
+                    <button class="nav-category-header" data-section="adaptive-session" onclick="showSection('adaptive-session')">
+                        <span class="nav-icon">🚀</span>
+                        <span class="nav-text">ADAPTIVE SESSION</span>
+                    </button>
+                </div>
+
+                <!-- Lernen Kategorie -->
+                <div class="nav-category">
+                    <button class="nav-category-header collapsed" onclick="toggleNavCategory(this)">
+                        <span class="nav-icon">📚</span>
+                        <span class="nav-text">LERNEN</span>
+                        <span class="nav-arrow">▼</span>
+                    </button>
+                    <div class="nav-category-items collapsed">
+                        <button class="nav-item" data-section="chat" onclick="showSection('chat')">
+                            <span class="nav-icon">💬</span>
+                            <span class="nav-text">KI-Tutor</span>
+                        </button>
+                        <button class="nav-item" data-section="operators" onclick="showSection('operators')">
+                            <span class="nav-icon">📝</span>
+                            <span class="nav-text">Operatoren</span>
+                        </button>
+                        <button class="nav-item" data-section="strategies" onclick="showSection('strategies')">
+                            <span class="nav-icon">🧠</span>
+                            <span class="nav-text">Lernstrategien</span>
+                        </button>
+                        <button class="nav-item" data-section="timeline" onclick="showSection('timeline')">
+                            <span class="nav-icon">📅</span>
+                            <span class="nav-text">Zeitstrahl</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Üben Kategorie -->
+                <div class="nav-category">
+                    <button class="nav-category-header collapsed" onclick="toggleNavCategory(this)">
+                        <span class="nav-icon">🎯</span>
+                        <span class="nav-text">ÜBEN</span>
+                        <span class="nav-arrow">▼</span>
+                    </button>
+                    <div class="nav-category-items collapsed">
+                        <button class="nav-item" data-section="exercises" onclick="showSection('exercises')">
+                            <span class="nav-icon">📝</span>
+                            <span class="nav-text">Übungen</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Materialien Kategorie -->
+                <div class="nav-category">
+                    <button class="nav-category-header collapsed" onclick="toggleNavCategory(this)">
+                        <span class="nav-icon">📖</span>
+                        <span class="nav-text">MATERIALIEN</span>
+                        <span class="nav-arrow">▼</span>
+                    </button>
+                    <div class="nav-category-items collapsed">
+                        <button class="nav-item" data-section="library" onclick="showSection('library')">
+                            <span class="nav-icon">📚</span>
+                            <span class="nav-text">Bibliothek</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Meine Burg -->
+                <div class="nav-category">
+                    <button class="nav-category-header" data-section="castle" onclick="showSection('castle')">
+                        <span class="nav-icon">🏰</span>
+                        <span class="nav-text">MEINE BURG</span>
+                    </button>
+                </div>
+
+                <!-- Einstellungen -->
+                <div class="nav-category">
+                    <button class="nav-category-header" data-section="settings" onclick="showSection('settings')">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">EINSTELLUNGEN</span>
+                    </button>
+                </div>
             </div>
 
             <div class="sidebar-footer">
@@ -144,7 +188,10 @@
         <!-- Main Content -->
         <main class="main-content">
             <!-- Pomodoro Timer Bar -->
-            <div class="timer-bar" id="timerBar">
+            <div class="timer-bar" id="timerBar" style="display: none;">
+                <button class="timer-close-btn" onclick="toggleTimer()" title="Timer schließen">
+                    ×
+                </button>
                 <div class="timer-info">
                     <span class="timer-status" id="timerStatus">⏸️ Timer pausiert</span>
                     <span class="timer-display" id="timerDisplay">20:00</span>
@@ -163,6 +210,11 @@
                 </div>
             </div>
 
+            <!-- Timer Toggle Button (immer sichtbar) -->
+            <button class="timer-toggle-btn" onclick="toggleTimer()" title="Timer ein-/ausblenden">
+                ⏱️ Timer
+            </button>
+
             <!-- Dashboard Section -->
             <section id="dashboard" class="content-section active">
                 <div class="section-header">
@@ -171,6 +223,26 @@
                 </div>
 
                 <div class="dashboard-grid">
+                    <!-- Adaptive Session Card (NEU) -->
+                    <div class="card adaptive-session-card" onclick="showSection('adaptive-session')">
+                        <h3>🚀 Adaptive Lernsession</h3>
+                        <p>Starte eine personalisierte Lernsession, die sich an dein Niveau anpasst</p>
+                        <div class="adaptive-info">
+                            <div class="info-badge">
+                                <span>🎯</span>
+                                <span>Maßgeschneidert</span>
+                            </div>
+                            <div class="info-badge">
+                                <span>📊</span>
+                                <span>Fortschritt tracken</span>
+                            </div>
+                            <div class="info-badge">
+                                <span>🧠</span>
+                                <span>Effektiv lernen</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" style="margin-top: 15px;">Session starten</button>
+                    </div>
                     <!-- Progress Card -->
                     <div class="card progress-card">
                         <h3>📊 Dein Fortschritt</h3>
@@ -460,34 +532,15 @@
                 </div>
 
                 <div class="exercises-tabs">
-                    <button class="exercise-tab active" onclick="showExerciseType('quiz')">❓ Quiz</button>
+                    <button class="exercise-tab active" onclick="showExerciseType('topic')">📚 Themenübungen</button>
                     <button class="exercise-tab" onclick="showExerciseType('operator')">📝 Operator-Übungen</button>
-                    <button class="exercise-tab" onclick="showExerciseType('topic')">📚 Themenübungen</button>
                     <button class="exercise-tab" onclick="showExerciseType('cognitive')">🧩 Kognitive Übungen</button>
+                    <button class="exercise-tab" onclick="showExerciseType('quiz')">❓ Quiz</button>
                 </div>
 
                 <div class="exercises-content" id="exercisesContent">
-                    <!-- Quiz Selection -->
-                    <div class="exercise-type active" id="exerciseQuiz">
-                        <h3>Wähle ein Thema für das Quiz</h3>
-                        <div class="topic-grid" id="quizTopics">
-                            <!-- Filled by JavaScript -->
-                        </div>
-                    </div>
-
-                    <!-- Operator Exercises -->
-                    <div class="exercise-type" id="exerciseOperator">
-                        <h3>Operator-Übungen</h3>
-                        <div class="operator-exercise-select">
-                            <select id="operatorExerciseSelect">
-                                <option value="">Wähle einen Operator...</option>
-                            </select>
-                            <button class="btn btn-primary" onclick="startOperatorPractice()">Übung starten</button>
-                        </div>
-                    </div>
-
-                    <!-- Topic Exercises -->
-                    <div class="exercise-type" id="exerciseTopic">
+                    <!-- Topic Exercises (FIRST) -->
+                    <div class="exercise-type active" id="exerciseTopic">
                         <h3>Themenübungen</h3>
                         <p>Bearbeite spezifische Übungen zu jedem Thema (je 20 Übungen pro Thema)</p>
                         <div class="topic-grid" id="topicExercisesGrid">
@@ -558,7 +611,18 @@
                         </div>
                     </div>
 
-                    <!-- Cognitive Exercises -->
+                    <!-- Operator Exercises (SECOND) -->
+                    <div class="exercise-type" id="exerciseOperator">
+                        <h3>Operator-Übungen</h3>
+                        <div class="operator-exercise-select">
+                            <select id="operatorExerciseSelect">
+                                <option value="">Wähle einen Operator...</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="startOperatorPractice()">Übung starten</button>
+                        </div>
+                    </div>
+
+                    <!-- Cognitive Exercises (THIRD) -->
                     <div class="exercise-type" id="exerciseCognitive">
                         <h3>Kognitive Übungen</h3>
                         <p>Trainiere dein Gehirn zwischen den Lerneinheiten</p>
@@ -580,6 +644,14 @@
                             </button>
                         </div>
                     </div>
+
+                    <!-- Quiz (FOURTH/LAST) -->
+                    <div class="exercise-type" id="exerciseQuiz">
+                        <h3>Wähle ein Thema für das Quiz</h3>
+                        <div class="topic-grid" id="quizTopics">
+                            <!-- Filled by JavaScript -->
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Exercise Area -->
@@ -588,73 +660,138 @@
                 </div>
             </section>
 
-            <!-- Library Section -->
+            <!-- Library Section (mit Tabs für Bibliothek, Glossar, Lernzettel) -->
             <section id="library" class="content-section">
                 <div class="section-header">
-                    <h1>📚 Bibliothek</h1>
-                    <p>Deine Lernmaterialien und Fortschritte</p>
+                    <h1>📚 Materialien</h1>
+                    <p>Bibliothek, Glossar und Lernzettel an einem Ort</p>
                 </div>
 
-                <div class="library-layout">
-                    <div class="library-sidebar">
-                        <h3>📁 Ordner</h3>
-                        <div class="folder-list" id="folderList">
-                            <div class="folder-item" onclick="openFolder('alle')">
-                                <span>📂</span> Alle Materialien
+                <!-- Tabs für Bibliothek/Glossar/Lernzettel -->
+                <div class="library-tabs">
+                    <button class="library-tab active" onclick="showLibraryTab('materials')">📚 Bibliothek</button>
+                    <button class="library-tab" onclick="showLibraryTab('glossary')">📖 Glossar</button>
+                    <button class="library-tab" onclick="showLibraryTab('studynotes')">📄 Lernzettel Upload</button>
+                </div>
+
+                <!-- Tab: Bibliothek -->
+                <div class="library-tab-content active" id="libraryTabMaterials">
+                    <div class="library-layout">
+                        <div class="library-sidebar">
+                            <h3>📁 Ordner</h3>
+                            <div class="folder-list" id="folderList">
+                                <div class="folder-item" onclick="openFolder('alle')">
+                                    <span>📂</span> Alle Materialien
+                                </div>
+                                <div class="folder-item" onclick="openFolder('favoriten')">
+                                    <span>⭐</span> Favoriten
+                                </div>
+                                <div class="folder-item" onclick="openFolder('gelernt')">
+                                    <span>✅</span> Gelernt
+                                </div>
                             </div>
-                            <div class="folder-item" onclick="openFolder('favoriten')">
-                                <span>⭐</span> Favoriten
+                            <button class="btn btn-secondary btn-full" onclick="createFolder()">+ Neuer Ordner</button>
+                        </div>
+
+                        <div class="library-main">
+                            <div class="library-filters">
+                                <input type="text" placeholder="Suchen..." id="librarySearch" onkeyup="searchLibrary()">
+                                <select id="libraryFilter" onchange="filterLibrary()">
+                                    <option value="all">Alle Inhalte</option>
+                                    <option value="topics">Themen</option>
+                                    <option value="notes">Notizen</option>
+                                    <option value="chats">Gespeicherte Chats</option>
+                                </select>
                             </div>
-                            <div class="folder-item" onclick="openFolder('gelernt')">
-                                <span>✅</span> Gelernt
+
+                            <div class="library-content" id="libraryContent">
+                                <!-- Filled by JavaScript -->
                             </div>
                         </div>
-                        <button class="btn btn-secondary btn-full" onclick="createFolder()">+ Neuer Ordner</button>
                     </div>
+                </div>
 
-                    <div class="library-main">
-                        <div class="library-filters">
-                            <input type="text" placeholder="Suchen..." id="librarySearch" onkeyup="searchLibrary()">
-                            <select id="libraryFilter" onchange="filterLibrary()">
-                                <option value="all">Alle Inhalte</option>
-                                <option value="topics">Themen</option>
-                                <option value="notes">Notizen</option>
-                                <option value="chats">Gespeicherte Chats</option>
-                            </select>
+                <!-- Tab: Glossar -->
+                <div class="library-tab-content" id="libraryTabGlossary">
+                    <div class="glossary-layout">
+                        <div class="glossary-header">
+                            <div class="glossary-filters">
+                                <button class="glossary-filter-btn active" data-filter="alle">Alle Begriffe</button>
+                                <button class="glossary-filter-btn" data-filter="klasse8">Klasse 8</button>
+                                <button class="glossary-filter-btn" data-filter="klasse9">Klasse 9</button>
+                                <button class="glossary-filter-btn" data-filter="klasse10">Klasse 10</button>
+                            </div>
+                            <div class="glossary-search">
+                                <input type="text" id="glossarySearch" placeholder="Begriff suchen..." onkeyup="searchGlossary(this.value)">
+                            </div>
                         </div>
 
-                        <div class="library-content" id="libraryContent">
-                            <!-- Filled by JavaScript -->
+                        <div class="glossary-content">
+                            <div class="glossary-list" id="glossaryList">
+                                <!-- Filled by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Lernzettel Upload -->
+                <div class="library-tab-content" id="libraryTabStudynotes">
+                    <div class="studynotes-layout">
+                        <div class="studynotes-header">
+                            <h2>📄 Lernzettel hochladen</h2>
+                            <p>Lade deine eigenen Lernzettel hoch und frag die KI dazu</p>
+                        </div>
+
+                        <div class="studynotes-upload">
+                            <div class="upload-area" onclick="openStudyNotesUpload()">
+                                <span class="upload-icon">📤</span>
+                                <h3>Lernzettel hochladen</h3>
+                                <p>PDF, DOCX, TXT, MD (max. 10MB)</p>
+                                <button class="btn btn-primary">Datei auswählen</button>
+                            </div>
+                        </div>
+
+                        <div class="studynotes-list" id="studynotesList">
+                            <h3>Hochgeladene Lernzettel</h3>
+                            <div id="studynotesItems">
+                                <!-- Filled by JavaScript -->
+                                <p style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                                    Noch keine Lernzettel hochgeladen
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Glossary Section -->
-            <section id="glossary" class="content-section">
+            <!-- Adaptive Learning Session Section -->
+            <section id="adaptive-session" class="content-section">
                 <div class="section-header">
-                    <h1>📖 Glossar</h1>
-                    <p>Wichtige Fachbegriffe aus den Klassen 8, 9 und 10</p>
+                    <h1>🚀 Adaptive Lernsession</h1>
+                    <p>Personalisiertes Lernen basierend auf deinem Fortschritt</p>
                 </div>
 
-                <div class="glossary-layout">
-                    <div class="glossary-header">
-                        <div class="glossary-filters">
-                            <button class="glossary-filter-btn active" data-filter="alle">Alle Begriffe</button>
-                            <button class="glossary-filter-btn" data-filter="klasse8">Klasse 8</button>
-                            <button class="glossary-filter-btn" data-filter="klasse9">Klasse 9</button>
-                            <button class="glossary-filter-btn" data-filter="klasse10">Klasse 10</button>
+                <div class="adaptive-session-main">
+                    <div class="adaptive-session-info">
+                        <div class="info-card">
+                            <span class="info-icon">🎯</span>
+                            <h4>Maßgeschneidert</h4>
+                            <p>Die App passt sich deinem Wissensstand an</p>
                         </div>
-                        <div class="glossary-search">
-                            <input type="text" id="glossarySearch" placeholder="Begriff suchen..." onkeyup="searchGlossary(this.value)">
+                        <div class="info-card">
+                            <span class="info-icon">📊</span>
+                            <h4>Fortschritt</h4>
+                            <p>Verfolge deine Entwicklung in Echtzeit</p>
+                        </div>
+                        <div class="info-card">
+                            <span class="info-icon">🧠</span>
+                            <h4>Effektiv</h4>
+                            <p>Lerne genau das, was du brauchst</p>
                         </div>
                     </div>
-
-                    <div class="glossary-content">
-                        <div class="glossary-list" id="glossaryList">
-                            <!-- Filled by JavaScript -->
-                        </div>
-                    </div>
+                    <button class="btn btn-primary btn-large" onclick="showLearningSessionStart()">
+                        🚀 Session starten
+                    </button>
                 </div>
             </section>
 

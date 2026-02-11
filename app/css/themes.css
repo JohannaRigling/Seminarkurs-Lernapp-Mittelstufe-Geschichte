@@ -173,7 +173,7 @@ button {
 body.dark {
     /* Medieval Color Palette */
     --medieval-parchment: #2a2520;
-    --medieval-gold: #c9a227;
+    --medieval-gold: #27ae60;
     --medieval-gold-dark: #8b6914;
     --medieval-stone: #4a4a4a;
     --medieval-wood: #5d4e37;
@@ -182,7 +182,7 @@ body.dark {
     --medieval-forest: #2d5016;
 
     /* Override primary colors with gold */
-    --primary: #c9a227;
+    --primary: #27ae60;
     --primary-dark: #8b6914;
     --secondary: #d4a84b;
 }
@@ -195,7 +195,7 @@ body.dark .btn-primary {
 
 body.dark .btn-primary:hover {
     background: linear-gradient(135deg, #d4a84b, var(--medieval-gold));
-    box-shadow: 0 0 20px rgba(201, 162, 39, 0.4);
+    box-shadow: 0 0 20px rgba(39, 174, 96, 0.4);
 }
 
 body.dark .nav-item.active {
@@ -208,7 +208,7 @@ body.dark .progress-ring {
 
 /* Medieval card styling */
 body.dark .card {
-    border: 1px solid rgba(201, 162, 39, 0.2);
+    border: 1px solid rgba(39, 174, 96, 0.2);
     position: relative;
 }
 
@@ -243,7 +243,7 @@ body.dark .timeline-container {
 }
 
 body.dark .timeline-container[data-era="antike"] {
-    background: linear-gradient(135deg, rgba(232, 213, 183, 0.1), rgba(201, 162, 39, 0.05));
+    background: linear-gradient(135deg, rgba(232, 213, 183, 0.1), rgba(39, 174, 96, 0.05));
 }
 
 body.dark .timeline-container[data-era="mittelalter"] {
@@ -264,17 +264,17 @@ body.dark .timeline-container[data-era="20jh"] {
 
 /* Glowing gold effects */
 body.dark .rank-display .rank-icon {
-    text-shadow: 0 0 20px rgba(201, 162, 39, 0.5);
+    text-shadow: 0 0 20px rgba(39, 174, 96, 0.5);
 }
 
 body.dark .coin-big {
-    text-shadow: 0 0 15px rgba(201, 162, 39, 0.6);
+    text-shadow: 0 0 15px rgba(39, 174, 96, 0.6);
     animation: coinGlow 2s ease-in-out infinite;
 }
 
 @keyframes coinGlow {
-    0%, 100% { filter: drop-shadow(0 0 5px rgba(201, 162, 39, 0.5)); }
-    50% { filter: drop-shadow(0 0 15px rgba(201, 162, 39, 0.8)); }
+    0%, 100% { filter: drop-shadow(0 0 5px rgba(39, 174, 96, 0.5)); }
+    50% { filter: drop-shadow(0 0 15px rgba(39, 174, 96, 0.8)); }
 }
 
 /* Castle medieval styling */
@@ -300,23 +300,23 @@ body.dark .castle-view::before {
 /* Achievement golden glow */
 body.dark .achievement.unlocked {
     border: 2px solid var(--medieval-gold);
-    box-shadow: 0 0 15px rgba(201, 162, 39, 0.3);
+    box-shadow: 0 0 15px rgba(39, 174, 96, 0.3);
 }
 
 /* Shop items with medieval styling */
 body.dark .shop-item {
-    border: 1px solid rgba(201, 162, 39, 0.2);
+    border: 1px solid rgba(39, 174, 96, 0.2);
 }
 
 body.dark .shop-item:hover {
     border-color: var(--medieval-gold);
-    box-shadow: 0 0 10px rgba(201, 162, 39, 0.2);
+    box-shadow: 0 0 10px rgba(39, 174, 96, 0.2);
 }
 
 /* Rank items with medieval flair */
 body.dark .rank-item.current {
     background: linear-gradient(135deg, var(--medieval-gold), var(--medieval-gold-dark));
-    box-shadow: 0 5px 20px rgba(201, 162, 39, 0.4);
+    box-shadow: 0 5px 20px rgba(39, 174, 96, 0.4);
 }
 
 body.dark .rank-item.achieved {
@@ -365,12 +365,12 @@ body.dark select:focus,
 body.dark textarea:focus {
     outline: none;
     border-color: var(--medieval-gold) !important;
-    box-shadow: 0 0 10px rgba(201, 162, 39, 0.3);
+    box-shadow: 0 0 10px rgba(39, 174, 96, 0.3);
 }
 
 /* Button hover glow */
 body.dark .btn:hover {
-    box-shadow: 0 0 15px rgba(201, 162, 39, 0.3);
+    box-shadow: 0 0 15px rgba(39, 174, 96, 0.3);
 }
 
 /* Modal backdrop */
@@ -379,7 +379,7 @@ body.dark .modal {
 }
 
 body.dark .modal-content {
-    border: 1px solid rgba(201, 162, 39, 0.3);
+    border: 1px solid rgba(39, 174, 96, 0.3);
 }
 
 /* Toast notifications */

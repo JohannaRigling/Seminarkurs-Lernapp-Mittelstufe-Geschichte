@@ -6,7 +6,7 @@ const TOPIC_EXERCISES = {
     // KLASSE 8 THEMEN
     // ========================================
 
-    'franzoesische-revolution': [
+    'französische-revolution': [
         // AFB I - Reproduktion (Übungen 1-7)
         {
             id: 'fr-1',

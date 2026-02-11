@@ -52,8 +52,8 @@ function showSection(sectionId) {
         section.classList.add('active');
     }
 
-    // Navigation aktualisieren
-    document.querySelectorAll('.nav-item').forEach(item => {
+    // Navigation aktualisieren - sowohl nav-items als auch nav-category-header
+    document.querySelectorAll('.nav-item, .nav-category-header').forEach(item => {
         item.classList.remove('active');
         if (item.dataset.section === sectionId) {
             item.classList.add('active');
@@ -1768,3 +1768,65 @@ function loadProfileSettings() {
         }
     }
 }
+
+// ===== NEUE NAVIGATION FUNKTIONEN =====
+
+// Toggle Navigation Category
+function toggleNavCategory(button) {
+    const categoryItems = button.nextElementSibling;
+    const isCollapsed = categoryItems.classList.contains('collapsed');
+
+    if (isCollapsed) {
+        categoryItems.classList.remove('collapsed');
+        button.classList.remove('collapsed');
+    } else {
+        categoryItems.classList.add('collapsed');
+        button.classList.add('collapsed');
+    }
+}
+
+// Toggle Timer Visibility
+function toggleTimer() {
+    const timerBar = document.getElementById('timerBar');
+    const toggleBtn = document.querySelector('.timer-toggle-btn');
+
+    if (timerBar.style.display === 'none' || timerBar.style.display === '') {
+        timerBar.style.display = 'flex';
+        if (toggleBtn) toggleBtn.style.display = 'none';
+    } else {
+        timerBar.style.display = 'none';
+        if (toggleBtn) toggleBtn.style.display = 'block';
+    }
+}
+
+// Show Library Tab
+function showLibraryTab(tabName) {
+    // Alle Tabs deaktivieren
+    document.querySelectorAll('.library-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+
+    // Alle Tab-Inhalte ausblenden
+    document.querySelectorAll('.library-tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+
+    // Gewählten Tab aktivieren
+    event.target.classList.add('active');
+
+    // Entsprechenden Content anzeigen
+    const contentId = 'libraryTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
+    const content = document.getElementById(contentId);
+    if (content) {
+        content.classList.add('active');
+
+        // Glossar initialisieren wenn es das Glossar-Tab ist
+        if (tabName === 'glossary' && !document.querySelector('.glossary-item')) {
+            if (typeof initGlossary === 'function') {
+                initGlossary();
+            }
+        }
+    }
+}
+
+// Die showExerciseType Funktion unterstützt bereits den neuen 'adaptive' Tab!

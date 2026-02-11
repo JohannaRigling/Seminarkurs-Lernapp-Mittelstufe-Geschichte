@@ -24,8 +24,9 @@ function startQuiz(topicId) {
 function showQuizQuestion() {
     if (!currentQuiz) return;
 
-    const area = document.getElementById('exerciseArea');
-    area.style.display = 'block';
+    const modal = document.getElementById('exerciseModal');
+    const content = document.getElementById('exerciseModalContent');
+    modal.classList.add('active');
 
     if (currentQuizQuestion >= currentQuiz.questions.length) {
         showQuizResults();
@@ -35,8 +36,9 @@ function showQuizQuestion() {
     const q = currentQuiz.questions[currentQuizQuestion];
     quizAnswered = false;
 
-    area.innerHTML = `
+    content.innerHTML = `
         <div class="quiz-container">
+            <button class="exercise-close-btn" onclick="closeExerciseArea()">×</button>
             <div class="quiz-header">
                 <h3>${currentQuiz.icon} ${currentQuiz.name}</h3>
                 <div class="quiz-progress">
@@ -70,11 +72,6 @@ function showQuizQuestion() {
             </div>
         </div>
     `;
-
-    // Animation
-    area.style.animation = 'none';
-    area.offsetHeight; // Reflow
-    area.style.animation = 'fadeIn 0.3s ease';
 }
 
 // Quiz-Antwort auswählen
@@ -134,7 +131,7 @@ function nextQuizQuestion() {
 
 // Quiz-Ergebnisse anzeigen
 function showQuizResults() {
-    const area = document.getElementById('exerciseArea');
+    const content = document.getElementById('exerciseModalContent');
     const total = currentQuiz.questions.length;
     const percent = Math.round((quizScore / total) * 100);
 
@@ -165,7 +162,7 @@ function showQuizResults() {
         emoji = '📚';
     }
 
-    area.innerHTML = `
+    content.innerHTML = `
         <div class="quiz-result">
             <div class="result-emoji">${emoji}</div>
             <h2>${currentQuiz.name} - Ergebnis</h2>
@@ -194,7 +191,7 @@ function showQuizResults() {
 
             <div class="result-actions">
                 <button class="btn btn-primary" onclick="startQuiz('${currentQuiz.id}')">🔄 Nochmal spielen</button>
-                <button class="btn btn-secondary" onclick="hideExerciseArea()">Zurück zur Übersicht</button>
+                <button class="btn btn-secondary" onclick="closeExerciseModal()">Zurück zur Übersicht</button>
             </div>
         </div>
     `;
@@ -248,6 +245,11 @@ function hideExerciseArea() {
     const area = document.getElementById('exerciseArea');
     area.style.display = 'none';
     currentQuiz = null;
+}
+
+// Alias für closeExerciseArea
+function closeExerciseArea() {
+    hideExerciseArea();
 }
 
 // CSS für Quiz
