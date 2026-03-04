@@ -5,37 +5,47 @@ let selectedOperator = null;
 let viewedOperators = new Set();
 let currentExercise = null; // Speichert die aktuelle Übung für Musterantwort
 
-// Operatoren für AFB laden
-function loadOperators(afb) {
-    currentAFB = afb;
+// AFB Accordion öffnen/schließen
+function toggleAFB(afb) {
+    const list = document.getElementById(`afb-list-${afb}`);
+    const btn = document.getElementById(`afb-btn-${afb}`);
+    if (!list || !btn) return;
 
-    // Tabs aktualisieren
-    document.querySelectorAll('.afb-tab').forEach((tab, index) => {
-        tab.classList.toggle('active', index + 1 === afb);
+    const isOpen = list.classList.contains('open');
+
+    // Alle schließen
+    [1, 2, 3].forEach(n => {
+        document.getElementById(`afb-list-${n}`).classList.remove('open');
+        document.getElementById(`afb-btn-${n}`).classList.remove('active');
     });
 
-    const operatorsList = document.getElementById('operatorsList');
-    if (!operatorsList) return;
+    // Aktuellen öffnen wenn er zu war
+    if (!isOpen) {
+        list.classList.add('open');
+        btn.classList.add('active');
+        currentAFB = afb;
 
-    const operators = OPERATORS[`afb${afb}`];
+        // Liste befüllen falls leer
+        if (!list.innerHTML.trim()) {
+            const operators = OPERATORS[`afb${afb}`];
+            list.innerHTML = operators.map(op => `
+                <button class="operator-item" data-id="${op.id}" onclick="showOperatorDetail('${op.id}')">
+                    ${op.name}
+                </button>
+            `).join('');
+        }
 
-    operatorsList.innerHTML = operators.map(op => `
-        <button class="operator-item" data-id="${op.id}" onclick="showOperatorDetail('${op.id}')">
-            ${op.name}
-        </button>
-    `).join('');
-}
-
-// AFB wechseln
-function showAFB(afb) {
-    loadOperators(afb);
-
-    // Erstes Operator-Detail anzeigen
-    const operators = OPERATORS[`afb${afb}`];
-    if (operators && operators.length > 0) {
-        showOperatorDetail(operators[0].id);
+        // Ersten Operator anzeigen
+        const operators = OPERATORS[`afb${afb}`];
+        if (operators && operators.length > 0) {
+            showOperatorDetail(operators[0].id);
+        }
     }
 }
+
+// Rückwärtskompatibilität
+function loadOperators(afb) { toggleAFB(afb); }
+function showAFB(afb) { toggleAFB(afb); }
 
 // Operator-Detail anzeigen
 function showOperatorDetail(operatorId) {

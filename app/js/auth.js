@@ -376,7 +376,7 @@ function updateUserUI() {
     // Progress Ring
     const progressRing = document.getElementById('progressRing');
     if (progressRing) {
-        progressRing.style.background = `conic-gradient(var(--primary) ${progressPercent * 3.6}deg, var(--bg-tertiary) 0deg)`;
+        progressRing.style.background = `conic-gradient(var(--secondary) ${progressPercent * 3.6}deg, var(--bg-primary) ${progressPercent * 3.6}deg)`;
     }
 
     // Heute gelernt

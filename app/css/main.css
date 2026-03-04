@@ -447,6 +447,76 @@ body::before {
     height: 100vh;
     z-index: 100;
     box-shadow: 5px 0 30px rgba(0, 0, 0, 0.5);
+    transition: width 0.3s ease;
+}
+
+/* Sidebar eingeklappt */
+.sidebar.collapsed {
+    width: 60px;
+    overflow: hidden;
+}
+
+.sidebar.collapsed .nav-text,
+.sidebar.collapsed .user-details,
+.sidebar.collapsed .nav-arrow,
+.sidebar.collapsed .sidebar-footer {
+    display: none;
+}
+
+.sidebar.collapsed .nav-icon {
+    font-size: 1.4em;
+    width: auto;
+}
+
+.sidebar.collapsed .sidebar-header {
+    padding: 10px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar.collapsed .user-info {
+    justify-content: center;
+    gap: 0;
+    padding: 4px;
+    margin-bottom: 0;
+}
+
+.sidebar.collapsed .user-avatar {
+    margin: 0 auto;
+    width: 44px;
+    height: 44px;
+    font-size: 1.4em;
+}
+
+.sidebar.collapsed .user-stats {
+    display: none;
+}
+
+.sidebar.collapsed .nav-item,
+.sidebar.collapsed .nav-category-header {
+    justify-content: center;
+    padding: 12px;
+}
+
+/* Toggle-Button für Sidebar */
+.sidebar-toggle-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    border-radius: 6px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: all 0.3s ease;
+    float: right;
+    margin-bottom: 8px;
+    line-height: 1;
+}
+
+.sidebar-toggle-btn:hover {
+    color: var(--secondary);
+    border-color: var(--secondary);
 }
 
 /* Ornament oben */
@@ -676,6 +746,7 @@ body::before {
 .main-content {
     flex: 1;
     margin-left: var(--sidebar-width);
+    transition: margin-left 0.3s ease;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -780,6 +851,11 @@ body::before {
     padding: 35px;
     flex: 1;
     animation: none;
+}
+
+/* Chat braucht weniger Padding damit der Bereich maximal groß ist */
+#chat.content-section {
+    padding: 5px 20px;
 }
 
 .content-section.active {
@@ -1232,6 +1308,10 @@ body::before {
     color: white;
     border-color: var(--danger);
     transform: rotate(90deg);
+}
+
+.main-content.sidebar-collapsed {
+    margin-left: 60px;
 }
 
 /* ===== RESPONSIVE ===== */

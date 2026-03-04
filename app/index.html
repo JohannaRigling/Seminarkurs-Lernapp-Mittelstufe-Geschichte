@@ -74,6 +74,7 @@
         <!-- Sidebar -->
         <nav class="sidebar" id="sidebar">
             <div class="sidebar-header">
+                <button class="sidebar-toggle-btn" onclick="toggleSidebar()" title="Sidebar ein-/ausklappen">◀</button>
                 <div class="user-info" onclick="showSection('settings')" style="cursor: pointer;" title="Profil bearbeiten">
                     <div class="user-avatar" id="userAvatar">👤</div>
                     <div class="user-details">
@@ -106,6 +107,14 @@
                     </button>
                 </div>
 
+                <!-- KI-Tutor (eigener Eintrag) -->
+                <div class="nav-category">
+                    <button class="nav-category-header" data-section="chat" onclick="showSection('chat')">
+                        <span class="nav-icon">💬</span>
+                        <span class="nav-text">KI-TUTOR</span>
+                    </button>
+                </div>
+
                 <!-- Lernen Kategorie -->
                 <div class="nav-category">
                     <button class="nav-category-header collapsed" onclick="toggleNavCategory(this)">
@@ -114,10 +123,6 @@
                         <span class="nav-arrow">▼</span>
                     </button>
                     <div class="nav-category-items collapsed">
-                        <button class="nav-item" data-section="chat" onclick="showSection('chat')">
-                            <span class="nav-icon">💬</span>
-                            <span class="nav-text">KI-Tutor</span>
-                        </button>
                         <button class="nav-item" data-section="operators" onclick="showSection('operators')">
                             <span class="nav-icon">📝</span>
                             <span class="nav-text">Operatoren</span>
@@ -156,9 +161,17 @@
                         <span class="nav-arrow">▼</span>
                     </button>
                     <div class="nav-category-items collapsed">
-                        <button class="nav-item" data-section="library" onclick="showSection('library')">
+                        <button class="nav-item" data-section="library-materials" onclick="showSection('library-materials')">
                             <span class="nav-icon">📚</span>
                             <span class="nav-text">Bibliothek</span>
+                        </button>
+                        <button class="nav-item" data-section="library-glossary" onclick="showSection('library-glossary')">
+                            <span class="nav-icon">📖</span>
+                            <span class="nav-text">Glossar</span>
+                        </button>
+                        <button class="nav-item" data-section="library-studynotes" onclick="showSection('library-studynotes')">
+                            <span class="nav-icon">📄</span>
+                            <span class="nav-text">Lernzettel</span>
                         </button>
                     </div>
                 </div>
@@ -265,7 +278,7 @@
 
                     <!-- Rank Card -->
                     <div class="card rank-card">
-                        <h3>⚔️ Dein Rang</h3>
+                        <h3>⚔️ Dein Rang <button class="info-btn" onclick="showRankInfo()" title="Rang-Anforderungen">ⓘ</button></h3>
                         <div class="rank-display">
                             <div class="rank-icon" id="rankIcon">🌾</div>
                             <div class="rank-name" id="rankName">Tagelöhner</div>
@@ -319,7 +332,7 @@
 
                     <!-- Achievements -->
                     <div class="card achievements-card">
-                        <h3>🏆 Auszeichnungen</h3>
+                        <h3>🏆 Auszeichnungen <button class="info-btn" onclick="showAchievementsInfo()" title="Alle Auszeichnungen anzeigen">ⓘ</button></h3>
                         <div class="achievements-grid" id="achievementsGrid">
                             <div class="achievement locked">
                                 <span class="achievement-icon">🔒</span>
@@ -409,23 +422,31 @@
                 <div class="operators-layout">
                     <div class="operators-sidebar">
                         <h3>Anforderungsbereiche</h3>
-                        <div class="afb-tabs">
-                            <button class="afb-tab active" onclick="showAFB(1)">
-                                <span class="afb-badge afb1">AFB I</span>
-                                <span>Reproduktion</span>
-                            </button>
-                            <button class="afb-tab" onclick="showAFB(2)">
-                                <span class="afb-badge afb2">AFB II</span>
-                                <span>Reorganisation</span>
-                            </button>
-                            <button class="afb-tab" onclick="showAFB(3)">
-                                <span class="afb-badge afb3">AFB III</span>
-                                <span>Transfer & Reflexion</span>
-                            </button>
-                        </div>
-
-                        <div class="operators-list" id="operatorsList">
-                            <!-- Filled by JavaScript -->
+                        <div class="afb-accordion">
+                            <div class="afb-group">
+                                <button class="afb-tab" id="afb-btn-1" onclick="toggleAFB(1)">
+                                    <span class="afb-badge afb1">AFB I</span>
+                                    <span>Reproduktion</span>
+                                    <span class="afb-arrow">▼</span>
+                                </button>
+                                <div class="afb-operators-list" id="afb-list-1"></div>
+                            </div>
+                            <div class="afb-group">
+                                <button class="afb-tab" id="afb-btn-2" onclick="toggleAFB(2)">
+                                    <span class="afb-badge afb2">AFB II</span>
+                                    <span>Reorganisation</span>
+                                    <span class="afb-arrow">▼</span>
+                                </button>
+                                <div class="afb-operators-list" id="afb-list-2"></div>
+                            </div>
+                            <div class="afb-group">
+                                <button class="afb-tab" id="afb-btn-3" onclick="toggleAFB(3)">
+                                    <span class="afb-badge afb3">AFB III</span>
+                                    <span>Transfer & Reflexion</span>
+                                    <span class="afb-arrow">▼</span>
+                                </button>
+                                <div class="afb-operators-list" id="afb-list-3"></div>
+                            </div>
                         </div>
                     </div>
 
@@ -730,6 +751,9 @@
                             <div class="glossary-list" id="glossaryList">
                                 <!-- Filled by JavaScript -->
                             </div>
+                            <div class="glossary-alphabet-bar" id="glossaryAlphabetBar">
+                                <!-- Filled by JavaScript -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -986,9 +1010,19 @@
         </main>
     </div>
 
+    <!-- Info Popup (Auszeichnungen / Rang) -->
+    <div class="info-popup-overlay" id="infoPopupOverlay" onclick="closeInfoPopup()"></div>
+    <div class="info-popup" id="infoPopup">
+        <div class="info-popup-header">
+            <span id="infoPopupTitle"></span>
+            <button class="info-popup-close" onclick="closeInfoPopup()">×</button>
+        </div>
+        <div class="info-popup-body" id="infoPopupBody"></div>
+    </div>
+
     <!-- Modal for Exercises/Quizzes -->
     <div class="modal" id="exerciseModal">
-        <div class="modal-content modal-large">
+        <div class="modal-content modal-exercise">
             <button class="modal-close" onclick="closeExerciseModal()">×</button>
             <div id="exerciseModalContent"></div>
         </div>

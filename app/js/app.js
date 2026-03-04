@@ -20,6 +20,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Quiz-Themen laden
     loadQuizTopics();
 
+    // Sidebar-Status wiederherstellen
+    if (localStorage.getItem('histolearn_sidebar_collapsed') === 'true') {
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+        const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+        if (sidebar) sidebar.classList.add('collapsed');
+        if (mainContent) mainContent.classList.add('sidebar-collapsed');
+        if (toggleBtn) toggleBtn.textContent = '▶';
+    }
+
     // Event Listener
     setupEventListeners();
 });
@@ -79,6 +89,13 @@ function showSection(sectionId) {
             loadProfileSettings();
             updateAllAvatarDisplays();
             break;
+        case 'library-materials':
+        case 'library-glossary':
+        case 'library-studynotes':
+            document.getElementById('library').classList.add('active');
+            showLibraryTab(sectionId === 'library-materials' ? 'materials' :
+                           sectionId === 'library-glossary' ? 'glossary' : 'studynotes');
+            break;
     }
 }
 
@@ -118,6 +135,98 @@ function closeExerciseModal() {
     }
 }
 
+// Info-Popup anzeigen
+function showInfoPopup(title, html) {
+    document.getElementById('infoPopupTitle').innerHTML = title;
+    document.getElementById('infoPopupBody').innerHTML = html;
+    document.getElementById('infoPopup').classList.add('active');
+    document.getElementById('infoPopupOverlay').classList.add('active');
+}
+
+function closeInfoPopup() {
+    document.getElementById('infoPopup').classList.remove('active');
+    document.getElementById('infoPopupOverlay').classList.remove('active');
+}
+
+// Auszeichnungen Info
+function showAchievementsInfo() {
+    const achievements = typeof ACHIEVEMENTS !== 'undefined' ? ACHIEVEMENTS : [
+        { icon: '👣', name: 'Erste Schritte',       description: 'Erste Übung abschließen' },
+        { icon: '🎯', name: 'Quiz-Meister',          description: '10 Quiz-Fragen richtig beantworten' },
+        { icon: '⏰', name: 'Zeitreisender',         description: '5 Zeitstrahl-Events erkunden' },
+        { icon: '📝', name: 'Operator-Pro',          description: 'Alle Operatoren angesehen' },
+        { icon: '🧠', name: 'Strategie-Guru',        description: 'Alle Lernstrategien entdeckt' },
+        { icon: '📚', name: 'Fleißig',               description: '1 Stunde gelernt' },
+        { icon: '🏰', name: 'Burgenbauer',           description: 'Erstes Burg-Upgrade kaufen' },
+        { icon: '🐄', name: 'Wohlhabend',            description: '100 Münzen sammeln' },
+        { icon: '🔥', name: '3-Tage-Streak',         description: '3 Tage in Folge lernen' },
+        { icon: '🔥', name: 'Wochenläufer',          description: '7 Tage in Folge lernen' },
+        { icon: '🃏', name: 'Memory-Champion',       description: '5 Memory-Spiele gewinnen' },
+        { icon: '💬', name: 'Wissbegierig',          description: '20 Fragen an den KI-Tutor stellen' },
+        { icon: '📒', name: 'Notizenmeister',        description: '10 Notizen erstellen' },
+        { icon: '💯', name: 'Perfektionist',         description: 'Ein Quiz mit 100% abschließen' },
+        { icon: '🦉', name: 'Nachteule',             description: 'Nach 22 Uhr lernen' },
+        { icon: '🐦', name: 'Frühaufsteher',         description: 'Vor 7 Uhr lernen' },
+    ];
+
+    const html = `<ul class="info-list">` +
+        achievements.map(a => `
+            <li class="info-list-item">
+                <span class="info-list-icon">${a.icon}</span>
+                <div>
+                    <strong>${a.name}</strong>
+                    <span>${a.description}</span>
+                </div>
+            </li>
+        `).join('') +
+        `</ul>`;
+    showInfoPopup('🏆 Auszeichnungen – Anforderungen', html);
+}
+
+// Rang Info
+function showRankInfo() {
+    const ranks = typeof RANKS !== 'undefined' ? RANKS : [
+        { icon: '🌾', name: 'Tagelöhner', minPoints: 0 },
+        { icon: '🌾', name: 'Bauer',      minPoints: 100 },
+        { icon: '🔨', name: 'Handwerker', minPoints: 300 },
+        { icon: '⚔️', name: 'Ritter',     minPoints: 600 },
+        { icon: '👑', name: 'Adel',       minPoints: 1000 },
+        { icon: '⚡', name: 'Legende',    minPoints: 2000 },
+    ];
+
+    const html = `<ul class="info-list">` +
+        ranks.map((r, i) => `
+            <li class="info-list-item">
+                <span class="info-list-icon">${r.icon}</span>
+                <div>
+                    <strong>${r.name}</strong>
+                    <span>${r.minPoints === 0 ? 'Startrang' : `ab ${r.minPoints} XP`}</span>
+                </div>
+            </li>
+        `).join('') +
+        `</ul>
+        <p class="info-note">XP erhältst du durch Übungen, Quiz, Memory und tägliches Lernen.</p>`;
+    showInfoPopup('⚔️ Rang-Aufstieg – Übersicht', html);
+}
+
+// Sidebar ein-/ausklappen
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+    const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+
+    sidebar.classList.toggle('collapsed');
+    mainContent.classList.toggle('sidebar-collapsed');
+
+    if (sidebar.classList.contains('collapsed')) {
+        toggleBtn.textContent = '▶';
+        localStorage.setItem('histolearn_sidebar_collapsed', 'true');
+    } else {
+        toggleBtn.textContent = '◀';
+        localStorage.setItem('histolearn_sidebar_collapsed', 'false');
+    }
+}
+
 // Theme ändern
 function changeTheme() {
     const theme = document.getElementById('themeSelect').value;
@@ -139,6 +248,14 @@ function setAccentColor(color) {
     // Dunklere Version berechnen
     const darkerColor = adjustColor(color, -20);
     document.body.style.setProperty('--primary-dark', darkerColor);
+
+    // Sekundäre Farb-Variablen mitaktualisieren (für Buttons, Borders, Text)
+    document.body.style.setProperty('--secondary', color);
+    document.body.style.setProperty('--secondary-light', adjustColor(color, 15));
+    document.body.style.setProperty('--secondary-dark', adjustColor(color, -15));
+    document.body.style.setProperty('--text-gold', adjustColor(color, 10));
+    document.body.style.setProperty('--border-gold', color);
+    document.body.style.setProperty('--shadow-gold', `0 0 20px ${color}4D`);
 
     // Button aktivieren
     document.querySelectorAll('.color-btn').forEach(btn => {
@@ -894,7 +1011,7 @@ function startCognitiveGame(gameType) {
 
     switch (gameType) {
         case 'memory':
-            startMemoryGame();
+            showMemoryDifficultySelection();
             break;
         case 'sequence':
             startSequenceGame();
@@ -905,20 +1022,85 @@ function startCognitiveGame(gameType) {
     }
 }
 
-// Memory-Spiel
-function startMemoryGame() {
+// Memory-Spiel: Schwierigkeitsstufen-Auswahl
+function showMemoryDifficultySelection() {
+    const area = document.getElementById('exerciseArea');
+    const levels = JSON.parse(localStorage.getItem('histolearn_memory_levels') || '{"max":1}');
+    const maxUnlocked = levels.max || 1;
+
+    area.innerHTML = `
+        <h3>🃏 Memory - Schwierigkeitsstufe wählen</h3>
+        <div class="memory-difficulty-select">
+            <div class="difficulty-card ${maxUnlocked >= 1 ? 'unlocked' : 'locked'}" onclick="startMemoryGame(1)">
+                <h4>⭐ Leicht</h4>
+                <p>6 Paare · Jahreszahlen &amp; Ereignisse</p>
+            </div>
+            <div class="difficulty-card ${maxUnlocked >= 2 ? 'unlocked' : 'locked'}" ${maxUnlocked >= 2 ? 'onclick="startMemoryGame(2)"' : ''}>
+                <h4>⭐⭐ Mittel</h4>
+                <p>8 Paare · Begriffe &amp; Definitionen</p>
+                ${maxUnlocked < 2 ? '<span class="difficulty-lock">🔒 Gewinne Stufe 1</span>' : ''}
+            </div>
+            <div class="difficulty-card ${maxUnlocked >= 3 ? 'unlocked' : 'locked'}" ${maxUnlocked >= 3 ? 'onclick="startMemoryGame(3)"' : ''}>
+                <h4>⭐⭐⭐ Schwer</h4>
+                <p>10 Paare · Personen &amp; historische Rolle</p>
+                ${maxUnlocked < 3 ? '<span class="difficulty-lock">🔒 Gewinne Stufe 2</span>' : ''}
+            </div>
+        </div>
+    `;
+}
+
+let flippedCards = [];
+let matchedPairs = 0;
+let memoryTotalPairs = 6;
+let memoryCurrentDifficulty = 1;
+
+// Memory-Spiel mit Schwierigkeitsstufe
+function startMemoryGame(difficulty) {
+    difficulty = difficulty || 1;
+    memoryCurrentDifficulty = difficulty;
     const area = document.getElementById('exerciseArea');
 
-    const pairs = [
-        { term: '1789', match: 'Französische Revolution' },
-        { term: '1871', match: 'Deutsche Reichsgründung' },
-        { term: '1914', match: 'Erster Weltkrieg' },
-        { term: '1933', match: 'Machtergreifung' },
-        { term: '1989', match: 'Mauerfall' },
-        { term: '1517', match: 'Reformation' }
-    ];
+    const allPairs = {
+        1: [
+            { term: '1789', match: 'Französische Revolution' },
+            { term: '1871', match: 'Deutsche Reichsgründung' },
+            { term: '1914', match: 'Erster Weltkrieg' },
+            { term: '1933', match: 'Machtergreifung' },
+            { term: '1989', match: 'Mauerfall' },
+            { term: '1517', match: 'Reformation' }
+        ],
+        2: [
+            { term: 'Absolutismus', match: 'Uneingeschränkte Herrschaft eines Monarchen' },
+            { term: 'Imperialismus', match: 'Ausdehnung staatlicher Macht über fremde Gebiete' },
+            { term: 'Industrialisierung', match: 'Übergang von Agrar- zu Industriegesellschaft' },
+            { term: 'Nationalismus', match: 'Übersteigertes Nationalgefühl' },
+            { term: 'Sozialismus', match: 'Gesellschaft mit gemeinschaftlichem Eigentum' },
+            { term: 'Demokratie', match: 'Herrschaft des Volkes durch Wahlen' },
+            { term: 'Kolonialismus', match: 'Herrschaft über fremde Völker und Gebiete' },
+            { term: 'Antisemitismus', match: 'Hass und Feindschaft gegen Juden' }
+        ],
+        3: [
+            { term: 'Napoleon Bonaparte', match: 'Französischer Kaiser, Code Civil' },
+            { term: 'Otto von Bismarck', match: 'Gründer des Deutschen Reiches 1871' },
+            { term: 'Karl Marx', match: 'Begründer des wissenschaftlichen Sozialismus' },
+            { term: 'Adolf Hitler', match: 'NS-Diktator, Ermächtigungsgesetz 1933' },
+            { term: 'Konrad Adenauer', match: 'Erster Bundeskanzler der BRD' },
+            { term: 'Michail Gorbatschow', match: 'Glasnost und Perestroika' },
+            { term: 'Mao Zedong', match: 'Gründer der Volksrepublik China' },
+            { term: 'Kemal Atatürk', match: 'Gründer der modernen Türkei' },
+            { term: 'Lenin', match: 'Führer der Oktoberrevolution 1917' },
+            { term: 'Franz Ferdinand', match: 'Erschossen 1914, Auslöser WK1' }
+        ]
+    };
 
-    // Karten erstellen und mischen
+    const pairs = allPairs[difficulty] || allPairs[1];
+    memoryTotalPairs = pairs.length;
+    flippedCards = [];
+    matchedPairs = 0;
+
+    const gridCols = difficulty === 3 ? 5 : 4;
+    const diffLabel = difficulty === 1 ? 'Leicht' : difficulty === 2 ? 'Mittel' : 'Schwer';
+
     let cards = [];
     pairs.forEach((pair, index) => {
         cards.push({ id: index, content: pair.term, pairId: index, type: 'term' });
@@ -927,8 +1109,11 @@ function startMemoryGame() {
     cards = shuffleArray(cards);
 
     area.innerHTML = `
-        <h3>🃏 Memory - Ordne die Ereignisse den Jahren zu!</h3>
-        <div class="memory-grid" id="memoryGrid">
+        <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
+            <button class="btn btn-secondary" onclick="showMemoryDifficultySelection()">← Stufe wählen</button>
+            <h3 style="margin:0;">🃏 Memory - ${diffLabel} (${pairs.length} Paare)</h3>
+        </div>
+        <div class="memory-grid" id="memoryGrid" style="grid-template-columns: repeat(${gridCols}, 1fr);">
             ${cards.map((card, i) => `
                 <div class="memory-card" data-index="${i}" data-pair="${card.pairId}" onclick="flipMemoryCard(this)">
                     <div class="memory-card-inner">
@@ -939,20 +1124,17 @@ function startMemoryGame() {
             `).join('')}
         </div>
         <style>
-            .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; max-width: 600px; margin: 20px auto; }
+            .memory-grid { display: grid; gap: 10px; max-width: 700px; margin: 0 auto; }
             .memory-card { aspect-ratio: 1; cursor: pointer; perspective: 1000px; }
             .memory-card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.5s; }
             .memory-card.flipped .memory-card-inner { transform: rotateY(180deg); }
-            .memory-card-front, .memory-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 0.9em; padding: 10px; text-align: center; }
-            .memory-card-front { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; font-size: 2em; }
-            .memory-card-back { background: var(--bg-tertiary); transform: rotateY(180deg); }
-            .memory-card.matched { opacity: 0.5; pointer-events: none; }
+            .memory-card-front, .memory-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 0.85em; padding: 8px; text-align: center; }
+            .memory-card-front { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; font-size: 1.8em; }
+            .memory-card-back { background: var(--bg-tertiary); border: 1px solid var(--border-color); transform: rotateY(180deg); }
+            .memory-card.matched { opacity: 0.4; pointer-events: none; border: 2px solid var(--secondary); border-radius: 10px; }
         </style>
     `;
 }
-
-let flippedCards = [];
-let matchedPairs = 0;
 
 function flipMemoryCard(card) {
     if (flippedCards.length >= 2) return;
@@ -974,10 +1156,17 @@ function flipMemoryCard(card) {
                 flippedCards = [];
                 matchedPairs++;
 
-                if (matchedPairs >= 6) {
-                    showToast('🎉 Gewonnen!', 'success');
-                    addCoins(5, 'Memory gewonnen');
-                    addXP(10);
+                if (matchedPairs >= memoryTotalPairs) {
+                    showToast('🎉 Gewonnen! Nächste Stufe freigeschaltet!', 'success');
+                    addCoins(5 * memoryCurrentDifficulty, 'Memory gewonnen');
+                    addXP(10 * memoryCurrentDifficulty);
+
+                    // Nächste Stufe freischalten
+                    const levels = JSON.parse(localStorage.getItem('histolearn_memory_levels') || '{"max":1}');
+                    if (memoryCurrentDifficulty >= levels.max) {
+                        levels.max = Math.min(memoryCurrentDifficulty + 1, 3);
+                        localStorage.setItem('histolearn_memory_levels', JSON.stringify(levels));
+                    }
                 }
             }, 500);
         } else {
@@ -1811,8 +2000,13 @@ function showLibraryTab(tabName) {
         content.classList.remove('active');
     });
 
-    // Gewählten Tab aktivieren
-    event.target.classList.add('active');
+    // Gewählten Tab-Button aktivieren (suche per tabName, unabhängig von event.target)
+    document.querySelectorAll('.library-tab').forEach(tab => {
+        const onclick = tab.getAttribute('onclick') || '';
+        if (onclick.includes("'" + tabName + "'") || onclick.includes('"' + tabName + '"')) {
+            tab.classList.add('active');
+        }
+    });
 
     // Entsprechenden Content anzeigen
     const contentId = 'libraryTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);

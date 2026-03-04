@@ -938,5 +938,190 @@ Jeder Themenbereich hat **genau 20 Übungen** mit verschiedenen Operatoren und A
 
 ---
 
+---
+
+## 🎯 HTML-Analyse (Stand 04.03.2026) - Fehlende Dokumentation ergänzt
+
+### ✅ Im HTML vorhandene Features, die bisher nicht dokumentiert waren:
+
+---
+
+**1. Kognitive Übungen (🧩) - Neuer Tab in Übungen-Section**
+
+Bisher undokumentierter 3. Tab in der Übungen-Section:
+- **Memory** 🃏 - "Trainiere dein Gedächtnis"
+- **Reihenfolge** 🔢 - "Bringe Ereignisse in Ordnung"
+- **Zuordnung** 🔗 - "Verbinde Zusammenhänge"
+
+Tab-Reihenfolge in Übungen: Themenübungen → Operator-Übungen → **Kognitive Übungen** → Quiz
+
+---
+
+**2. Library umstrukturiert zu "Materialien" (3 Tabs)**
+
+Die Library-Section (`id="library"`) heißt jetzt offiziell **"📚 Materialien"** und enthält 3 Tabs:
+- **Tab 1: 📚 Bibliothek** - Ordner (Alle Materialien, Favoriten, Gelernt), Filter (Alle Inhalte, Themen, Notizen, Gespeicherte Chats)
+- **Tab 2: 📖 Glossar** - Das Glossar ist KEIN eigener Nav-Punkt mehr, sondern ein Tab innerhalb von Materialien
+- **Tab 3: 📄 Lernzettel Upload** - Datei hochladen (PDF, DOCX, TXT, MD, max. 10MB)
+
+⚠️ Wichtig: Das Glossar hat KEINE eigene Sidebar-Navigation mehr - es ist in "Materialien" integriert!
+
+---
+
+**3. Chat Quick-Prompt Buttons (7 Buttons)**
+
+Der KI-Tutor hat 7 schnelle Aktions-Buttons:
+- 🐴 Eselsbrücke erstellen (`sendQuickPrompt('eselsbruecke')`)
+- 📋 Zusammenfassung (`sendQuickPrompt('zusammenfassung')`)
+- ❓ Quiz zu Thema (`sendQuickPrompt('quiz')`)
+- 💡 Einfach erklären (`sendQuickPrompt('erklaerung')`)
+- 📅 Zeitliche Einordnung (`sendQuickPrompt('zeitstrahl')`)
+- ⚖️ Vergleich erstellen (`sendQuickPrompt('vergleich')`)
+- 📝 Prüfungsmodus (`sendQuickPrompt('pruefung')`)
+
+---
+
+**4. KI-Modus - 3 Optionen**
+
+Auswählbar im Chat und in Einstellungen:
+- 📚 Tutor (hilfsbereit) - `value="tutor"`
+- 🔍 Kritiker (streng) - `value="critic"`
+- 💬 Diskussionspartner - `value="discussion"`
+
+---
+
+**5. Einstellungen-Section - Vollständige Detailstruktur**
+
+6 Karten in der Settings-Section:
+1. **👤 Mein Profil** - Avatar-Vorschau, Anzeigename (max. 20 Zeichen), Button "Avatar gestalten"
+2. **🎨 Erscheinungsbild** - Theme (☀️ Hell / 🌙 Dunkel / 📜 Sepia) + 5 Akzentfarben (#667eea, #e74c3c, #27ae60, #f39c12, #9b59b6)
+3. **🤖 KI-Einstellungen** - Standard KI-Modus + API-Key Eingabe
+4. **⏱️ Pomodoro-Timer** - Lernzeit (Standard: 20 Min), Pausenzeit (Standard: 5 Min), Ton-Toggle
+5. **📊 Lernpräferenzen** - Bevorzugte Lernstrategie (Visuell/Auditiv/Praktisch), Schwierige Operatoren
+6. **💾 Daten** - Export, Import, "Fortschritt zurücksetzen" (Danger-Button)
+
+---
+
+**6. Pomodoro Timer Bar - Details**
+
+Immer sichtbarer Toggle-Button "⏱️ Timer". Die ausklappbare Timer-Bar enthält:
+- Timer-Status Anzeige
+- Timer-Display (Standard: 20:00)
+- Buttons: ▶️ Start / ⏸️ Pause / 🔄 Reset / ⏭️ Pause überspringen
+- Progress-Bar
+- "📖 Heute gelernt: X Min"
+
+---
+
+**7. Burg (Castle) - Vollständige Struktur**
+
+7 Burg-Teile (alle anfangs "locked"):
+- wall-left 🧱, gate 🚪, wall-right 🧱
+- tower-left 🗼, keep 🏰, tower-right 🗼
+- flag 🚩
+
+**Burg-Shop** (3 Items):
+- 🧱 Mauer - 50 🐄 (`buyUpgrade('wall')`)
+- 🗼 Turm - 100 🐄 (`buyUpgrade('tower')`)
+- 🏰 Bergfried - 200 🐄 (`buyUpgrade('keep')`)
+
+**Rang-System** (vollständige Liste im HTML):
+- 🌾 Tagelöhner → 🌾 Bauer → 🔨 Handwerker → ⚔️ Ritter → 👑 Adel → ⚡ Legende
+
+---
+
+**8. Aktuelle Modals (4 Stück)**
+
+- `exerciseModal` - Für Themenübungen (modal-large)
+- `adaptiveLearningModal` - Für Adaptive Session
+- `studyNotesModal` - Für Lernzettel
+- `avatarEditorModal` - Für Avatar-Editor
+
+---
+
+**9. Script-Ladereihenfolge (aktuell, 17 Scripts)**
+
+```html
+data.js → topic-exercises.js → topic-exercises-part2.js → topic-exercises-part3.js
+→ topic-exercises-complete.js → topic-exercises-final.js → integration.js
+→ auth.js → app.js → timer.js → chat.js → glossary.js → operators.js
+→ strategies.js → timeline.js → exercises.js → gamification.js
+→ adaptive-learning.js → study-notes.js → avatar-editor.js → admin.js
+```
+
+---
+
+**10. Registrierung - Klasse 7 Option vorhanden**
+
+Das Registrierungsformular bietet Klassen 7-10 an (Klasse 7 ist im Dropdown, obwohl Zielgruppe eigentlich 8-10 ist).
+
+---
+
+---
+
+## 🎯 Session vom 04.03.2026 (Nachmittag) - UI-Verbesserungen & Bugfixes
+
+### ✅ Durchgeführte Änderungen:
+
+**1. Akzentfarben vollständig repariert (`app/js/app.js`):**
+- `setAccentColor()` setzt jetzt alle Sekundärvariablen mit: `--secondary`, `--secondary-light`, `--secondary-dark`, `--text-gold`, `--border-gold`, `--shadow-gold`
+- Alle UI-Elemente (Buttons, Borders, Text) folgen jetzt der gewählten Akzentfarbe
+
+**2. Glossar Alphabetleiste (`app/js/glossary.js`, `app/index.html`, `app/css/components.css`):**
+- Terme alphabetisch gruppiert mit `#glossary-letter-X` Ankern
+- Sticky Alphabetleiste rechts (`.glossary-alphabet-bar`) mit klickbaren Buchstaben
+- Nur vorhandene Buchstaben werden hervorgehoben
+
+**3. Materialien Navigation aufgeteilt (`app/index.html`, `app/js/app.js`):**
+- 3 separate Sidebar-Einträge statt einem: 📚 Bibliothek, 📖 Glossar, 📄 Lernzettel
+- `showSection()` erweitert mit Cases: `library-materials`, `library-glossary`, `library-studynotes`
+
+**4. Themenübungen als kompaktes Modal (`app/js/integration.js`, `app/css/components.css`):**
+- Statt großem Modal → kompakte Karteikarte (`.modal-exercise`, max-width 640px)
+- Fortschrittsbalken, AFB-Badges, Textarea (rows=3), Musterlösung
+- Prev/Next Navigation + X-Schließen-Button
+
+**5. Memory Schwierigkeitsstufen (`app/js/app.js`):**
+- 3 progressive Stufen: Leicht (6 Paare), Mittel (8 Paare), Schwer (10 Paare)
+- Stufen werden nach Sieg freigeschaltet, Status in `localStorage` (`histolearn_memory_levels`)
+- Stufen-Auswahlbildschirm vor Spielstart
+
+**6. Sidebar einklappbar (`app/index.html`, `app/js/app.js`, `app/css/main.css`):**
+- Toggle-Button `◀/▶` im Sidebar-Header
+- Eingeklappt: 60px breit, nur Icons sichtbar
+- Smooth Transition (0.3s), Status in `localStorage` gespeichert
+
+**7. KI-Tutor in Sidebar & Chat-Layout verbessert:**
+- KI-Tutor als eigenständiger Sidebar-Eintrag über LERNEN
+- Chat-Layout: `height: calc(100vh - 50px)`, Chat-Sidebar schmaler (210px)
+- Timer-Überlappung behoben: `padding-top: 55px` auf `.chat-sidebar`
+
+**8. Auszeichnungen & Rang Info-Buttons (`app/index.html`, `app/js/app.js`):**
+- ⓘ Button bei Auszeichnungen → öffnet Popup mit allen Achievement-Anforderungen
+- ⓘ Button bei Rang → öffnet Popup mit Rang-Aufstiegs-Tabelle
+- `showInfoPopup()`, `closeInfoPopup()`, `showAchievementsInfo()`, `showRankInfo()`
+
+**9. Goldene/Ockerfarbene Texte → Akzentfarbe (`app/css/components.css`):**
+- `.shop-price`: `var(--warning)` → `var(--text-gold)`
+- `.quiz-coins-earned`: `var(--warning)` → `var(--text-gold)`
+- `.feedback-ok` Border + Score: `#daa520` → `var(--secondary)` / `var(--text-gold)`
+
+**10. Bugfixes:**
+- Progress-Karte war weiß im Sepia-Theme: `.progress-card` in components.css auf `.progress-cards .progress-card` eingeschränkt
+- Progress-Ring verwendete `var(--primary)` statt Akzentfarbe: in `auth.js` auf `var(--secondary)` geändert
+- `showLibraryTab()` Fehler bei programmatischem Aufruf behoben
+
+**11. Operatoren Accordion (`app/js/operators.js`, `app/index.html`, `app/css/components.css`):**
+- AFB I/II/III als Accordion: Klick öffnet Operatorenliste darunter
+- `toggleAFB(afb)` ersetzt `showAFB(afb)` / `loadOperators(afb)`
+- Pfeil-Icon dreht sich beim Öffnen/Schließen
+
+**12. Lernstrategien Textfarben (`app/js/strategies.js`, `app/css/components.css`):**
+- Überschriften (h2, h4) in Akzentfarbe (`var(--text-gold)`)
+- Fließtext (p, li) explizit weiß (`#e8e4d9`) als Inline-Style
+- Kategorie-Badge ("Zeitmanagement" etc.) in Akzentfarbe
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 11.02.2026 (Nachmittag) - Projekt-Abgleich durchgeführt, README professionalisiert
+**Letzte Aktualisierung:** 04.03.2026 - UI-Verbesserungen & Bugfixes

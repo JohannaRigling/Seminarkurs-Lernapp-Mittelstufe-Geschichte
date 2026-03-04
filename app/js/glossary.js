@@ -381,18 +381,45 @@ function loadGlossaryContent(filter = 'alle') {
     // Alphabetisch sortieren
     allTerms.sort((a, b) => a.begriff.localeCompare(b.begriff));
 
-    // Anzeigen
-    container.innerHTML = allTerms.map(term => `
-        <div class="glossary-item" data-klasse="${term.klasse}">
-            <div class="glossary-term">
-                <span class="term-name">${term.begriff}</span>
-                <span class="term-class">Klasse ${term.klasse}</span>
-            </div>
-            <div class="glossary-definition">${term.definition}</div>
-            ${term.beispiel ? `<div class="glossary-example"><strong>Beispiel:</strong> ${term.beispiel}</div>` : ''}
-            <div class="glossary-theme"><strong>Thema:</strong> ${term.thema}</div>
+    // Nach Buchstabe gruppieren
+    const grouped = {};
+    allTerms.forEach(term => {
+        const letter = term.begriff[0].toUpperCase();
+        if (!grouped[letter]) grouped[letter] = [];
+        grouped[letter].push(term);
+    });
+
+    const presentLetters = Object.keys(grouped).sort();
+
+    // Gruppierten Inhalt rendern
+    container.innerHTML = presentLetters.map(letter => `
+        <div id="glossary-letter-${letter}" class="glossary-letter-group">
+            <div class="glossary-letter-header">${letter}</div>
+            ${grouped[letter].map(term => `
+                <div class="glossary-item" data-klasse="${term.klasse}">
+                    <div class="glossary-term">
+                        <span class="term-name">${term.begriff}</span>
+                        <span class="term-class">Klasse ${term.klasse}</span>
+                    </div>
+                    <div class="glossary-definition">${term.definition}</div>
+                    ${term.beispiel ? `<div class="glossary-example"><strong>Beispiel:</strong> ${term.beispiel}</div>` : ''}
+                    <div class="glossary-theme"><strong>Thema:</strong> ${term.thema}</div>
+                </div>
+            `).join('')}
         </div>
     `).join('');
+
+    // Alphabet-Bar aktualisieren
+    const alphabetBar = document.getElementById('glossaryAlphabetBar');
+    if (alphabetBar) {
+        const allLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+        alphabetBar.innerHTML = allLetters.map(letter => `
+            <span
+                class="alphabet-letter ${presentLetters.includes(letter) ? 'active' : 'inactive'}"
+                onclick="${presentLetters.includes(letter) ? `document.getElementById('glossary-letter-${letter}').scrollIntoView({behavior:'smooth'})` : ''}"
+            >${letter}</span>
+        `).join('');
+    }
 }
 
 // Filter einrichten

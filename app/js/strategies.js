@@ -26,36 +26,36 @@ function showStrategyDetail(strategyId) {
     const content = document.getElementById('strategyDetailContent');
 
     content.innerHTML = `
-        <div class="strategy-detail">
+        <div class="strategy-detail" style="color: #e8e4d9;">
             <div class="strategy-detail-header">
                 <span class="strategy-icon-large">${strategy.icon}</span>
                 <div>
-                    <h2>${strategy.name}</h2>
-                    <span class="strategy-category-badge">${strategy.category}</span>
+                    <h2 style="color: var(--text-gold);">${strategy.name}</h2>
+                    <span class="strategy-category-badge" style="color: var(--text-gold);">${strategy.category}</span>
                 </div>
             </div>
 
             <div class="strategy-section">
-                <h4>📖 Was ist das?</h4>
+                <h4 style="color: var(--text-gold);">📖 Was ist das?</h4>
                 <p>${strategy.fullDesc}</p>
             </div>
 
             <div class="strategy-section">
-                <h4>📋 Schritt für Schritt</h4>
+                <h4 style="color: var(--text-gold);">📋 Schritt für Schritt</h4>
                 <ol class="strategy-steps">
                     ${strategy.steps.map(step => `<li>${step}</li>`).join('')}
                 </ol>
             </div>
 
             <div class="strategy-section">
-                <h4>✅ Vorteile</h4>
+                <h4 style="color: var(--text-gold);">✅ Vorteile</h4>
                 <ul class="strategy-benefits">
                     ${strategy.benefits.map(benefit => `<li>✓ ${benefit}</li>`).join('')}
                 </ul>
             </div>
 
             <div class="strategy-section history-tip">
-                <h4>📚 Tipp für Geschichte</h4>
+                <h4 style="color: var(--text-gold);">📚 Tipp für Geschichte</h4>
                 <p>${strategy.historyTip}</p>
             </div>
 
@@ -262,10 +262,6 @@ strategyStyles.textContent = `
     .strategy-section {
         margin-bottom: 25px;
     }
-    .strategy-section h4 {
-        color: var(--primary);
-        margin-bottom: 12px;
-    }
     .strategy-steps {
         margin-left: 20px;
     }
@@ -276,15 +272,10 @@ strategyStyles.textContent = `
     .strategy-benefits {
         list-style: none;
     }
-    .strategy-benefits li {
-        margin-bottom: 8px;
-        color: var(--success);
-    }
     .history-tip {
-        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
         padding: 20px;
         border-radius: 10px;
-        border-left: 4px solid var(--primary);
+        border-left: 4px solid var(--secondary);
     }
     .strategy-actions {
         margin-top: 30px;
