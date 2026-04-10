@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #1a1a2e;
+            color: #eaeaea;
+            padding: 8px 12px;
+        }
+
+        :root {
+            --primary: #c49080;
+            --secondary: #90a890;
+            --bg-primary: #1c1814;
+            --bg-secondary: #241e18;
+            --bg-tertiary: #2e2620;
+            --text-primary: #f0ebe3;
+            --text-secondary: #a09585;
+            --border-color: #3a3028;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .controls button {
+            padding: 6px 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .controls button:hover {
+            background: var(--secondary);
+        }
+
+        #zoomLevel {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        /* Styles kommen aus timeline-v3.js (.timeline-container) */
+
+        .debug-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .debug-info div {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <button onclick="zoomTimeline('out')">➖</button>
+        <span id="zoomLevel">Übersicht</span>
+        <button onclick="zoomTimeline('in')">➕</button>
+    </div>
+
+    <div class="timeline-container" id="timelineContainer">
+        <div class="timeline-track" id="timelineTrack"></div>
+    </div>
+
+    <script src="js/timeline-v2-data.js?t=1744310000"></script>
+    <script src="js/timeline-v3.js?t=1744310000"></script>
+</body>
+</html>
