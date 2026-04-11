@@ -74,6 +74,7 @@ function showSection(sectionId) {
     switch (sectionId) {
         case 'chat':
             document.getElementById('chatInput').focus();
+            updateSavedChatsList();
             break;
         case 'timeline':
             if (!document.querySelector('.timeline-event')) {

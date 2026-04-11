@@ -608,6 +608,7 @@ function showMainApp() {
     updateUserUI();
     updateActivityList();
     updateAchievementsDisplay();
+    updateSavedChatsList();
 
     // Fun Fact aktualisieren
     updateFunFact();
