@@ -3,6 +3,16 @@
 let chatHistory = [];
 let currentAIMode = 'tutor';
 
+// Sicherheitshinweis der an alle System-Prompts angehängt wird
+const SAFETY_ADDENDUM = `
+
+WICHTIGE SICHERHEITSREGELN (höchste Priorität):
+- Du bist eine Lern-App für Schüler der Klassen 8-10. Bleibe immer bei historischen Bildungsthemen.
+- Lehne jede Anfrage nach sexuellen, pornographischen oder gewaltverharmlosenden Inhalten höflich aber bestimmt ab.
+- Wenn ein Schüler Anzeichen von Depressionen, Suizidgedanken oder emotionaler Not zeigt, antworte einfühlsam und weise auf die Telefonseelsorge hin: 0800 111 0 111 (kostenlos, 24/7).
+- Gib keine Anleitung zu gefährlichen, illegalen oder schädlichen Handlungen.
+- Bleibe stets respektvoll, unterstützend und altersgerecht.`;
+
 // KI-Modi Beschreibungen
 const AI_MODES = {
     tutor: {
@@ -12,7 +22,7 @@ const AI_MODES = {
         Erster Weltkrieg, Weimarer Republik, Nationalsozialismus, BRD/DDR, Russland, China, Osmanisches Reich/Türkei und Europäische Union.
         Erkläre Konzepte einfach und verständlich. Nutze Beispiele und Vergleiche aus dem Alltag.
         Ermutige den Schüler und gib konstruktives Feedback. Halte deine Antworten kurz und prägnant (max. 150 Wörter).
-        Antworte immer auf Deutsch.`
+        Antworte immer auf Deutsch.` + SAFETY_ADDENDUM
     },
     critic: {
         name: 'Kritiker',
@@ -20,7 +30,7 @@ const AI_MODES = {
         Prüfe die Antworten des Schülers kritisch auf historische Korrektheit.
         Weise auf Fehler und Ungenauigkeiten hin. Fordere Belege und Begründungen ein.
         Stelle Rückfragen, um das Verständnis zu überprüfen. Sei anspruchsvoll aber respektvoll.
-        Halte deine Antworten kurz (max. 150 Wörter). Antworte immer auf Deutsch.`
+        Halte deine Antworten kurz (max. 150 Wörter). Antworte immer auf Deutsch.` + SAFETY_ADDENDUM
     },
     discussion: {
         name: 'Diskussionspartner',
@@ -28,9 +38,71 @@ const AI_MODES = {
         Vertrete verschiedene Perspektiven und rege zum Nachdenken an.
         Stelle kontroverse Fragen und fordere den Schüler auf, seine Meinung zu begründen.
         Bringe Gegenargumente ein und zeige verschiedene Interpretationen auf.
-        Halte deine Antworten kurz (max. 150 Wörter). Antworte immer auf Deutsch.`
+        Halte deine Antworten kurz (max. 150 Wörter). Antworte immer auf Deutsch.` + SAFETY_ADDENDUM
     }
 };
+
+// ===== KINDERSICHERUNG =====
+
+// Schlüsselwörter für blockierte Inhalte
+const BLOCKED_KEYWORDS = [
+    'porno', 'pornograph', 'nackt', 'sex', 'erotik', 'nacktbild',
+    'masturbier', 'orgasmus', 'penis', 'vagina', 'dildo',
+    'drogen kaufen', 'drogen nehmen', 'joints', 'kokain', 'heroin',
+    'waffe kaufen', 'bombe bauen', 'anschlag planen', 'jemanden töten'
+];
+
+// Schlüsselwörter für Krisenthemen (Hilfe anbieten)
+const CRISIS_KEYWORDS = [
+    'suizid', 'selbstmord', 'umbringen', 'töten mich', 'leben beenden',
+    'nicht mehr leben', 'sterben wollen', 'aufhören zu leben',
+    'depression', 'depressiv', 'hoffnungslos', 'keinen ausweg',
+    'selbstverletzung', 'ritzen', 'schneiden', 'schmerzen zufügen',
+    'niemand mag mich', 'bin eine last', 'wertlos', 'bin allein'
+];
+
+// Nachricht für blockierte Inhalte
+const BLOCKED_RESPONSE = `Das liegt leider außerhalb meiner Möglichkeiten als Geschichts-Tutor. 📚
+
+Ich bin hier, um dir beim Lernen von Geschichte zu helfen! Frag mich gerne zu:
+• Französische Revolution, Weltkriege, Industrialisierung
+• Nationalsozialismus, BRD/DDR, Kalter Krieg
+• Russland, China, Osmanisches Reich, EU
+
+Was möchtest du lernen?`;
+
+// Nachricht für Krisenthemen
+const CRISIS_RESPONSE = `Ich mache mir Sorgen um dich und möchte, dass du weißt: Du bist nicht allein. 💙
+
+Wenn du gerade schwere Gedanken hast oder dich sehr schlecht fühlst, gibt es Menschen, die dir helfen können:
+
+📞 **Telefonseelsorge** – kostenlos, 24/7, anonym:
+• **0800 111 0 111**
+• **0800 111 0 222**
+
+💬 **Online-Beratung:** www.online.telefonseelsorge.de
+
+Diese Menschen hören dir zu – egal was, egal wann. Du musst das nicht alleine durchmachen.
+
+Ich bin als Geschichts-Tutor leider nicht die richtige Anlaufstelle für solche Themen, aber die Menschen bei der Telefonseelsorge sind es. Bitte ruf an. 🙏`;
+
+/**
+ * Prüft eine Nachricht auf sicherheitsrelevante Inhalte.
+ * Gibt zurück: 'blocked', 'crisis', oder 'ok'
+ */
+function checkMessageSafety(message) {
+    const lower = message.toLowerCase();
+
+    for (const keyword of CRISIS_KEYWORDS) {
+        if (lower.includes(keyword)) return 'crisis';
+    }
+
+    for (const keyword of BLOCKED_KEYWORDS) {
+        if (lower.includes(keyword)) return 'blocked';
+    }
+
+    return 'ok';
+}
 
 // Quick Prompts
 const QUICK_PROMPTS = {
@@ -146,6 +218,17 @@ function hideTypingIndicator() {
 
 // KI-Antwort holen
 async function getAIResponse(message) {
+    // Sicherheitscheck vor API-Aufruf
+    const safetyResult = checkMessageSafety(message);
+    if (safetyResult === 'blocked') {
+        addChatMessage(BLOCKED_RESPONSE, 'ai');
+        return;
+    }
+    if (safetyResult === 'crisis') {
+        addChatMessage(CRISIS_RESPONSE, 'ai');
+        return;
+    }
+
     showTypingIndicator();
 
     const apiKey = (typeof HISTOLEARN_CONFIG !== 'undefined' && HISTOLEARN_CONFIG.apiKey)
