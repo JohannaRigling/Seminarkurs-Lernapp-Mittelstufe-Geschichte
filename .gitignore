@@ -1,0 +1,6 @@
+# API-Keys und sensible Daten
+API/
+
+# System
+.DS_Store
+Thumbs.db
