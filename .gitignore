@@ -1,5 +1,6 @@
 # API-Keys und sensible Daten
 API/
+app/js/config.js
 
 # System
 .DS_Store

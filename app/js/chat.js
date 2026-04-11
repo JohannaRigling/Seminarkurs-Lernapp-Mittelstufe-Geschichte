@@ -148,7 +148,9 @@ function hideTypingIndicator() {
 async function getAIResponse(message) {
     showTypingIndicator();
 
-    const apiKey = localStorage.getItem('histolearn_apiKey');
+    const apiKey = (typeof HISTOLEARN_CONFIG !== 'undefined' && HISTOLEARN_CONFIG.apiKey)
+        ? HISTOLEARN_CONFIG.apiKey
+        : localStorage.getItem('histolearn_apiKey');
 
     try {
         let response;
@@ -172,7 +174,7 @@ async function getAIResponse(message) {
 
     } catch (error) {
         hideTypingIndicator();
-        addChatMessage('Es gab einen Fehler bei der Verbindung. Bitte überprüfe deinen API-Key in den Einstellungen.', 'ai');
+        addChatMessage('Es gab einen Fehler bei der Verbindung zur KI. Bitte versuche es erneut.', 'ai');
         console.error('AI Error:', error);
     }
 }
