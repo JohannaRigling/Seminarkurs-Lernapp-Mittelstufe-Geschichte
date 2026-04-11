@@ -1001,10 +1001,32 @@ function updateSavedChatsList() {
 
     container.innerHTML = currentUser.savedChats.slice(-5).reverse().map(chat => `
         <div class="saved-chat-item" onclick="loadChat('${chat.id}')">
-            <span class="chat-name">${escapeHtml(chat.name)}</span>
-            <span class="chat-date">${new Date(chat.savedAt).toLocaleDateString('de-DE')}</span>
+            <div class="saved-chat-info">
+                <span class="chat-name">${escapeHtml(chat.name)}</span>
+                <span class="chat-date">${new Date(chat.savedAt).toLocaleDateString('de-DE')}</span>
+            </div>
+            <button class="chat-delete-btn" onclick="event.stopPropagation(); deleteChat('${chat.id}')" title="Chat löschen">🗑️</button>
         </div>
     `).join('');
+}
+
+// Chat löschen
+function deleteChat(chatId) {
+    if (!currentUser || !currentUser.savedChats) return;
+
+    if (!confirm('Chat wirklich löschen?')) return;
+
+    currentUser.savedChats = currentUser.savedChats.filter(c => c.id !== chatId);
+
+    const users = JSON.parse(localStorage.getItem('histolearn_users') || '[]');
+    const userIndex = users.findIndex(u => u.id === currentUser.id);
+    if (userIndex !== -1) {
+        users[userIndex] = currentUser;
+        localStorage.setItem('histolearn_users', JSON.stringify(users));
+    }
+
+    updateSavedChatsList();
+    showToast('Chat gelöscht.', 'info');
 }
 
 // Chat laden
