@@ -1123,5 +1123,34 @@ Das Registrierungsformular bietet Klassen 7-10 an (Klasse 7 ist im Dropdown, obw
 
 ---
 
+---
+
+## 🎯 Session vom 11.04.2026 - Claude API Integration & Kindersicherung
+
+### ✅ Durchgeführte Änderungen:
+
+**1. Claude API fest eingebunden (`app/js/config.js`, `app/js/chat.js`):**
+- ✅ `app/js/config.js` erstellt (gitignored!) mit Claude API-Key (sk-ant-...)
+- ✅ `chat.js` liest Key aus `config.js` statt localStorage
+- ✅ API-Key-Eingabefeld aus den Einstellungen entfernt (war Sicherheitsrisiko)
+- ✅ KI-Tutor nutzt jetzt echte Claude 3 Haiku Antworten statt simulierter Responses
+- ✅ `config.js` in `.gitignore` eingetragen → Key kommt nie auf GitHub
+
+**2. Kindersicherung implementiert (`app/js/chat.js`):**
+- ✅ Client-seitiger Content-Filter vor API-Aufruf
+- ✅ Blockiert: pornographische, sexuelle, gewaltverharmlosende Inhalte
+- ✅ Krisenintervention: Bei Suizid/Depression/Selbstverletzung → Verweis auf Telefonseelsorge **0800 111 0 111** (kostenlos, 24/7)
+- ✅ Safety-Addendum in allen KI-System-Prompts (Tutor, Kritiker, Diskussionspartner)
+- ✅ `BLOCKED_KEYWORDS` und `CRISIS_KEYWORDS` Arrays für einfache Erweiterung
+- ✅ Funktion `checkMessageSafety(message)` → gibt 'blocked', 'crisis' oder 'ok' zurück
+
+**Begründung:** App ist ausschließlich für Minderjährige (Klasse 8-10) — Sicherheit hat höchste Priorität.
+
+**3. Sicherheits-Infrastruktur (`gitignore`):**
+- ✅ `API/` Ordner gitignored (enthält schluessel.txt)
+- ✅ `app/js/config.js` gitignored
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 04.03.2026 - UI-Verbesserungen & Bugfixes
+**Letzte Aktualisierung:** 11.04.2026 - Claude API Integration & Kindersicherung
