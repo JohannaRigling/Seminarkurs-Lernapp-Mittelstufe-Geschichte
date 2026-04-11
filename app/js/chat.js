@@ -266,13 +266,10 @@ async function getAIResponse(message) {
 async function callClaudeAPI(message, apiKey) {
     const mode = AI_MODES[currentAIMode];
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('/api/messages', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey,
-            'anthropic-version': '2023-06-01',
-            'anthropic-dangerous-allow-browser': 'true'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             model: 'claude-3-haiku-20240307',
