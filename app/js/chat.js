@@ -1030,6 +1030,26 @@ function loadChat(chatId) {
     showToast('Chat geladen!', 'success');
 }
 
+// Neuen Chat starten
+function startNewChat() {
+    chatHistory = [];
+
+    const container = document.getElementById('chatMessages');
+    container.innerHTML = `
+        <div class="message ai">
+            <div class="message-avatar">🤖</div>
+            <div class="message-content">
+                <p>Hallo! Ich bin dein KI-Geschichtstutor. Ich helfe dir beim Lernen für Geschichte. Du kannst mich alles fragen oder die Schnell-Buttons unten nutzen!</p>
+            </div>
+        </div>
+    `;
+
+    const input = document.getElementById('chatInput');
+    if (input) input.value = '';
+
+    showToast('Neuer Chat gestartet!', 'success');
+}
+
 // HTML escapen
 function escapeHtml(text) {
     const div = document.createElement('div');
