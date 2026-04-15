@@ -1248,5 +1248,31 @@ Das Registrierungsformular bietet Klassen 7-10 an (Klasse 7 ist im Dropdown, obw
 
 ---
 
+### ✅ Quellenarbeit-Tab (Karikaturen & Historikertexte)
+
+**Neue Übungskategorie „📜 Quellenarbeit" in Themenübungen:**
+- Typ-Umschalter: 🎨 Karikaturen / 📄 Historikertexte
+- Themenraster mit allen 16 Unterrichtsthemen (Kl. 8–10)
+- Pro Thema und Typ je 2 Quellen → 64 Quellen gesamt
+- **Karikaturen:** Detaillierte Bildbeschreibungen (kein echtes Bildmaterial nötig, prüfungsgerecht)
+- **Historikertexte:** Echte Historiker-Zitate mit vollständigen Quellenangaben
+- Jede Quelle: 3 differenzierte Aufgaben (Beschreiben → Erklären → Beurteilen/Erörtern)
+- Aufklappbare Hilfestellungen (`<details>/<summary>`) pro Aufgabe
+- Freitextfelder (`<textarea>`) zur Selbsteinschätzung
+- Keine automatische Auswertung — Selbstkontrolle durch Schüler:in
+
+**Lernpräferenzen entfernt:**
+- Karte „📊 Lernpräferenzen" aus Einstellungen entfernt (Visuell/Auditiv/Kinästhetisch nicht umsetzbar)
+
+**Technische Details:**
+- `app/js/source-analysis.js` (neu, ~910 Zeilen) — alle Daten + UI-Logik
+- Nutzt bestehenden `#exerciseModal` / `#exerciseModalContent`
+- `showExerciseType('quellenarbeit')` funktioniert ohne Änderung (generische Logik)
+- CSS für alle `.ql-*`-Klassen am Ende von `components.css` ergänzt
+
+**Dateien:** `app/js/source-analysis.js` (neu), `app/index.html`, `app/css/components.css`
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 15.04.2026 - Passwort-Einstellungen, Pomodoro-Sperre, Erstanmeldungs-Tutorial
+**Letzte Aktualisierung:** 15.04.2026 - Passwort-Einstellungen, Pomodoro-Sperre, Erstanmeldungs-Tutorial, Quellenarbeit-Tab
