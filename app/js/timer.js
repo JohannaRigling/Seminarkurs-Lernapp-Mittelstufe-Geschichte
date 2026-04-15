@@ -1,13 +1,17 @@
 // ===== POMODORO TIMER =====
 
 let timerInterval = null;
-let timerSeconds = 20 * 60; // 20 Minuten
+let timerSeconds = 20 * 60;
 let timerRunning = false;
 let isBreak = false;
 let pomodoroCount = 0;
+let breakOverlayInterval = null;
 
-const WORK_TIME = 20 * 60; // 20 Minuten
-const BREAK_TIME = 5 * 60; // 5 Minuten
+let WORK_TIME = 20 * 60; // wird bei Einstellungsänderung aktualisiert
+
+function getBreakTime() {
+    return Math.round(WORK_TIME / 4);
+}
 
 // Timer starten
 function startTimer() {
@@ -16,10 +20,6 @@ function startTimer() {
     timerRunning = true;
     document.getElementById('timerStartBtn').style.display = 'none';
     document.getElementById('timerPauseBtn').style.display = 'inline-block';
-
-    if (isBreak) {
-        document.getElementById('skipBreakBtn').style.display = 'inline-block';
-    }
 
     updateTimerStatus();
 
@@ -64,19 +64,16 @@ function resetTimer() {
     updateTimerStatus();
 }
 
-// Pause überspringen
+// Pause überspringen (nur noch für manuelle Fälle, Overlay hat eigene Buttons)
 function skipBreak() {
     if (!isBreak) return;
-
     pauseTimer();
     isBreak = false;
     timerSeconds = WORK_TIME;
     updateTimerDisplay();
     updateTimerProgress();
     updateTimerStatus();
-
     document.getElementById('skipBreakBtn').style.display = 'none';
-
     showToast('Pause übersprungen. Weiter geht\'s!', 'info');
 }
 
@@ -89,59 +86,123 @@ function timerComplete() {
         playTimerSound();
     }
 
-    if (isBreak) {
-        // Pause vorbei -> Arbeitszeit
-        isBreak = false;
-        timerSeconds = WORK_TIME;
-        showToast('☕ Pause vorbei! Bereit für die nächste Lerneinheit?', 'info');
-    } else {
-        // Arbeitszeit vorbei -> Pause + Belohnung
-        pomodoroCount++;
-        isBreak = true;
-        timerSeconds = BREAK_TIME;
+    // Lernzeit vorbei → Break-Overlay zeigen
+    pomodoroCount++;
+    isBreak = true;
 
-        // Münzen für 20 Minuten lernen
-        addCoins(10, '20 Minuten gelernt');
-        addXP(20);
-        addActivity('timer', 'Pomodoro abgeschlossen');
+    addCoins(10, 'Pomodoro abgeschlossen');
+    addXP(20);
+    addActivity('timer', 'Pomodoro abgeschlossen');
 
-        // Nach 4 Pomodoros extra Bonus
-        if (pomodoroCount % 4 === 0) {
-            addCoins(15, 'Bonus: 4 Pomodoros geschafft!');
-            showToast('🎉 Super! 4 Pomodoros geschafft! Gönn dir eine längere Pause!', 'success');
-        } else {
-            showToast('🍅 Pomodoro geschafft! Zeit für eine kurze Pause.', 'success');
-        }
-
-        document.getElementById('skipBreakBtn').style.display = 'inline-block';
+    if (pomodoroCount % 4 === 0) {
+        addCoins(15, 'Bonus: 4 Pomodoros geschafft!');
     }
 
+    showBreakOverlay();
+}
+
+// Break-Overlay anzeigen und Countdown starten
+function showBreakOverlay() {
+    const overlay = document.getElementById('breakOverlay');
+    const countdownEl = document.getElementById('breakOverlayCountdown');
+    const actionsEl = document.getElementById('breakOverlayActions');
+    const titleEl = document.getElementById('breakOverlayTitle');
+    const msgEl = document.getElementById('breakOverlayMessage');
+
+    if (!overlay) return;
+
+    let breakSeconds = getBreakTime();
+
+    titleEl.textContent = '☕ Pause!';
+    msgEl.textContent = 'Gönn dir eine Auszeit. Die App ist während der Pause gesperrt.';
+    countdownEl.textContent = formatTimerTime(breakSeconds);
+    countdownEl.style.display = 'block';
+    actionsEl.style.display = 'none';
+    overlay.style.display = 'flex';
+
+    breakOverlayInterval = setInterval(() => {
+        breakSeconds--;
+        countdownEl.textContent = formatTimerTime(breakSeconds);
+
+        if (breakSeconds <= 0) {
+            clearInterval(breakOverlayInterval);
+            breakOverlayInterval = null;
+
+            // Pause vorbei → Buttons zeigen
+            titleEl.textContent = '✅ Pause vorbei!';
+            msgEl.textContent = 'Möchtest du weitermachen?';
+            countdownEl.style.display = 'none';
+            actionsEl.style.display = 'flex';
+
+            if ((currentUser?.preferences || {}).pomodoroSound !== false) {
+                playTimerSound();
+            }
+        }
+    }, 1000);
+}
+
+// Overlay verstecken
+function hideBreakOverlay() {
+    const overlay = document.getElementById('breakOverlay');
+    if (overlay) overlay.style.display = 'none';
+
+    if (breakOverlayInterval) {
+        clearInterval(breakOverlayInterval);
+        breakOverlayInterval = null;
+    }
+
+    // Countdown-Element zurücksetzen für nächste Runde
+    const countdownEl = document.getElementById('breakOverlayCountdown');
+    if (countdownEl) countdownEl.style.display = 'block';
+
+    isBreak = false;
+}
+
+// "Weiterlernen" geklickt → Overlay weg, Timer neu starten
+function continuePomodoro() {
+    hideBreakOverlay();
+    timerSeconds = WORK_TIME;
     updateTimerDisplay();
     updateTimerProgress();
     updateTimerStatus();
+    startTimer();
+    showToast('📚 Auf geht\'s! Viel Erfolg beim Lernen!', 'success');
+}
+
+// "Fertig" geklickt → Overlay weg, Timer komplett zurücksetzen
+function finishPomodoro() {
+    hideBreakOverlay();
+    pomodoroCount = 0;
+    timerSeconds = WORK_TIME;
+    updateTimerDisplay();
+    updateTimerProgress();
+    updateTimerStatus();
+    showToast('🎉 Super gemacht! Bis zum nächsten Mal!', 'success');
 }
 
 // Timer-Anzeige aktualisieren
 function updateTimerDisplay() {
-    const minutes = Math.floor(timerSeconds / 60);
-    const seconds = timerSeconds % 60;
-    const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    document.getElementById('timerDisplay').textContent = formatTimerTime(timerSeconds);
+}
 
-    document.getElementById('timerDisplay').textContent = display;
+// Hilfsfunktion: Sekunden → MM:SS
+function formatTimerTime(seconds) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 }
 
 // Timer-Fortschrittsbalken aktualisieren
 function updateTimerProgress() {
-    const totalTime = isBreak ? BREAK_TIME : WORK_TIME;
-    const progress = ((totalTime - timerSeconds) / totalTime) * 100;
-
+    const totalTime = isBreak ? getBreakTime() : WORK_TIME;
+    const elapsed = totalTime - timerSeconds;
+    const progress = Math.min(100, (elapsed / totalTime) * 100);
     document.getElementById('timerProgressBar').style.width = `${progress}%`;
 }
 
 // Timer-Status aktualisieren
 function updateTimerStatus() {
     const status = document.getElementById('timerStatus');
-
     if (!timerRunning) {
         status.textContent = '⏸️ Timer pausiert';
     } else if (isBreak) {
@@ -163,16 +224,46 @@ function updateLearningTime() {
         totalMinutes: currentUser.progress.totalMinutes
     });
 
-    // 1 Stunde gelernt = 25 Münzen Bonus
     if (currentUser.progress.todayMinutes === 60) {
         addCoins(25, '1 Stunde heute gelernt!');
         showToast('🎉 Eine Stunde gelernt! 25 Bonus-Münzen!', 'success');
     }
 }
 
+// Pomodoro-Einstellungen aktualisieren (Pausenzeit = immer 1/4 der Lernzeit)
+function updatePomodoroSettings() {
+    const workTime = parseInt(document.getElementById('pomodoroWork')?.value) || 20;
+    const sound = document.getElementById('pomodoroSound')?.checked ?? true;
+
+    WORK_TIME = workTime * 60;
+
+    if (currentUser) {
+        updateUserPreferences({
+            pomodoroWork: workTime,
+            pomodoroSound: sound
+        });
+    }
+
+    // Timer zurücksetzen mit neuen Werten (nur wenn nicht läuft)
+    if (!timerRunning && !isBreak) {
+        timerSeconds = WORK_TIME;
+        updateTimerDisplay();
+        updateTimerProgress();
+    }
+
+    updateBreakTimeDisplay();
+}
+
+// Pausenzeit-Anzeige in den Einstellungen aktualisieren
+function updateBreakTimeDisplay() {
+    const workTime = parseInt(document.getElementById('pomodoroWork')?.value) || 20;
+    const breakTime = Math.round(workTime / 4);
+    const display = document.getElementById('breakTimeDisplay');
+    if (display) display.textContent = `${breakTime} Min. = 1/4 der Lernzeit`;
+}
+
 // Timer-Sound abspielen
 function playTimerSound() {
-    // Einfacher Beep mit Web Audio API
     try {
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const oscillator = audioContext.createOscillator();
@@ -190,7 +281,6 @@ function playTimerSound() {
         oscillator.start(audioContext.currentTime);
         oscillator.stop(audioContext.currentTime + 0.5);
 
-        // Zweiter Beep
         setTimeout(() => {
             const osc2 = audioContext.createOscillator();
             const gain2 = audioContext.createGain();
@@ -208,37 +298,14 @@ function playTimerSound() {
     }
 }
 
-// Pomodoro-Einstellungen aktualisieren
-function updatePomodoroSettings() {
-    const workTime = parseInt(document.getElementById('pomodoroWork')?.value) || 20;
-    const breakTime = parseInt(document.getElementById('pomodoroBreak')?.value) || 5;
-    const sound = document.getElementById('pomodoroSound')?.checked ?? true;
-
-    if (currentUser) {
-        updateUserPreferences({
-            pomodoroWork: workTime,
-            pomodoroBreak: breakTime,
-            pomodoroSound: sound
-        });
-    }
-
-    // Timer zurücksetzen mit neuen Werten
-    if (!timerRunning) {
-        timerSeconds = workTime * 60;
-        updateTimerDisplay();
-    }
-}
-
 // Chat-Zeit tracken
 let chatStartTime = null;
 let chatTimeInterval = null;
 
 function startChatTimer() {
     if (chatStartTime) return;
-
     chatStartTime = Date.now();
     updateChatTime();
-
     chatTimeInterval = setInterval(updateChatTime, 1000);
 }
 
@@ -252,20 +319,17 @@ function stopChatTimer() {
 
 function updateChatTime() {
     if (!chatStartTime) return;
-
     const elapsed = Math.floor((Date.now() - chatStartTime) / 1000);
     const minutes = Math.floor(elapsed / 60);
     const seconds = elapsed % 60;
-
     const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     const chatTimeEl = document.getElementById('chatTime');
-    if (chatTimeEl) {
-        chatTimeEl.textContent = display;
-    }
+    if (chatTimeEl) chatTimeEl.textContent = display;
 }
 
 // Initialisierung
 document.addEventListener('DOMContentLoaded', function() {
     updateTimerDisplay();
     updateTimerProgress();
+    updateBreakTimeDisplay();
 });

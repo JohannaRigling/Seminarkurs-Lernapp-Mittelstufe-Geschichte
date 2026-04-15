@@ -3949,6 +3949,75 @@
     font-weight: 700;
 }
 
+/* Break-Overlay (sperrt die App während der Pause) */
+.break-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 5, 15, 0.97);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(12px);
+}
+
+.break-overlay-content {
+    text-align: center;
+    color: #fff;
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+}
+
+.break-icon {
+    font-size: 5em;
+    margin-bottom: 16px;
+    animation: breakBob 2s ease-in-out infinite;
+}
+
+@keyframes breakBob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.break-overlay-content h2 {
+    font-size: 2em;
+    margin-bottom: 12px;
+    color: var(--primary, #27ae60);
+}
+
+.break-overlay-content p {
+    font-size: 1.1em;
+    color: rgba(255,255,255,0.75);
+    margin-bottom: 32px;
+    line-height: 1.5;
+}
+
+.break-overlay-countdown {
+    font-size: 5em;
+    font-weight: 700;
+    color: var(--primary, #27ae60);
+    letter-spacing: 4px;
+    margin-bottom: 24px;
+    font-variant-numeric: tabular-nums;
+}
+
+.break-overlay-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+/* Pausenzeit-Info in Einstellungen */
+.break-time-info {
+    color: var(--text-secondary);
+    font-size: 0.95em;
+    margin: 4px 0 0;
+    font-style: italic;
+}
+
 /* Passwort-Feld mit Auge-Button */
 .password-field-wrapper {
     display: flex;

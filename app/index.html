@@ -964,15 +964,15 @@
                         <h3>⏱️ Pomodoro-Timer</h3>
                         <div class="setting-item">
                             <label>Lernzeit (Minuten)</label>
-                            <input type="number" id="pomodoroWork" value="20" min="5" max="60">
+                            <input type="number" id="pomodoroWork" value="20" min="5" max="60" oninput="updateBreakTimeDisplay()" onchange="updatePomodoroSettings()">
                         </div>
                         <div class="setting-item">
-                            <label>Pausenzeit (Minuten)</label>
-                            <input type="number" id="pomodoroBreak" value="5" min="1" max="30">
+                            <label>Pausenzeit (automatisch)</label>
+                            <p id="breakTimeDisplay" class="break-time-info">5 Min. = 1/4 der Lernzeit</p>
                         </div>
                         <div class="setting-item">
                             <label>
-                                <input type="checkbox" id="pomodoroSound" checked>
+                                <input type="checkbox" id="pomodoroSound" checked onchange="updatePomodoroSettings()">
                                 Ton bei Timer-Ende
                             </label>
                         </div>
@@ -1074,6 +1074,20 @@
         <div class="modal-content modal-large">
             <button class="modal-close" onclick="closeAvatarEditor()">×</button>
             <div id="avatarEditorContent"></div>
+        </div>
+    </div>
+
+    <!-- Pause-Overlay (sperrt die App während der Pausenzeit) -->
+    <div id="breakOverlay" class="break-overlay" style="display:none;">
+        <div class="break-overlay-content">
+            <div class="break-icon">☕</div>
+            <h2 id="breakOverlayTitle">Pause!</h2>
+            <p id="breakOverlayMessage">Gönn dir eine Auszeit. Die App ist während der Pause gesperrt.</p>
+            <div id="breakOverlayCountdown" class="break-overlay-countdown">05:00</div>
+            <div id="breakOverlayActions" class="break-overlay-actions" style="display:none;">
+                <button class="btn btn-primary btn-large" onclick="continuePomodoro()">📚 Weiterlernen</button>
+                <button class="btn btn-secondary btn-large" onclick="finishPomodoro()">✅ Fertig für heute</button>
+            </div>
         </div>
     </div>
 

@@ -1966,6 +1966,17 @@ function loadProfileSettings() {
         const eyeBtn = pwdDisplay.nextElementSibling;
         if (eyeBtn) eyeBtn.textContent = '👁️';
     }
+
+    // Pomodoro-Einstellungen aus Preferences laden
+    const workInput = document.getElementById('pomodoroWork');
+    if (workInput && currentUser.preferences?.pomodoroWork) {
+        workInput.value = currentUser.preferences.pomodoroWork;
+    }
+    const soundCheckbox = document.getElementById('pomodoroSound');
+    if (soundCheckbox && currentUser.preferences?.pomodoroSound !== undefined) {
+        soundCheckbox.checked = currentUser.preferences.pomodoroSound;
+    }
+    if (typeof updateBreakTimeDisplay === 'function') updateBreakTimeDisplay();
 }
 
 // ===== NEUE NAVIGATION FUNKTIONEN =====
