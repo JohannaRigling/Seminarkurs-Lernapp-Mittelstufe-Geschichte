@@ -1041,3 +1041,67 @@ function getDisplayName() {
     if (!currentUser) return 'Gast';
     return currentUser.displayName || currentUser.username;
 }
+
+/**
+ * Zeigt/versteckt ein Passwortfeld
+ */
+function togglePasswordVisibility(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = '🙈';
+    } else {
+        input.type = 'password';
+        btn.textContent = '👁️';
+    }
+}
+
+/**
+ * Ändert das Passwort des eingeloggten Nutzers
+ */
+function changePassword() {
+    if (!currentUser) return;
+
+    const oldPwd = document.getElementById('oldPasswordInput').value;
+    const newPwd = document.getElementById('newPasswordInput').value;
+    const confirmPwd = document.getElementById('confirmPasswordInput').value;
+
+    if (!oldPwd || !newPwd || !confirmPwd) {
+        showToast('Bitte alle Felder ausfüllen!', 'error');
+        return;
+    }
+
+    if (oldPwd !== currentUser.password) {
+        showToast('Aktuelles Passwort ist falsch!', 'error');
+        return;
+    }
+
+    if (newPwd !== confirmPwd) {
+        showToast('Neue Passwörter stimmen nicht überein!', 'error');
+        return;
+    }
+
+    if (newPwd.length < 4) {
+        showToast('Passwort muss mindestens 4 Zeichen lang sein!', 'error');
+        return;
+    }
+
+    // Passwort speichern
+    currentUser.password = newPwd;
+    const users = JSON.parse(localStorage.getItem('histolearn_users') || '[]');
+    const userIndex = users.findIndex(u => u.id === currentUser.id);
+    if (userIndex !== -1) {
+        users[userIndex] = currentUser;
+        localStorage.setItem('histolearn_users', JSON.stringify(users));
+    }
+
+    // Felder leeren und Anzeige aktualisieren
+    document.getElementById('oldPasswordInput').value = '';
+    document.getElementById('newPasswordInput').value = '';
+    document.getElementById('confirmPasswordInput').value = '';
+    const display = document.getElementById('currentPasswordDisplay');
+    if (display) display.value = newPwd;
+
+    showToast('Passwort erfolgreich geändert! ✓', 'success');
+}

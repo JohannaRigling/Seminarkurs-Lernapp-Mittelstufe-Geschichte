@@ -3948,3 +3948,29 @@
     font-size: 1.1em;
     font-weight: 700;
 }
+
+/* Passwort-Feld mit Auge-Button */
+.password-field-wrapper {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.password-field-wrapper input {
+    flex: 1;
+}
+
+.btn-eye {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    font-size: 1.1em;
+    line-height: 1;
+    transition: background 0.2s;
+}
+
+.btn-eye:hover {
+    background: var(--border-color);
+}

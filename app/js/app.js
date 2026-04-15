@@ -1957,6 +1957,15 @@ function loadProfileSettings() {
             avatarPreview.innerHTML = '<div class="no-avatar-placeholder">👤</div>';
         }
     }
+
+    // Passwort-Anzeige befüllen
+    const pwdDisplay = document.getElementById('currentPasswordDisplay');
+    if (pwdDisplay) {
+        pwdDisplay.value = currentUser.password || '';
+        pwdDisplay.type = 'password';
+        const eyeBtn = pwdDisplay.nextElementSibling;
+        if (eyeBtn) eyeBtn.textContent = '👁️';
+    }
 }
 
 // ===== NEUE NAVIGATION FUNKTIONEN =====

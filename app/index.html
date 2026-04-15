@@ -998,6 +998,30 @@
                     </div>
 
                     <div class="settings-card">
+                        <h3>🔑 Passwort</h3>
+                        <div class="setting-item">
+                            <label>Aktuelles Passwort</label>
+                            <div class="password-field-wrapper">
+                                <input type="password" id="currentPasswordDisplay" readonly>
+                                <button class="btn-eye" onclick="togglePasswordVisibility('currentPasswordDisplay', this)" title="Passwort anzeigen">👁️</button>
+                            </div>
+                        </div>
+                        <div class="setting-item">
+                            <label>Altes Passwort</label>
+                            <input type="password" id="oldPasswordInput" placeholder="Aktuelles Passwort eingeben">
+                        </div>
+                        <div class="setting-item">
+                            <label>Neues Passwort</label>
+                            <input type="password" id="newPasswordInput" placeholder="Neues Passwort">
+                        </div>
+                        <div class="setting-item">
+                            <label>Bestätigen</label>
+                            <input type="password" id="confirmPasswordInput" placeholder="Neues Passwort bestätigen">
+                        </div>
+                        <button class="btn btn-primary btn-full" onclick="changePassword()">Passwort ändern</button>
+                    </div>
+
+                    <div class="settings-card">
                         <h3>💾 Daten</h3>
                         <button class="btn btn-secondary btn-full" onclick="exportData()">📤 Daten exportieren</button>
                         <button class="btn btn-secondary btn-full" onclick="importData()">📥 Daten importieren</button>
