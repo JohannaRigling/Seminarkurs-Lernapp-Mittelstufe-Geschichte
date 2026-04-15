@@ -557,6 +557,7 @@
 
                 <div class="exercises-tabs">
                     <button class="exercise-tab active" onclick="showExerciseType('topic')">📚 Themenübungen</button>
+                    <button class="exercise-tab" onclick="showExerciseType('quellenarbeit')">📜 Quellenarbeit</button>
                     <button class="exercise-tab" onclick="showExerciseType('operator')">📝 Operator-Übungen</button>
                     <button class="exercise-tab" onclick="showExerciseType('cognitive')">🧩 Kognitive Übungen</button>
                     <button class="exercise-tab" onclick="showExerciseType('quiz')">❓ Quiz</button>
@@ -635,7 +636,35 @@
                         </div>
                     </div>
 
-                    <!-- Operator Exercises (SECOND) -->
+                    <!-- Quellenarbeit (SECOND) -->
+                    <div class="exercise-type" id="exerciseQuellenarbeit">
+                        <h3>Quellenarbeit</h3>
+                        <p>Analysiere historische Karikaturen und arbeite mit Historikertexten – themenspezifisch.</p>
+                        <div class="quellenarbeit-type-toggle">
+                            <button class="ql-type-btn active" id="qlBtnKarikatur" onclick="switchQuellenarbeitType('karikatur')">🎨 Karikaturen</button>
+                            <button class="ql-type-btn" id="qlBtnHistorikertext" onclick="switchQuellenarbeitType('historikertext')">📄 Historikertexte</button>
+                        </div>
+                        <div class="topic-grid" id="quellenarbeitTopicGrid">
+                            <div class="topic-card" onclick="openQuellenarbeit('französische-revolution')"><h4>🇫🇷 Französische Revolution</h4><p>Klasse 8</p></div>
+                            <div class="topic-card" onclick="openQuellenarbeit('industrialisierung')"><h4>🏭 Industrialisierung</h4><p>Klasse 8</p></div>
+                            <div class="topic-card" onclick="openQuellenarbeit('imperialismus')"><h4>🌍 Imperialismus</h4><p>Klasse 8</p></div>
+                            <div class="topic-card" onclick="openQuellenarbeit('erster-weltkrieg')"><h4>⚔️ Erster Weltkrieg</h4><p>Klasse 8</p></div>
+                            <div class="topic-card" onclick="openQuellenarbeit('weimarer-republik')"><h4>🏛️ Weimarer Republik</h4><p>Klasse 8</p></div>
+                            <div class="topic-card" onclick="openQuellenarbeit('revolution-1848')"><h4>📜 Revolution 1848</h4><p>Klasse 8</p></div>
+                            <div class="topic-card" onclick="openQuellenarbeit('nationalsozialismus')"><h4>🕯️ Nationalsozialismus</h4><p>Klasse 9</p></div>
+                            <div class="topic-card" onclick="openQuellenarbeit('zweiter-weltkrieg')"><h4>🌐 Zweiter Weltkrieg</h4><p>Klasse 9</p></div>
+                            <div class="topic-card" onclick="openQuellenarbeit('holocaust')"><h4>🕯️ Holocaust</h4><p>Klasse 9</p></div>
+                            <div class="topic-card" onclick="openQuellenarbeit('brd-ddr')"><h4>🇩🇪 BRD/DDR</h4><p>Klasse 9</p></div>
+                            <div class="topic-card" onclick="openQuellenarbeit('kalter-krieg')"><h4>❄️ Kalter Krieg</h4><p>Klasse 9</p></div>
+                            <div class="topic-card" onclick="openQuellenarbeit('wiedervereinigung')"><h4>🎉 Wiedervereinigung</h4><p>Klasse 9</p></div>
+                            <div class="topic-card" onclick="openQuellenarbeit('russland')"><h4>🇷🇺 Russland</h4><p>Klasse 10</p></div>
+                            <div class="topic-card" onclick="openQuellenarbeit('china')"><h4>🇨🇳 China</h4><p>Klasse 10</p></div>
+                            <div class="topic-card" onclick="openQuellenarbeit('tuerkei')"><h4>🇹🇷 Türkei</h4><p>Klasse 10</p></div>
+                            <div class="topic-card" onclick="openQuellenarbeit('europaeische-union')"><h4>🇪🇺 Europäische Union</h4><p>Klasse 10</p></div>
+                        </div>
+                    </div>
+
+                    <!-- Operator Exercises (THIRD) -->
                     <div class="exercise-type" id="exerciseOperator">
                         <h3>Operator-Übungen</h3>
                         <div class="operator-exercise-select">
@@ -979,25 +1008,6 @@
                     </div>
 
                     <div class="settings-card">
-                        <h3>📊 Lernpräferenzen</h3>
-                        <div class="setting-item">
-                            <label>Bevorzugte Lernstrategie</label>
-                            <select id="prefStrategy">
-                                <option value="">Keine Präferenz</option>
-                                <option value="visual">Visuell</option>
-                                <option value="auditory">Auditiv</option>
-                                <option value="kinesthetic">Praktisch</option>
-                            </select>
-                        </div>
-                        <div class="setting-item">
-                            <label>Schwierige Operatoren</label>
-                            <div id="difficultOperators" class="tag-list">
-                                <!-- Filled by JavaScript -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="settings-card">
                         <h3>🔑 Passwort</h3>
                         <div class="setting-item">
                             <label>Aktuelles Passwort</label>
@@ -1114,6 +1124,8 @@
     <script src="js/topic-exercises-part3.js"></script>
     <script src="js/topic-exercises-complete.js"></script>
     <script src="js/topic-exercises-final.js"></script>
+    <!-- Quellenarbeit: Karikaturen & Historikertexte -->
+    <script src="js/source-analysis.js"></script>
     <!-- Integration von Bildarchiv & Übungen -->
     <script src="js/integration.js"></script>
     <script src="js/auth.js"></script>
