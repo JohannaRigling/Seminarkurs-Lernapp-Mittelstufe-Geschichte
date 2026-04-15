@@ -938,6 +938,53 @@ Jeder Themenbereich hat **genau 20 Übungen** mit verschiedenen Operatoren und A
 
 ---
 
+## 📊 Status-Update (Stand 15.04.2026)
+
+### Datei-Veränderungen seit 11.02.2026:
+
+Einige Dateien sind seit dem letzten Abgleich gewachsen:
+
+| Datei | Zeilen (Feb) | Zeilen (Apr) | Differenz |
+|---|---|---|---|
+| `app/js/app.js` | 1.832 | 2.027 | +195 |
+| `app/js/chat.js` | 997 | 1.122 | +125 |
+| `app/index.html` | 1.048 | 1.082 | +34 |
+| `app/js/glossary.js` | 441 | 468 | +27 |
+| `app/js/operators.js` | 784 | 794 | +10 |
+
+**Neue Datei seit letzter Doku:**
+- `app/js/config.js` (6 Zeilen) — Enthält Anthropic API-Key, liegt in `.gitignore` und wird **nicht auf GitHub gepusht**
+
+### Aktuelle Gesamtstatistik:
+- **Gesamt Codezeilen:** ~22.400 Zeilen (JS + CSS + HTML)
+- **JS-Dateien:** 21 Module
+- **CSS-Dateien:** 3 (main, components, themes)
+- **HTML:** index.html (1.082 Zeilen)
+
+### Vollständige Feature-Liste (aktuell implementiert):
+1. ✅ KI-Tutor (chat.js) — Claude API-Integration via config.js
+2. ✅ Adaptives Lernsystem (adaptive-learning.js) — Phasen: Diagnostik, Übung, Abschluss
+3. ✅ Avatar-Editor (avatar-editor.js) — Millionen Kombinationen
+4. ✅ Lernzettel-Upload (study-notes.js) — Bilder hochladen + Kamera
+5. ✅ Themenübungen — 320+ Übungen in 16 Themenbereichen
+6. ✅ Operatoren-Training — AFB I, II, III
+7. ✅ Glossar — 56 Fachbegriffe (Klasse 8-10)
+8. ✅ Interaktiver Zeitstrahl (timeline.js)
+9. ✅ Quiz-System (exercises.js)
+10. ✅ Gamification (gamification.js) — Burg, Ränge, Coins, Achievements
+11. ✅ Pomodoro-Timer (timer.js)
+12. ✅ Lernstrategien (strategies.js)
+13. ✅ Bibliothek/Library
+14. ✅ Admin-Panel (admin.js)
+15. ✅ Avatar-Editor (avatar-editor.js)
+16. ✅ Dark/Sepia/Grün-Theme-System
+
+### Hauptfarbe:
+- **Grün** als Standardakzentfarbe: `#27ae60` / `#2ecc71` / `#1e8449`
+- Theming über `setAccentColor()` in app.js
+
+---
+
 ---
 
 ## 🎯 HTML-Analyse (Stand 04.03.2026) - Fehlende Dokumentation ergänzt
