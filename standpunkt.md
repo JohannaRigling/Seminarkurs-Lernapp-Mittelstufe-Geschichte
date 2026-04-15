@@ -1199,5 +1199,54 @@ Das Registrierungsformular bietet Klassen 7-10 an (Klasse 7 ist im Dropdown, obw
 
 ---
 
+## 🎯 Session vom 15.04.2026
+
+### ✅ Passwort in Einstellungen
+
+**Neue Karte „🔑 Passwort" in den Einstellungen:**
+- Aktuelles Passwort wird vorausgefüllt angezeigt (verdeckt als `***`)
+- 👁️-Button zum Anzeigen/Verstecken (`togglePasswordVisibility()`)
+- Passwort ändern: altes Passwort + neues Passwort + bestätigen
+- Validierung: falsches altes PW, nicht übereinstimmende Felder, Mindestlänge 4 Zeichen
+- `loadProfileSettings()` befüllt das Feld automatisch beim Öffnen
+
+**Dateien:** `app/js/auth.js`, `app/js/app.js`, `app/index.html`, `app/css/components.css`
+
+---
+
+### ✅ Pomodoro-Timer: App-Sperre während Pause
+
+**Neues Verhalten:**
+- Lernzeit endet → schwarzes Vollbild-Overlay (`#breakOverlay`) sperrt sofort alles
+- Overlay zeigt Countdown der Pausenzeit
+- Pausenzeit = immer automatisch **1/4 der Lernzeit** (nicht mehr manuell einstellbar)
+- Pause vorbei → zwei Buttons: **„📚 Weiterlernen"** (Timer startet neu) oder **„✅ Fertig für heute"** (Reset)
+
+**Einstellungen:**
+- Pausenzeit-Input entfernt, Infotext stattdessen: „X Min. = 1/4 der Lernzeit"
+- Lernzeit-Änderung aktualisiert den Infotext live (`updateBreakTimeDisplay()`)
+- Einstellungen werden jetzt korrekt gespeichert (`onchange="updatePomodoroSettings()"`) und beim Öffnen geladen
+
+**Dateien:** `app/js/timer.js` (komplett überarbeitet), `app/index.html`, `app/css/components.css`
+
+---
+
+### ✅ Tutorial für Erstanmeldung
+
+**Ablauf:**
+- `tutorialCompleted: false` beim Registrieren in User-Daten gespeichert
+- Beim ersten Login: Tutorial startet automatisch nach 600ms (nach App-Aufbau)
+- Dunkles Vollbild-Overlay mit zentrierter Karte, ein Schritt auf einmal
+- 10 Schritte mit Fortschrittspunkten oben
+- „Weiter →" Button, letzter Schritt: „🚀 Los geht's!"
+- „Überspringen ×" in der Ecke für ungeduldige Nutzer
+- Nach Abschluss: `tutorialCompleted: true` gespeichert → Tutorial erscheint nie wieder
+
+**Schritte:** Begrüßung mit Name → Dashboard → KI-Tutor → Themenübungen → Operatoren → Zeitstrahl → Glossar → Meine Burg → Pomodoro-Timer → Fertig
+
+**Dateien:** `app/js/app.js` (TUTORIAL_STEPS + Funktionen), `app/js/auth.js` (Flag + Trigger), `app/index.html`, `app/css/components.css`
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 11.04.2026 - Claude API Integration & Kindersicherung
+**Letzte Aktualisierung:** 15.04.2026 - Passwort-Einstellungen, Pomodoro-Sperre, Erstanmeldungs-Tutorial
