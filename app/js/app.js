@@ -2045,3 +2045,123 @@ function showLibraryTab(tabName) {
 }
 
 // Die showExerciseType Funktion unterstützt bereits den neuen 'adaptive' Tab!
+
+// ===== TUTORIAL (Erstanmeldung) =====
+
+let tutorialStep = 0;
+
+const TUTORIAL_STEPS = [
+    {
+        icon: '🏰',
+        title: (name) => `Hi ${name}, schön dass du da bist!`,
+        text: 'Ich erkläre dir jetzt kurz, wie HistoLearn funktioniert. Klick einfach immer auf „Weiter", um zum nächsten Bereich zu kommen.'
+    },
+    {
+        icon: '📊',
+        title: () => 'Dein Dashboard',
+        text: 'Hier siehst du auf einen Blick wie weit du bist: deine Münzen, dein XP, deinen Rang und was du zuletzt gemacht hast.'
+    },
+    {
+        icon: '🤖',
+        title: () => 'Der KI-Tutor',
+        text: 'Dein persönlicher Geschichtslehrer! Stell ihm Fragen zu allen Themen aus dem Schulbuch – er erklärt dir alles auf deinem Level.'
+    },
+    {
+        icon: '📝',
+        title: () => 'Themenübungen',
+        text: 'Über 320 Aufgaben zu allen Schulbuch-Themen – von einfach (nennen, beschreiben) bis anspruchsvoll (erörtern, bewerten). Perfekt zur Prüfungsvorbereitung.'
+    },
+    {
+        icon: '🔤',
+        title: () => 'Operatoren-Training',
+        text: 'Was heißt eigentlich „analysieren" oder „erörtern"? Hier lernst du alle Aufgabenoperatoren mit Beispielen und typischen Fehlern kennen.'
+    },
+    {
+        icon: '📅',
+        title: () => 'Interaktiver Zeitstrahl',
+        text: 'Alle wichtigen Ereignisse der Geschichte auf einem Blick – von der Französischen Revolution bis zur Europäischen Union.'
+    },
+    {
+        icon: '📖',
+        title: () => 'Glossar',
+        text: '56 Fachbegriffe einfach erklärt – von Absolutismus bis Wiedervereinigung. Du kannst nach Klasse filtern oder suchen.'
+    },
+    {
+        icon: '🐄',
+        title: () => 'Meine Burg',
+        text: 'Durch Lernen verdienst du Kuh-Münzen und XP. Damit baust du deine eigene Burg aus und steigst im Rang auf – vom Tagelöhner bis zur Legende!'
+    },
+    {
+        icon: '⏱️',
+        title: () => 'Pomodoro-Timer',
+        text: 'Konzentriert lernen mit echten Pausen! Nach der Lernzeit wird die App automatisch gesperrt. Danach entscheidest du: weitermachen oder fertig für heute.'
+    },
+    {
+        icon: '🎉',
+        title: () => 'Du bist startklar!',
+        text: 'Das war\'s! Viel Spaß beim Lernen. Tipp: Regelmäßig ein bisschen ist besser als einmal alles auf einmal!',
+        isLast: true
+    }
+];
+
+function startTutorial() {
+    tutorialStep = 0;
+    renderTutorialStep();
+    document.getElementById('tutorialOverlay').style.display = 'flex';
+}
+
+function renderTutorialStep() {
+    const step = TUTORIAL_STEPS[tutorialStep];
+    const name = currentUser ? (currentUser.displayName || currentUser.username) : '';
+
+    document.getElementById('tutorialIcon').textContent = step.icon;
+    document.getElementById('tutorialTitle').textContent = step.title(name);
+    document.getElementById('tutorialText').textContent = step.text;
+
+    // Fortschrittspunkte
+    const dotsEl = document.getElementById('tutorialDots');
+    dotsEl.innerHTML = '';
+    TUTORIAL_STEPS.forEach((_, i) => {
+        const dot = document.createElement('span');
+        dot.className = 'tutorial-dot' + (i === tutorialStep ? ' active' : '');
+        dotsEl.appendChild(dot);
+    });
+
+    // Letzter Schritt: Button-Text ändern
+    const nextBtn = document.getElementById('tutorialNextBtn');
+    if (step.isLast) {
+        nextBtn.textContent = '🚀 Los geht\'s!';
+        nextBtn.onclick = completeTutorial;
+    } else {
+        nextBtn.textContent = 'Weiter →';
+        nextBtn.onclick = tutorialNext;
+    }
+}
+
+function tutorialNext() {
+    if (tutorialStep < TUTORIAL_STEPS.length - 1) {
+        tutorialStep++;
+        renderTutorialStep();
+    }
+}
+
+function skipTutorial() {
+    completeTutorial();
+}
+
+function completeTutorial() {
+    document.getElementById('tutorialOverlay').style.display = 'none';
+
+    // Als abgeschlossen markieren
+    if (currentUser) {
+        currentUser.tutorialCompleted = true;
+        const users = JSON.parse(localStorage.getItem('histolearn_users') || '[]');
+        const idx = users.findIndex(u => u.id === currentUser.id);
+        if (idx !== -1) {
+            users[idx] = currentUser;
+            localStorage.setItem('histolearn_users', JSON.stringify(users));
+        }
+    }
+
+    showToast(`Willkommen bei HistoLearn, ${currentUser?.displayName || currentUser?.username}! 🎉`, 'success');
+}

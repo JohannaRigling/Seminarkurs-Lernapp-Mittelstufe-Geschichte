@@ -96,7 +96,8 @@ function handleRegister(event) {
         },
         savedChats: [],
         folders: [],
-        activities: []
+        activities: [],
+        tutorialCompleted: false
     };
 
     users.push(newUser);
@@ -148,7 +149,12 @@ function handleLogin(event) {
     // Zur App wechseln
     showMainApp();
 
-    showToast(`Willkommen zurück, ${username}!`, 'success');
+    // Tutorial beim ersten Login zeigen
+    if (!user.tutorialCompleted) {
+        setTimeout(() => startTutorial(), 600);
+    } else {
+        showToast(`Willkommen zurück, ${username}!`, 'success');
+    }
 
     // Aktivität loggen
     addActivity('login', 'Angemeldet');

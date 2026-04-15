@@ -1077,6 +1077,20 @@
         </div>
     </div>
 
+    <!-- Tutorial-Overlay (Erstanmeldung) -->
+    <div id="tutorialOverlay" class="tutorial-overlay" style="display:none;">
+        <button class="tutorial-skip-btn" onclick="skipTutorial()">Überspringen ×</button>
+        <div class="tutorial-card">
+            <div class="tutorial-dots" id="tutorialDots"></div>
+            <div class="tutorial-icon" id="tutorialIcon"></div>
+            <h2 class="tutorial-title" id="tutorialTitle"></h2>
+            <p class="tutorial-text" id="tutorialText"></p>
+            <button class="btn btn-primary tutorial-next-btn" id="tutorialNextBtn" onclick="tutorialNext()">
+                Weiter →
+            </button>
+        </div>
+    </div>
+
     <!-- Pause-Overlay (sperrt die App während der Pausenzeit) -->
     <div id="breakOverlay" class="break-overlay" style="display:none;">
         <div class="break-overlay-content">
