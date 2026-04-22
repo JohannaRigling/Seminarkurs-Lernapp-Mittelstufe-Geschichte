@@ -232,10 +232,14 @@ function toggleSidebar() {
 function toggleChatFullscreen() {
     const chatSection = document.getElementById('chat');
     const btn = document.getElementById('chatFullscreenBtn');
+    const sidebar = document.getElementById('sidebar');
     const isFullscreen = chatSection.classList.toggle('chat-fullscreen');
 
     btn.textContent = isFullscreen ? '✕ Schließen' : '⤢ Vollbild';
     btn.title = isFullscreen ? 'Vollbild beenden' : 'Vollbild';
+
+    // Sidebar im Vollbild verstecken
+    if (sidebar) sidebar.style.display = isFullscreen ? 'none' : '';
 
     // Escape-Taste zum Beenden
     if (isFullscreen) {
