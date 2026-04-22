@@ -1274,5 +1274,42 @@ Das Registrierungsformular bietet Klassen 7-10 an (Klasse 7 ist im Dropdown, obw
 
 ---
 
+---
+
+## 🎯 Session vom 22.04.2026 – Adaptive Lernsession: Lernplan-Feature
+
+### ✅ Durchgeführte Änderungen:
+
+**1. Neues Setup-Formular (`app/js/app.js`, `showLearningSessionStart()`):**
+- Prüfungsdatum (required)
+- Thema (required, Select)
+- Fokus (optional, Freitext – z.B. "Ursachen, Folgen, Personen")
+- Kann-Liste (optional, Textarea + Textdatei-Upload via `loadKannListeFile()`)
+
+**2. Zwei Pfade nach dem Setup:**
+- 📋 **Lernplan erstellen** → `startDirectLernplan()` → KI erstellt sofort Plan
+- 🧪 **Wissen testen** → `startWissenTest()` → Diagnostik wie bisher, danach Plan anbieten
+
+**3. KI-Lernplan (`generateLernplan(examInfo, diagnosticResults)`):**
+- Ruft Claude API `/api/messages` auf (claude-3-haiku, max_tokens: 1200)
+- Prompt enthält: Thema, Datum, verbleibende Tage, Fokus, Kann-Liste, ggf. Diagnose-Ergebnis
+- Tagesgenaue Aufteilung, Methoden-Empfehlungen, Prüfungstipps
+- Lade-Animation während Generierung
+- Fehler-Handling mit Retry-Button
+
+**4. Lernplan nach Diagnostik:**
+- `showDiagnosticResults()` hat jetzt zwei Buttons: "Jetzt üben" + "📋 Individuellen Lernplan erstellen"
+- `generateLernplanAfterDiagnostic()` lädt gespeichertes examInfo aus localStorage
+
+**5. Lernplan in Materialien speichern (`saveLernplanToMaterials()`):**
+- `currentUser.notes` Eintrag mit `type: 'lernplan'`, `category: 'methoden'`
+- Titel: "Lernplan: [Thema] – Prüfung am [Datum]"
+- Speichern-Button deaktiviert sich nach Klick
+- +5 XP, +3 🐄 Belohnung
+
+**Dateien:** `app/js/app.js` (+341 Zeilen), `app/css/components.css` (+214 Zeilen)
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 15.04.2026 - Passwort-Einstellungen, Pomodoro-Sperre, Erstanmeldungs-Tutorial, Quellenarbeit-Tab
+**Letzte Aktualisierung:** 22.04.2026 – Adaptive Lernsession: Lernplan mit Prüfungsdatum, Kann-Liste, zwei Pfaden, Auto-Speicherung in Materialien
