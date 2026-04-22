@@ -92,10 +92,8 @@ function showSection(sectionId) {
             break;
         case 'library-materials':
         case 'library-glossary':
-        case 'library-studynotes':
             document.getElementById('library').classList.add('active');
-            showLibraryTab(sectionId === 'library-materials' ? 'materials' :
-                           sectionId === 'library-glossary' ? 'glossary' : 'studynotes');
+            showLibraryTab(sectionId === 'library-materials' ? 'materials' : 'glossary');
             break;
     }
 }
@@ -665,7 +663,9 @@ function getTypeIcon(type) {
         note: '📝',
         summary: '📋',
         timeline: '📅',
-        source: '📜'
+        source: '📜',
+        lernzettel: '📋',
+        lernplan: '🗓️'
     };
     return icons[type] || '📄';
 }
@@ -2367,37 +2367,56 @@ function toggleTimer() {
 
 // Show Library Tab
 function showLibraryTab(tabName) {
-    // Alle Tabs deaktivieren
-    document.querySelectorAll('.library-tab').forEach(tab => {
-        tab.classList.remove('active');
-    });
+    document.querySelectorAll('.library-tab-content').forEach(c => c.classList.remove('active'));
 
-    // Alle Tab-Inhalte ausblenden
-    document.querySelectorAll('.library-tab-content').forEach(content => {
-        content.classList.remove('active');
-    });
-
-    // Gewählten Tab-Button aktivieren (suche per tabName, unabhängig von event.target)
-    document.querySelectorAll('.library-tab').forEach(tab => {
-        const onclick = tab.getAttribute('onclick') || '';
-        if (onclick.includes("'" + tabName + "'") || onclick.includes('"' + tabName + '"')) {
-            tab.classList.add('active');
-        }
-    });
-
-    // Entsprechenden Content anzeigen
     const contentId = 'libraryTab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
     const content = document.getElementById(contentId);
     if (content) {
         content.classList.add('active');
-
-        // Glossar initialisieren wenn es das Glossar-Tab ist
         if (tabName === 'glossary' && !document.querySelector('.glossary-item')) {
-            if (typeof initGlossary === 'function') {
-                initGlossary();
-            }
+            if (typeof initGlossary === 'function') initGlossary();
+        }
+        if (tabName === 'materials') {
+            displayLibraryContent();
         }
     }
+}
+
+// Lernzettel hochladen
+function uploadLernzettel(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+        showToast('Datei ist zu groß (max. 10 MB)', 'error');
+        event.target.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        if (!currentUser.notes) currentUser.notes = [];
+        const note = {
+            id: 'lernzettel-' + Date.now(),
+            title: file.name.replace(/\.[^/.]+$/, ''),
+            category: 'notizen',
+            type: 'lernzettel',
+            content: e.target.result,
+            createdAt: new Date().toLocaleDateString('de-DE'),
+            isUserNote: true
+        };
+        currentUser.notes.push(note);
+        saveCurrentUser();
+        showToast('Lernzettel "' + note.title + '" hochgeladen!', 'success');
+        displayLibraryContent();
+    };
+
+    if (file.type === 'application/pdf') {
+        reader.readAsDataURL(file);
+    } else {
+        reader.readAsText(file, 'UTF-8');
+    }
+    event.target.value = '';
 }
 
 // Die showExerciseType Funktion unterstützt bereits den neuen 'adaptive' Tab!

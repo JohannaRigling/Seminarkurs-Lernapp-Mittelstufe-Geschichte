@@ -161,17 +161,13 @@
                         <span class="nav-arrow">▼</span>
                     </button>
                     <div class="nav-category-items collapsed">
-                        <button class="nav-item" data-section="library-materials" onclick="showSection('library-materials')">
-                            <span class="nav-icon">📚</span>
-                            <span class="nav-text">Bibliothek</span>
-                        </button>
                         <button class="nav-item" data-section="library-glossary" onclick="showSection('library-glossary')">
                             <span class="nav-icon">📖</span>
                             <span class="nav-text">Glossar</span>
                         </button>
-                        <button class="nav-item" data-section="library-studynotes" onclick="showSection('library-studynotes')">
-                            <span class="nav-icon">📄</span>
-                            <span class="nav-text">Lernzettel</span>
+                        <button class="nav-item" data-section="library-materials" onclick="showSection('library-materials')">
+                            <span class="nav-icon">📚</span>
+                            <span class="nav-text">Bibliothek</span>
                         </button>
                     </div>
                 </div>
@@ -721,25 +717,14 @@
 
             <!-- Library Section (mit Tabs für Bibliothek, Glossar, Lernzettel) -->
             <section id="library" class="content-section">
-                <div class="section-header">
-                    <h1>📚 Materialien</h1>
-                    <p>Bibliothek, Glossar und Lernzettel an einem Ort</p>
-                </div>
 
-                <!-- Tabs für Bibliothek/Glossar/Lernzettel -->
-                <div class="library-tabs">
-                    <button class="library-tab active" onclick="showLibraryTab('materials')">📚 Bibliothek</button>
-                    <button class="library-tab" onclick="showLibraryTab('glossary')">📖 Glossar</button>
-                    <button class="library-tab" onclick="showLibraryTab('studynotes')">📄 Lernzettel Upload</button>
-                </div>
-
-                <!-- Tab: Bibliothek -->
+                <!-- Bibliothek -->
                 <div class="library-tab-content active" id="libraryTabMaterials">
                     <div class="library-layout">
                         <div class="library-sidebar">
                             <h3>📁 Ordner</h3>
                             <div class="folder-list" id="folderList">
-                                <div class="folder-item" onclick="openFolder('alle')">
+                                <div class="folder-item active" onclick="openFolder('alle')">
                                     <span>📂</span> Alle Materialien
                                 </div>
                                 <div class="folder-item" onclick="openFolder('favoriten')">
@@ -748,8 +733,10 @@
                                 <div class="folder-item" onclick="openFolder('gelernt')">
                                     <span>✅</span> Gelernt
                                 </div>
+                                <div class="folder-item" onclick="openFolder('notizen')">
+                                    <span>📄</span> Lernzettel
+                                </div>
                             </div>
-                            <button class="btn btn-secondary btn-full" onclick="createFolder()">+ Neuer Ordner</button>
                         </div>
 
                         <div class="library-main">
@@ -758,9 +745,13 @@
                                 <select id="libraryFilter" onchange="filterLibrary()">
                                     <option value="all">Alle Inhalte</option>
                                     <option value="topics">Themen</option>
-                                    <option value="notes">Notizen</option>
+                                    <option value="notizen">Meine Notizen & Lernzettel</option>
                                     <option value="chats">Gespeicherte Chats</option>
                                 </select>
+                                <label class="btn btn-secondary lernzettel-upload-btn" for="lernzettelFileInput" title="Lernzettel hochladen">
+                                    📤 Hochladen
+                                </label>
+                                <input type="file" id="lernzettelFileInput" accept=".txt,.md,.pdf" style="display:none" onchange="uploadLernzettel(event)">
                             </div>
 
                             <div class="library-content" id="libraryContent">
@@ -770,7 +761,7 @@
                     </div>
                 </div>
 
-                <!-- Tab: Glossar -->
+                <!-- Glossar -->
                 <div class="library-tab-content" id="libraryTabGlossary">
                     <div class="glossary-layout">
                         <div class="glossary-header">
@@ -791,35 +782,6 @@
                             </div>
                             <div class="glossary-alphabet-bar" id="glossaryAlphabetBar">
                                 <!-- Filled by JavaScript -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tab: Lernzettel Upload -->
-                <div class="library-tab-content" id="libraryTabStudynotes">
-                    <div class="studynotes-layout">
-                        <div class="studynotes-header">
-                            <h2>📄 Lernzettel hochladen</h2>
-                            <p>Lade deine eigenen Lernzettel hoch und frag die KI dazu</p>
-                        </div>
-
-                        <div class="studynotes-upload">
-                            <div class="upload-area" onclick="openStudyNotesUpload()">
-                                <span class="upload-icon">📤</span>
-                                <h3>Lernzettel hochladen</h3>
-                                <p>PDF, DOCX, TXT, MD (max. 10MB)</p>
-                                <button class="btn btn-primary">Datei auswählen</button>
-                            </div>
-                        </div>
-
-                        <div class="studynotes-list" id="studynotesList">
-                            <h3>Hochgeladene Lernzettel</h3>
-                            <div id="studynotesItems">
-                                <!-- Filled by JavaScript -->
-                                <p style="text-align: center; color: var(--text-secondary); padding: 40px;">
-                                    Noch keine Lernzettel hochgeladen
-                                </p>
                             </div>
                         </div>
                     </div>

@@ -852,8 +852,17 @@
 
 .library-filters {
     display: flex;
-    gap: 15px;
+    gap: 10px;
     margin-bottom: 20px;
+    align-items: center;
+}
+
+.lernzettel-upload-btn {
+    white-space: nowrap;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 10px 16px;
+    font-size: 0.95em;
 }
 
 .library-filters input {
