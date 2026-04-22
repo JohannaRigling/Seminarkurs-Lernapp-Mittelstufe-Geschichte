@@ -229,6 +229,14 @@ function toggleSidebar() {
 }
 
 // Chat Vollbild umschalten
+let _pomodoroSyncInterval = null;
+
+function _syncPomodoroMini() {
+    const src = document.getElementById('timerDisplay');
+    const dst = document.getElementById('chatPomodoroTime');
+    if (src && dst) dst.textContent = src.textContent;
+}
+
 function toggleChatFullscreen() {
     const chatSection = document.getElementById('chat');
     const btn = document.getElementById('chatFullscreenBtn');
@@ -240,6 +248,15 @@ function toggleChatFullscreen() {
 
     // Sidebar im Vollbild verstecken
     if (sidebar) sidebar.style.display = isFullscreen ? 'none' : '';
+
+    // Pomodoro-Mini-Anzeige synchronisieren
+    if (isFullscreen) {
+        _syncPomodoroMini();
+        _pomodoroSyncInterval = setInterval(_syncPomodoroMini, 1000);
+    } else {
+        clearInterval(_pomodoroSyncInterval);
+        _pomodoroSyncInterval = null;
+    }
 
     // Escape-Taste zum Beenden
     if (isFullscreen) {
