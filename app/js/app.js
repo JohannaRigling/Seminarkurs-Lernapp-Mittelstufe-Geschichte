@@ -1641,7 +1641,7 @@ Zum Schluss: 3 Tipps für den Prüfungstag. Halte den Plan realistisch und ermut
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 model: 'claude-haiku-4-5-20251001',
-                max_tokens: 1200,
+                max_tokens: 2000,
                 system: 'Du bist ein freundlicher, motivierender Geschichtslehrer für Schüler der Klassen 8-10. Antworte immer auf Deutsch. Sei konkret, strukturiert und ermutigend.',
                 messages: [{ role: 'user', content: prompt }]
             })
@@ -1696,9 +1696,14 @@ function showLernplanResult(lernplanText, examInfo) {
     // Lernplan global speichern für den Speichern-Button
     _currentLernplan = { lernplanText, examInfo, examDateStr };
 
-    // Markdown-ähnliche Formatierung
+    // Markdown → HTML
     const formatted = lernplanText
+        .replace(/^## (.+)$/gm, '<h3 class="lp-h2">$1</h3>')
+        .replace(/^### (.+)$/gm, '<h4 class="lp-h3">$1</h4>')
+        .replace(/^---+$/gm, '<hr class="lp-hr">')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
         .replace(/\n/g, '<br>');
 
     content.innerHTML = `

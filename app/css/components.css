@@ -4660,6 +4660,37 @@
     color: var(--text-gold);
 }
 
+.lernplan-text .lp-h2 {
+    color: var(--text-gold);
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 12px 0 4px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 3px;
+}
+
+.lernplan-text .lp-h3 {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 8px 0 2px;
+}
+
+.lernplan-text .lp-hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 8px 0;
+}
+
+.lernplan-text ul {
+    margin: 4px 0 4px 18px;
+    padding: 0;
+}
+
+.lernplan-text li {
+    margin-bottom: 2px;
+}
+
 .lernplan-actions {
     display: flex;
     gap: 10px;
