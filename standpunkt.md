@@ -1382,5 +1382,39 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 
 ---
 
+---
+
+## 🎯 Session vom 22.04.2026 – Materialien-Redesign
+
+### ✅ Neue Struktur unter MATERIALIEN
+
+**Navigation (linke Sidebar):**
+- Glossar ← zuerst
+- Bibliothek ← zweiter Eintrag
+- Lernzettel-Eintrag **entfernt** (kein eigener Nav-Punkt mehr)
+- Wechsel zwischen Glossar und Bibliothek **nur** über die linke Sidebar
+
+**Keine Tab-Leiste mehr:**
+- Die interne Tab-Leiste (Bibliothek / Glossar / Lernzettel Upload) wurde komplett entfernt
+- `showLibraryTab()` vereinfacht — kein Tab-Button-Toggle mehr, nur Content-Div wechseln
+
+**Lernzettel-Upload in Bibliothek integriert:**
+- Neuer **📤 Hochladen**-Button in der Filter-Leiste der Bibliothek
+- Akzeptiert: `.txt`, `.md`, `.pdf` (max. 10 MB)
+- Text-Dateien werden als volles Textnote gespeichert, PDFs als Base64-DataURL
+- Gespeichert in `currentUser.notes` mit `type: 'lernzettel'`, `category: 'notizen'`
+- Erscheinen sofort im Bibliothek-Inhalt
+- Neuer Ordner „📄 Lernzettel" in der Sidebar-Ordnerliste filtert gezielt Lernzettel
+
+**Technische Details:**
+- `uploadLernzettel(event)` neu in `app/js/app.js`
+- `getTypeIcon()` erweitert um `lernzettel: '📋'` und `lernplan: '🗓️'`
+- `.lernzettel-upload-btn` CSS-Klasse in `app/css/components.css`
+- `library-studynotes` Nav-Item, Tab und HTML-Block komplett entfernt
+
+**Dateien:** `app/index.html`, `app/js/app.js`, `app/css/components.css`
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 22.04.2026 – Layout-Fixes, Chat-UI, Vollbild-Pomodoro
+**Letzte Aktualisierung:** 22.04.2026 – Materialien-Redesign (Glossar + Bibliothek mit Lernzettel-Upload)
