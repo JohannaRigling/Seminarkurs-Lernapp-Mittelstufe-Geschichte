@@ -1311,5 +1311,20 @@ Das Registrierungsformular bietet Klassen 7-10 an (Klasse 7 ist im Dropdown, obw
 
 ---
 
+---
+
+## 🐛 Bugfix vom 22.04.2026 – Modellname veraltet
+
+**Problem:** KI nicht erreichbar beim Erstellen des Lernplans (und im Chat).
+**Ursache:** `claude-3-haiku-20240307` ist nicht mehr verfügbar.
+**Fix:** Modell in `app/js/chat.js` und `app/js/app.js` auf `claude-haiku-4-5-20251001` aktualisiert.
+
+**Wichtige Infrastruktur-Info:**
+- Die App muss über `python3 server.py` gestartet werden → läuft auf `http://localhost:8080`
+- `server.py` liest den API-Key aus `app/js/config.js` und leitet `/api/messages` an die Anthropic API weiter
+- Direkt als HTML-Datei öffnen → KI funktioniert NICHT
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 22.04.2026 – Adaptive Lernsession: Lernplan mit Prüfungsdatum, Kann-Liste, zwei Pfaden, Auto-Speicherung in Materialien
+**Letzte Aktualisierung:** 22.04.2026 – Modellname-Bugfix (claude-haiku-4-5-20251001), Lernplan-Feature
