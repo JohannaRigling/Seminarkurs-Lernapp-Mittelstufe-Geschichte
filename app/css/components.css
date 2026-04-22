@@ -145,21 +145,29 @@
 }
 
 .chat-quick-buttons {
-    padding: 15px 20px;
+    padding: 6px 20px;
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    border-top: 1px solid var(--border-color);
+    flex-wrap: nowrap;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
     background: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+}
+
+.chat-quick-buttons::-webkit-scrollbar {
+    display: none;
 }
 
 .quick-prompt-btn {
-    padding: 8px 16px;
+    padding: 4px 10px;
     background: var(--bg-secondary);
-    border: 2px solid var(--border-color);
+    border: 1px solid var(--border-color);
     border-radius: 20px;
-    font-size: 0.9em;
+    font-size: 0.78em;
     cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
     transition: var(--transition);
 }
 
