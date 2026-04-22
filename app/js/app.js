@@ -228,6 +228,32 @@ function toggleSidebar() {
     }
 }
 
+// Chat Vollbild umschalten
+function toggleChatFullscreen() {
+    const chatSection = document.getElementById('chat');
+    const btn = document.getElementById('chatFullscreenBtn');
+    const isFullscreen = chatSection.classList.toggle('chat-fullscreen');
+
+    btn.textContent = isFullscreen ? '✕' : '⛶';
+    btn.title = isFullscreen ? 'Vollbild beenden' : 'Vollbild';
+
+    // Escape-Taste zum Beenden
+    if (isFullscreen) {
+        document.addEventListener('keydown', _chatEscHandler);
+    } else {
+        document.removeEventListener('keydown', _chatEscHandler);
+    }
+}
+
+function _chatEscHandler(e) {
+    if (e.key === 'Escape') {
+        const chatSection = document.getElementById('chat');
+        if (chatSection.classList.contains('chat-fullscreen')) {
+            toggleChatFullscreen();
+        }
+    }
+}
+
 // Theme ändern
 function changeTheme() {
     const theme = document.getElementById('themeSelect').value;

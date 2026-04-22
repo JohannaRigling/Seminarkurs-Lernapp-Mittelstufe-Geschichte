@@ -27,9 +27,56 @@
     font-size: 1.3em;
 }
 
+.chat-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
 .chat-timer {
     font-size: 0.9em;
     color: var(--text-secondary);
+}
+
+.chat-fullscreen-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 4px 8px;
+    line-height: 1;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.chat-fullscreen-btn:hover {
+    border-color: var(--secondary);
+    color: var(--text-gold);
+}
+
+/* Vollbild-Modus für Chat */
+#chat.chat-fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    background: var(--bg-primary);
+    padding: 0;
+    overflow: hidden;
+}
+
+#chat.chat-fullscreen .chat-layout {
+    height: 100vh;
+    border-radius: 0;
+}
+
+#chat.chat-fullscreen .chat-main {
+    border-radius: 0;
+}
+
+#chat.chat-fullscreen .chat-sidebar {
+    width: 220px;
+    flex-shrink: 0;
 }
 
 .chat-messages {
