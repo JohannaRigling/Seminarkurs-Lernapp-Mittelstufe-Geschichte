@@ -4475,3 +4475,217 @@
 .ql-answer-field::placeholder {
     color: rgba(255,255,255,0.3);
 }
+
+/* ===== Adaptive Lernsession – Neues Setup ===== */
+
+.learning-session-start {
+    padding: 4px 0;
+}
+
+.learning-session-start h2 {
+    color: var(--text-gold);
+    margin-bottom: 16px;
+    font-size: 1.3rem;
+}
+
+.setup-row {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 12px;
+}
+
+.setup-row .setup-field {
+    flex: 1;
+}
+
+.setup-field {
+    margin-bottom: 12px;
+}
+
+.setup-field label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+}
+
+.optional-hint {
+    font-weight: 400;
+    color: var(--text-muted, rgba(255,255,255,0.4));
+    font-size: 0.8rem;
+}
+
+.setup-field input[type="text"],
+.setup-field input[type="date"],
+.setup-field select,
+.setup-field textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+
+.setup-field textarea {
+    resize: vertical;
+    min-height: 90px;
+    font-family: inherit;
+}
+
+.setup-field input:focus,
+.setup-field select:focus,
+.setup-field textarea:focus {
+    outline: none;
+    border-color: var(--secondary);
+}
+
+/* Zwei-Pfade-Auswahl */
+.session-paths {
+    display: flex;
+    gap: 14px;
+    margin-top: 16px;
+}
+
+.path-card {
+    flex: 1;
+    padding: 16px 14px;
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+    background: var(--bg-tertiary);
+    cursor: pointer;
+    text-align: center;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+}
+
+.path-card:hover {
+    border-color: var(--secondary);
+    background: var(--bg-secondary);
+    transform: translateY(-2px);
+}
+
+.path-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.path-card h3 {
+    color: var(--text-gold);
+    font-size: 1rem;
+    margin: 0 0 6px;
+}
+
+.path-card p {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Lernplan Ladescreen */
+.lernplan-loading {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.lernplan-loading .loading-spinner {
+    font-size: 2.5rem;
+    animation: spin 1.5s linear infinite;
+    display: inline-block;
+    margin-bottom: 12px;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.lernplan-loading h3 {
+    color: var(--text-gold);
+    margin-bottom: 8px;
+}
+
+.lernplan-loading p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Lernplan Ergebnis */
+.lernplan-result {
+    padding: 4px 0;
+}
+
+.lernplan-header {
+    margin-bottom: 14px;
+}
+
+.lernplan-header h2 {
+    color: var(--text-gold);
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+}
+
+.lernplan-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.lernplan-meta span {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.lernplan-text {
+    background: var(--bg-tertiary);
+    border-radius: 10px;
+    padding: 16px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    line-height: 1.65;
+    max-height: 380px;
+    overflow-y: auto;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-color);
+}
+
+.lernplan-text strong {
+    color: var(--text-gold);
+}
+
+.lernplan-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Diagnose-Nachher-Buttons */
+.diagnostic-after-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+/* Fehlermeldung Lernplan */
+.lernplan-error {
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.lernplan-error h3 {
+    color: var(--warning, #daa520);
+    margin-bottom: 10px;
+}
+
+.lernplan-error p {
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}

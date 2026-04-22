@@ -1453,36 +1453,56 @@ function showLearningSessionStart() {
 
     if (!modal || !content) return;
 
+    const today = new Date().toISOString().split('T')[0];
+
     content.innerHTML = `
         <div class="learning-session-start">
-            <h2>🎯 Starte eine Lernsession</h2>
-            <p>Erzähle mir, was du lernen möchtest!</p>
+            <h2>🎯 Lernsession einrichten</h2>
 
-            <div class="goal-input">
-                <label>Dein Lernziel:</label>
-                <textarea id="learningGoal"
-                    placeholder="z.B. Ich muss Nationalsozialismus für meine Klausur am 15.03. lernen"
-                    rows="3"></textarea>
+            <div class="setup-row">
+                <div class="setup-field">
+                    <label>📅 Prüfungsdatum *</label>
+                    <input type="date" id="examDate" min="${today}" required>
+                </div>
+                <div class="setup-field">
+                    <label>📚 Thema *</label>
+                    <select id="sessionTopic">
+                        <option value="">-- Thema wählen --</option>
+                        ${getAvailableTopics().map(t =>
+                            `<option value="${t.id}">${t.name}</option>`
+                        ).join('')}
+                    </select>
+                </div>
             </div>
 
-            <div class="topic-selection">
-                <label>Thema:</label>
-                <select id="sessionTopic">
-                    <option value="">-- Wähle ein Thema --</option>
-                    ${getAvailableTopics().map(t =>
-                        `<option value="${t.id}">${t.name}</option>`
-                    ).join('')}
-                </select>
+            <div class="setup-field">
+                <label>🎯 Fokus <span class="optional-hint">(optional)</span></label>
+                <input type="text" id="sessionFocus"
+                    placeholder="z.B. Ursachen, Folgen, wichtige Personen, Daten">
             </div>
 
-            <div class="exam-date">
-                <label>Prüfungsdatum (optional):</label>
-                <input type="date" id="examDate" />
+            <div class="setup-field">
+                <label>📋 Kann-Liste <span class="optional-hint">(optional)</span></label>
+                <textarea id="kannListe" rows="4"
+                    placeholder="Füge hier ein, was du können musst – z.B. aus dem Aufgabenblatt deiner Lehrkraft:&#10;• Ursachen der Französischen Revolution nennen&#10;• Verlauf der Revolution erläutern&#10;• Bedeutung für Europa beurteilen"></textarea>
+                <button class="btn btn-secondary btn-small" onclick="document.getElementById('kannListeFile').click()" style="margin-top:6px">
+                    📁 Textdatei laden
+                </button>
+                <input type="file" id="kannListeFile" accept=".txt,.md" style="display:none" onchange="loadKannListeFile(event)">
             </div>
 
-            <button class="btn btn-primary" onclick="createLearningSession()">
-                Lernsession starten 🚀
-            </button>
+            <div class="session-paths">
+                <div class="path-card" onclick="startDirectLernplan()">
+                    <div class="path-icon">📋</div>
+                    <h3>Lernplan erstellen</h3>
+                    <p>KI erstellt einen strukturierten Lernplan basierend auf deinen Angaben</p>
+                </div>
+                <div class="path-card" onclick="startWissenTest()">
+                    <div class="path-icon">🧪</div>
+                    <h3>Wissen testen</h3>
+                    <p>Zeige was du kannst → erhalte Feedback + individuellen Lernplan</p>
+                </div>
+            </div>
         </div>
     `;
 
@@ -1490,28 +1510,267 @@ function showLearningSessionStart() {
 }
 
 /**
- * Erstellt eine neue Lernsession
+ * Liest eine Textdatei in das Kann-Liste-Feld
  */
-function createLearningSession() {
-    const goal = document.getElementById('learningGoal')?.value?.trim();
+function loadKannListeFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const ta = document.getElementById('kannListe');
+        if (ta) ta.value = e.target.result;
+    };
+    reader.readAsText(file, 'UTF-8');
+}
+
+/**
+ * Liest die Setup-Felder aus und validiert sie
+ * @returns {Object|null} examInfo oder null bei Fehler
+ */
+function readSessionSetup() {
+    const examDate = document.getElementById('examDate')?.value;
     const topicId = document.getElementById('sessionTopic')?.value;
-    const examDate = document.getElementById('examDate')?.value || null;
+    const focus = document.getElementById('sessionFocus')?.value?.trim() || '';
+    const kannListe = document.getElementById('kannListe')?.value?.trim() || '';
 
-    if (!goal) {
-        showToast('Bitte gib dein Lernziel ein!', 'error');
-        return;
+    if (!examDate) {
+        showToast('Bitte gib das Prüfungsdatum an!', 'error');
+        return null;
     }
-
     if (!topicId) {
         showToast('Bitte wähle ein Thema!', 'error');
+        return null;
+    }
+
+    const topicName = getTopicName(topicId);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const exam = new Date(examDate);
+    const daysLeft = Math.ceil((exam - today) / (1000 * 60 * 60 * 24));
+
+    return { examDate, topicId, topicName, focus, kannListe, daysLeft };
+}
+
+/**
+ * Pfad A: Direkt Lernplan erstellen
+ */
+function startDirectLernplan() {
+    const examInfo = readSessionSetup();
+    if (!examInfo) return;
+    generateLernplan(examInfo, null);
+}
+
+/**
+ * Pfad B: Wissen testen → danach Lernplan anbieten
+ */
+function startWissenTest() {
+    const examInfo = readSessionSetup();
+    if (!examInfo) return;
+
+    // examInfo in localStorage zwischenspeichern für nach der Diagnostik
+    localStorage.setItem('histolearn_pending_examinfo', JSON.stringify(examInfo));
+
+    const sessionId = startLearningSession(
+        `Vorbereitung: ${examInfo.topicName} – Prüfung am ${examInfo.examDate}`,
+        examInfo.topicId,
+        examInfo.examDate
+    );
+    showDiagnosticIntro(sessionId);
+}
+
+/**
+ * Generiert einen KI-Lernplan via Claude API
+ * @param {Object} examInfo - { examDate, topicId, topicName, focus, kannListe, daysLeft }
+ * @param {Object|null} diagnosticResults - optional Diagnose-Ergebnisse
+ */
+// Zwischenspeicher für Retry
+let _currentLernplanRequest = null;
+
+async function generateLernplan(examInfo, diagnosticResults) {
+    const content = document.getElementById('adaptiveLearningContent');
+    if (!content) return;
+
+    // Für Retry merken
+    _currentLernplanRequest = { examInfo, diagnosticResults };
+
+    // Lade-Anzeige
+    content.innerHTML = `
+        <div class="lernplan-loading">
+            <div class="loading-spinner">⏳</div>
+            <h3>Lernplan wird erstellt…</h3>
+            <p>Die KI analysiert deine Angaben und erstellt einen individuellen Plan.</p>
+        </div>
+    `;
+
+    // Prompt aufbauen
+    const todayStr = new Date().toLocaleDateString('de-DE');
+    const examDateStr = new Date(examInfo.examDate).toLocaleDateString('de-DE');
+
+    let prompt = `Du bist ein erfahrener Geschichtslehrer für Schüler der Mittelstufe (Klasse 8-10). Erstelle einen konkreten, tagesgenauen Lernplan.
+
+**Prüfungsinfos:**
+- Thema: ${examInfo.topicName}
+- Prüfungsdatum: ${examDateStr}
+- Heute: ${todayStr}
+- Verbleibende Tage: ${examInfo.daysLeft}`;
+
+    if (examInfo.focus) {
+        prompt += `\n- Fokusthemen: ${examInfo.focus}`;
+    }
+    if (examInfo.kannListe) {
+        prompt += `\n\n**Kann-Liste (muss beherrscht werden):**\n${examInfo.kannListe}`;
+    }
+    if (diagnosticResults) {
+        const stärken = diagnosticResults.strengths.map(s => `${s.name} (${Math.round(s.score * 100)}%)`).join(', ') || 'keine';
+        const schwächen = diagnosticResults.weaknesses.map(w => `${getWeaknessName(w)} (${Math.round(w.score * 100)}%)`).join(', ') || 'keine';
+        prompt += `\n\n**Diagnose-Ergebnis:**\n- Gesamtergebnis: ${Math.round(diagnosticResults.overallScore * 100)}%\n- Stärken: ${stärken}\n- Verbesserungsbedarf: ${schwächen}`;
+    }
+
+    prompt += `\n\n**Format des Lernplans:**
+Erstelle eine tagesweise Aufteilung mit konkreten Lernzielen. Struktur:
+- Überschrift mit Datum oder "Tag X"
+- 2-3 konkrete Lernziele für diesen Tag
+- Empfohlene Methode (z.B. Zusammenfassung schreiben, Zeitleiste erstellen, Übungsaufgaben lösen)
+- Zeitaufwand (ca.)
+
+Zum Schluss: 3 Tipps für den Prüfungstag. Halte den Plan realistisch und ermutigend.`;
+
+    try {
+        const response = await fetch('/api/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: 'claude-3-haiku-20240307',
+                max_tokens: 1200,
+                system: 'Du bist ein freundlicher, motivierender Geschichtslehrer für Schüler der Klassen 8-10. Antworte immer auf Deutsch. Sei konkret, strukturiert und ermutigend.',
+                messages: [{ role: 'user', content: prompt }]
+            })
+        });
+
+        const data = await response.json();
+        const lernplanText = data.content?.[0]?.text || null;
+
+        if (!lernplanText) throw new Error('Keine Antwort von der KI');
+
+        showLernplanResult(lernplanText, examInfo);
+
+    } catch (err) {
+        content.innerHTML = `
+            <div class="lernplan-error">
+                <h3>⚠️ Fehler beim Erstellen des Lernplans</h3>
+                <p>Die KI konnte gerade nicht erreicht werden. Bitte versuche es erneut.</p>
+                <button class="btn btn-primary" onclick="retryLernplan()">
+                    🔄 Erneut versuchen
+                </button>
+                <button class="btn btn-secondary" onclick="showLearningSessionStart()">← Zurück</button>
+            </div>
+        `;
+    }
+}
+
+/**
+ * Erneuter Versuch für Lernplan-Generierung
+ */
+function retryLernplan() {
+    if (_currentLernplanRequest) {
+        generateLernplan(_currentLernplanRequest.examInfo, _currentLernplanRequest.diagnosticResults);
+    } else {
+        showLearningSessionStart();
+    }
+}
+
+/**
+ * Zeigt den fertigen Lernplan im Modal an
+ */
+// Zwischenspeicher für aktuellen Lernplan
+let _currentLernplan = null;
+
+function showLernplanResult(lernplanText, examInfo) {
+    const content = document.getElementById('adaptiveLearningContent');
+    if (!content) return;
+
+    const examDateStr = examInfo.examDate
+        ? new Date(examInfo.examDate).toLocaleDateString('de-DE')
+        : '–';
+
+    // Lernplan global speichern für den Speichern-Button
+    _currentLernplan = { lernplanText, examInfo, examDateStr };
+
+    // Markdown-ähnliche Formatierung
+    const formatted = lernplanText
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+
+    content.innerHTML = `
+        <div class="lernplan-result">
+            <div class="lernplan-header">
+                <h2>📋 Dein Lernplan</h2>
+                <div class="lernplan-meta">
+                    <span>📚 ${escapeHtml(examInfo.topicName)}</span>
+                    <span>📅 Prüfung: ${examDateStr}</span>
+                    ${examInfo.daysLeft ? `<span>⏳ ${examInfo.daysLeft} Tage</span>` : ''}
+                </div>
+            </div>
+            <div class="lernplan-text" id="lernplanTextContent">${formatted}</div>
+            <div class="lernplan-actions">
+                <button class="btn btn-primary" id="saveLernplanBtn" onclick="saveLernplanToMaterials()">
+                    💾 In Materialien speichern
+                </button>
+                <button class="btn btn-secondary" onclick="showLearningSessionStart()">← Neu einrichten</button>
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Speichert den aktuellen Lernplan als Notiz in Materialien
+ */
+function saveLernplanToMaterials() {
+    if (!currentUser) {
+        showToast('Bitte erst einloggen!', 'warning');
+        return;
+    }
+    if (!_currentLernplan) {
+        showToast('Kein Lernplan zum Speichern vorhanden!', 'error');
         return;
     }
 
-    // Session erstellen
-    const sessionId = startLearningSession(goal, topicId, examDate);
+    const { lernplanText, examInfo, examDateStr } = _currentLernplan;
+    const title = `Lernplan: ${examInfo.topicName} – Prüfung am ${examDateStr}`;
 
-    // Diagnose-Intro zeigen
-    showDiagnosticIntro(sessionId);
+    if (!currentUser.notes) currentUser.notes = [];
+
+    const newNote = {
+        id: 'lernplan-' + Date.now(),
+        title: title,
+        category: 'methoden',
+        content: lernplanText,
+        type: 'lernplan',
+        topicId: examInfo.topicId,
+        createdAt: new Date().toISOString()
+    };
+
+    currentUser.notes.push(newNote);
+    currentUser.progress.notesCreated = (currentUser.progress.notesCreated || 0) + 1;
+    updateUserProgress({ notesCreated: currentUser.progress.notesCreated });
+    saveCurrentUser();
+
+    showToast('Lernplan in Materialien gespeichert! 💾', 'success');
+    addXP(5);
+    addCoins(3, 'Lernplan erstellt');
+
+    const saveBtn = document.getElementById('saveLernplanBtn');
+    if (saveBtn) {
+        saveBtn.textContent = '✅ Gespeichert';
+        saveBtn.disabled = true;
+    }
+}
+
+/**
+ * Erstellt eine neue Lernsession (Legacy – bleibt für Kompatibilität)
+ */
+function createLearningSession() {
+    startWissenTest();
 }
 
 /**
@@ -1745,11 +2004,56 @@ function showDiagnosticResults(results, sessionId) {
                 ${results.weaknesses.length > 0 ? '<p>Ich werde dir Aufgaben geben, die auf diese Bereiche abgestimmt sind!</p>' : ''}
             </div>
 
-            <button class="btn btn-primary" onclick="startAdaptivePractice('${sessionId}')">
-                ${results.weaknesses.length > 0 ? 'Jetzt üben! 🚀' : 'Übungen machen 🎯'}
-            </button>
+            <div class="diagnostic-after-actions">
+                <button class="btn btn-primary" onclick="startAdaptivePractice('${sessionId}')">
+                    ${results.weaknesses.length > 0 ? 'Jetzt üben! 🚀' : 'Übungen machen 🎯'}
+                </button>
+                <button class="btn btn-secondary" onclick="generateLernplanAfterDiagnostic(${JSON.stringify(results).replace(/"/g, '&quot;')})">
+                    📋 Individuellen Lernplan erstellen
+                </button>
+            </div>
         </div>
     `;
+}
+
+/**
+ * Erstellt Lernplan nach Diagnostik mit gespeichertem examInfo
+ */
+function generateLernplanAfterDiagnostic(diagnosticResults) {
+    let examInfo = null;
+    try {
+        const stored = localStorage.getItem('histolearn_pending_examinfo');
+        if (stored) examInfo = JSON.parse(stored);
+    } catch(e) {}
+
+    if (!examInfo) {
+        // Fallback: Session-Daten nutzen
+        const session = currentUser?.progress?.learningSessions?.current;
+        if (session) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const examDate = session.examDate || '';
+            const daysLeft = examDate
+                ? Math.ceil((new Date(examDate) - today) / (1000 * 60 * 60 * 24))
+                : 7;
+            examInfo = {
+                examDate: examDate || '',
+                topicId: session.topicId,
+                topicName: getTopicName(session.topicId),
+                focus: '',
+                kannListe: '',
+                daysLeft
+            };
+        }
+    }
+
+    if (!examInfo) {
+        showToast('Keine Prüfungsinfos gefunden. Bitte neu einrichten.', 'error');
+        showLearningSessionStart();
+        return;
+    }
+
+    generateLernplan(examInfo, diagnosticResults);
 }
 
 /**
