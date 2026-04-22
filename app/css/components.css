@@ -79,8 +79,7 @@
 }
 
 #chat.chat-fullscreen .chat-sidebar {
-    width: 220px;
-    flex-shrink: 0;
+    display: none;
 }
 
 .chat-messages {
