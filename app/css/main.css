@@ -745,8 +745,11 @@ body::before {
 /* ===== MAIN CONTENT ===== */
 .main-content {
     flex: 1;
+    min-width: 0;
+    width: calc(100vw - var(--sidebar-width));
+    max-width: calc(100vw - var(--sidebar-width));
     margin-left: var(--sidebar-width);
-    transition: margin-left 0.3s ease;
+    transition: margin-left 0.3s ease, width 0.3s ease, max-width 0.3s ease;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -1312,6 +1315,8 @@ body::before {
 
 .main-content.sidebar-collapsed {
     margin-left: 60px;
+    width: calc(100vw - 60px);
+    max-width: calc(100vw - 60px);
 }
 
 /* ===== RESPONSIVE ===== */

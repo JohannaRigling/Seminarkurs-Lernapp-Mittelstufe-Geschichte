@@ -1,8 +1,9 @@
 /* ===== Chat Styles ===== */
 .chat-layout {
     display: flex;
-    gap: 20px;
+    gap: 16px;
     height: calc(100vh - 50px);
+    min-width: 0;
 }
 
 .chat-main {
