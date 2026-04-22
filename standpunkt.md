@@ -1326,5 +1326,61 @@ Das Registrierungsformular bietet Klassen 7-10 an (Klasse 7 ist im Dropdown, obw
 
 ---
 
+---
+
+## 🎯 Session vom 22.04.2026 – Layout-Fixes & Chat-UI-Verbesserungen
+
+### ✅ Bugfix: Rechte Chat-Sidebar verschwindet bei offener linker Sidebar
+
+**Problem:** Mit geöffneter Navigations-Sidebar (280px) verschwand die rechte Chat-Sidebar.
+**Ursache:** `flex: 1` auf `.main-content` ließ es auf `100vw` wachsen; `margin-left: 280px` schob den rechten Rand 280px über den Viewport hinaus. `body { overflow-x: hidden }` schnitt die `.chat-sidebar` ab.
+**Fix (`app/css/main.css`):**
+```css
+.main-content {
+    width: calc(100vw - var(--sidebar-width));
+    max-width: calc(100vw - var(--sidebar-width));
+}
+.main-content.sidebar-collapsed {
+    width: calc(100vw - 60px);
+    max-width: calc(100vw - 60px);
+}
+```
+Außerdem: `overflow: hidden` von `.chat-layout` entfernt (war ein früherer Workaround).
+
+---
+
+### ✅ Quick-Prompt-Buttons kompakt in einer Zeile
+
+**Ziel:** Alle 7 Buttons sichtbar in einer Zeile, egal ob Sidebar auf/zu; Buttons füllen die ganze Breite aus.
+**Änderungen:**
+- Labels gekürzt: "Eselsbrücke erstellen" → "Eselsbrücke", "Quiz zu Thema" → "Quiz", etc.
+- `font-size: 0.74em`, `padding: 4px 9px`
+- `flex: 1` auf `.quick-prompt-btn` → Buttons dehnen sich gleichmäßig auf Zeilenbreite aus
+- `flex-wrap: nowrap`, `overflow-x: hidden`
+
+**Dateien:** `app/index.html`, `app/css/components.css`
+
+---
+
+### ✅ Vollbild-Modus: Rechte Sidebar ausgeblendet
+
+**Fix:** `#chat.chat-fullscreen .chat-sidebar { display: none }` statt width-Angabe.
+Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS).
+
+---
+
+### ✅ Pomodoro-Timer-Anzeige im Vollbild-Modus
+
+**Funktion:** Im Vollbild erscheint neben der Chat-Zeit ein Mini-Timer `⏱️ MM:SS`.
+**Implementierung:**
+- `<div class="chat-pomodoro-mini">` im Chat-Header (standardmäßig `display:none`)
+- CSS: `#chat.chat-fullscreen .chat-pomodoro-mini { display: flex }`
+- JS (`app/js/app.js`): `_syncPomodoroMini()` kopiert `#timerDisplay` → `#chatPomodoroTime` jede Sekunde via `setInterval`; Interval wird beim Schließen des Vollbilds gecleart
+- Styling: grüner Rahmen, `var(--secondary-light)` Text
+
+**Dateien:** `app/index.html`, `app/css/components.css`, `app/js/app.js`
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 22.04.2026 – Modellname-Bugfix (claude-haiku-4-5-20251001), Lernplan-Feature
+**Letzte Aktualisierung:** 22.04.2026 – Layout-Fixes, Chat-UI, Vollbild-Pomodoro
