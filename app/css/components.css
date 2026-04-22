@@ -156,14 +156,15 @@
 }
 
 .quick-prompt-btn {
-    padding: 4px 9px;
+    flex: 1;
+    padding: 4px 6px;
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
     border-radius: 20px;
     font-size: 0.74em;
     cursor: pointer;
     white-space: nowrap;
-    flex-shrink: 0;
+    text-align: center;
     transition: var(--transition);
 }
 
