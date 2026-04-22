@@ -148,16 +148,10 @@
 .chat-quick-buttons {
     padding: 6px 20px;
     display: flex;
-    flex-wrap: nowrap;
-    gap: 6px;
-    overflow-x: auto;
-    scrollbar-width: none;
+    flex-wrap: wrap;
+    gap: 5px;
     background: var(--bg-primary);
     border-top: 1px solid var(--border-color);
-}
-
-.chat-quick-buttons::-webkit-scrollbar {
-    display: none;
 }
 
 .quick-prompt-btn {
