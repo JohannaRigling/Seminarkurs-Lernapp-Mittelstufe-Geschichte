@@ -272,7 +272,7 @@ async function callClaudeAPI(message, apiKey) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            model: 'claude-3-haiku-20240307',
+            model: 'claude-haiku-4-5-20251001',
             max_tokens: 500,
             system: mode.systemPrompt,
             messages: chatHistory.slice(-10).map(m => ({
