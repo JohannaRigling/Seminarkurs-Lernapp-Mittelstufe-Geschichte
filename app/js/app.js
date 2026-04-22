@@ -234,7 +234,7 @@ function toggleChatFullscreen() {
     const btn = document.getElementById('chatFullscreenBtn');
     const isFullscreen = chatSection.classList.toggle('chat-fullscreen');
 
-    btn.textContent = isFullscreen ? '✕' : '⛶';
+    btn.textContent = isFullscreen ? '✕ Schließen' : '⤢ Vollbild';
     btn.title = isFullscreen ? 'Vollbild beenden' : 'Vollbild';
 
     // Escape-Taste zum Beenden
