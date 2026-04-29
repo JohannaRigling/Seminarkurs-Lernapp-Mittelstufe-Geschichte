@@ -4852,8 +4852,34 @@
 #exerciseModal.exercise-fullscreen #exerciseModalContent {
     flex: 1;
     min-height: 0;
-    overflow-y: auto;
-    padding: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+#exerciseModal.exercise-fullscreen .flashcard-header {
+    flex-shrink: 0;
+}
+#exerciseModal.exercise-fullscreen #exerciseCardContainer {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+#exerciseModal.exercise-fullscreen .fc-card {
+    overflow: hidden;
+}
+#exerciseModal.exercise-fullscreen .fc-answer-section {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+#exerciseModal.exercise-fullscreen .fc-textarea {
+    flex: 1;
+    min-height: 100px;
+    max-height: none;
+    resize: none;
 }
 
 /* Hilfe-Button auf Karteikarten */
