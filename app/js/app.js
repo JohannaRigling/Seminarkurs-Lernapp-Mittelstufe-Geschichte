@@ -131,7 +131,34 @@ function closeExerciseModal() {
     const modal = document.getElementById('exerciseModal');
     if (modal) {
         modal.classList.remove('active');
+        modal.classList.remove('exercise-fullscreen');
+        const btn = modal.querySelector('.modal-fullscreen-btn');
+        if (btn) btn.textContent = '⤢';
     }
+}
+
+function toggleExerciseFullscreen() {
+    const modal = document.getElementById('exerciseModal');
+    if (!modal) return;
+    const isFullscreen = modal.classList.toggle('exercise-fullscreen');
+    const btn = modal.querySelector('.modal-fullscreen-btn');
+    if (btn) btn.textContent = isFullscreen ? '✕' : '⤢';
+}
+
+// Öffnet den KI-Tutor-Chat und lässt den Tutor direkt nachfragen
+function openChatForHelp() {
+    closeExerciseModal();
+    showSection('chat');
+    setTimeout(() => {
+        if (typeof addChatMessage === 'function') {
+            addChatMessage(
+                'Hallo! Ich helfe dir gerne weiter 😊\n\nWas genau verstehst du bei der Aufgabe nicht? Erkläre mir kurz, wo du hängst — dann gehen wir das gemeinsam durch!',
+                'ai'
+            );
+            const input = document.getElementById('chatInput');
+            if (input) input.focus();
+        }
+    }, 250);
 }
 
 // Info-Popup anzeigen
@@ -1070,13 +1097,21 @@ function startCognitiveGame(gameType) {
     }
 }
 
+// Hilfsfunktion: öffnet exerciseModal für kognitive Übungen
+function _openCognitiveModal(html) {
+    const content = document.getElementById('exerciseModalContent');
+    const modal = document.getElementById('exerciseModal');
+    if (!content || !modal) return;
+    content.innerHTML = html;
+    modal.classList.add('active');
+}
+
 // Memory-Spiel: Schwierigkeitsstufen-Auswahl
 function showMemoryDifficultySelection() {
-    const area = document.getElementById('exerciseArea');
     const levels = JSON.parse(localStorage.getItem('histolearn_memory_levels') || '{"max":1}');
     const maxUnlocked = levels.max || 1;
 
-    area.innerHTML = `
+    _openCognitiveModal(`
         <h3>🃏 Memory - Schwierigkeitsstufe wählen</h3>
         <div class="memory-difficulty-select">
             <div class="difficulty-card ${maxUnlocked >= 1 ? 'unlocked' : 'locked'}" onclick="startMemoryGame(1)">
@@ -1094,7 +1129,7 @@ function showMemoryDifficultySelection() {
                 ${maxUnlocked < 3 ? '<span class="difficulty-lock">🔒 Gewinne Stufe 2</span>' : ''}
             </div>
         </div>
-    `;
+    `);
 }
 
 let flippedCards = [];
@@ -1106,7 +1141,6 @@ let memoryCurrentDifficulty = 1;
 function startMemoryGame(difficulty) {
     difficulty = difficulty || 1;
     memoryCurrentDifficulty = difficulty;
-    const area = document.getElementById('exerciseArea');
 
     const allPairs = {
         1: [
@@ -1156,8 +1190,8 @@ function startMemoryGame(difficulty) {
     });
     cards = shuffleArray(cards);
 
-    area.innerHTML = `
-        <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
+    _openCognitiveModal(`
+        <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px; flex-wrap:wrap;">
             <button class="btn btn-secondary" onclick="showMemoryDifficultySelection()">← Stufe wählen</button>
             <h3 style="margin:0;">🃏 Memory - ${diffLabel} (${pairs.length} Paare)</h3>
         </div>
@@ -1181,7 +1215,7 @@ function startMemoryGame(difficulty) {
             .memory-card-back { background: var(--bg-tertiary); border: 1px solid var(--border-color); transform: rotateY(180deg); }
             .memory-card.matched { opacity: 0.4; pointer-events: none; border: 2px solid var(--secondary); border-radius: 10px; }
         </style>
-    `;
+    `);
 }
 
 function flipMemoryCard(card) {

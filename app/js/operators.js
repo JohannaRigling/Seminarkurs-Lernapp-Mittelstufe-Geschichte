@@ -99,7 +99,26 @@ function showOperatorDetail(operatorId) {
     }
 }
 
-// Operator-Übung starten
+const OPERATOR_TOPICS = [
+    { id: 'franzoesische-revolution', name: 'Französische Revolution' },
+    { id: 'industrialisierung', name: 'Industrialisierung' },
+    { id: 'imperialismus', name: 'Imperialismus' },
+    { id: 'erster-weltkrieg', name: 'Erster Weltkrieg' },
+    { id: 'weimarer-republik', name: 'Weimarer Republik' },
+    { id: 'revolution-1848', name: 'Revolution 1848' },
+    { id: 'nationalsozialismus', name: 'Nationalsozialismus' },
+    { id: 'zweiter-weltkrieg', name: 'Zweiter Weltkrieg' },
+    { id: 'holocaust', name: 'Holocaust' },
+    { id: 'brd-ddr', name: 'BRD / DDR' },
+    { id: 'kalter-krieg', name: 'Kalter Krieg' },
+    { id: 'wiedervereinigung', name: 'Wiedervereinigung' },
+    { id: 'russland', name: 'Russland' },
+    { id: 'china', name: 'China' },
+    { id: 'tuerkei', name: 'Türkei / Osmanisches Reich' },
+    { id: 'eu', name: 'Europäische Union' }
+];
+
+// Operator-Übung starten – zuerst Thema auswählen
 function startOperatorExercise() {
     if (!selectedOperator) {
         showToast('Bitte wähle zuerst einen Operator aus.', 'warning');
@@ -109,13 +128,95 @@ function startOperatorExercise() {
     const modal = document.getElementById('exerciseModal');
     const content = document.getElementById('exerciseModalContent');
 
-    // Übungsaufgabe basierend auf Operator generieren
-    const exercise = generateOperatorExercise(selectedOperator);
-    currentExercise = exercise; // Für spätere Anzeige speichern
-
     content.innerHTML = `
         <h2>📝 Übung: ${selectedOperator.name}</h2>
         <div class="afb-badge afb${selectedOperator.afb}" style="display: inline-block; margin-bottom: 20px;">AFB ${selectedOperator.afb}</div>
+        <p style="color: var(--text-secondary); margin-bottom: 16px;">Zu welchem Thema möchtest du eine Aufgabe?</p>
+        <select id="opTopicSelect" style="width:100%; padding:10px; background:var(--bg-tertiary); border:1px solid var(--border-color); border-radius:8px; color:var(--text-primary); font-size:1em; margin-bottom:24px;">
+            <option value="">— Thema auswählen —</option>
+            ${OPERATOR_TOPICS.map(t => `<option value="${t.id}">${t.name}</option>`).join('')}
+        </select>
+        <div style="display:flex; gap:12px; justify-content:center;">
+            <button class="btn btn-primary" onclick="confirmOperatorTopic()">Aufgabe generieren →</button>
+            <button class="btn btn-secondary" onclick="closeExerciseModal()">Abbrechen</button>
+        </div>
+    `;
+
+    modal.classList.add('active');
+}
+
+// Thema bestätigt → Übung per KI generieren
+async function confirmOperatorTopic() {
+    const select = document.getElementById('opTopicSelect');
+    const topicId = select.value;
+    const topicName = topicId ? select.options[select.selectedIndex].text : '';
+    if (!topicId) {
+        showToast('Bitte wähle ein Thema aus.', 'warning');
+        return;
+    }
+
+    const content = document.getElementById('exerciseModalContent');
+    content.innerHTML = `<div style="text-align:center; padding:40px;"><p>⏳ Aufgabe wird generiert…</p></div>`;
+
+    let exercise;
+    try {
+        exercise = await _generateKIOperatorExercise(selectedOperator, topicName);
+    } catch (e) {
+        exercise = generateOperatorExercise(selectedOperator);
+        exercise.task = `[${topicName}] ${exercise.task}`;
+    }
+
+    currentExercise = exercise;
+    _renderOperatorExerciseContent(exercise, topicName);
+}
+
+// KI generiert eine themenspezifische Operator-Aufgabe
+async function _generateKIOperatorExercise(operator, topicName) {
+    const prompt = `Erstelle eine Geschichts-Übungsaufgabe für Schüler der Klasse 8-10.
+Operator: "${operator.name}" (AFB ${operator.afb}: ${operator.expectation})
+Thema: "${topicName}"
+
+Antworte NUR mit gültigem JSON (kein Markdown), exakt dieses Format:
+{
+  "task": "Aufgabenstellung mit dem Operator ${operator.name}…",
+  "material": "Kurzer Quelltext, Zitat oder Fallbeschreibung zum Thema (2-4 Sätze)",
+  "source": "Quellenangabe (fiktiv oder historisch passend)",
+  "sampleAnswer": "Musterlösung in 3-6 Sätzen"
+}`;
+
+    const response = await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 800,
+            messages: [{ role: 'user', content: prompt }]
+        })
+    });
+
+    if (!response.ok) throw new Error(`API ${response.status}`);
+    const data = await response.json();
+    const raw = data.content[0].text;
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('Kein JSON');
+    const parsed = JSON.parse(jsonMatch[0]);
+    return {
+        task: parsed.task || '',
+        material: parsed.material || '',
+        source: parsed.source || 'HistoLearn KI-generiert',
+        sampleAnswer: parsed.sampleAnswer || ''
+    };
+}
+
+// Operator-Übungsinhalt rendern (nach Themenauswahl)
+function _renderOperatorExerciseContent(exercise, topicName) {
+    const content = document.getElementById('exerciseModalContent');
+    content.innerHTML = `
+        <h2>📝 Übung: ${selectedOperator.name}</h2>
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:20px; flex-wrap:wrap;">
+            <div class="afb-badge afb${selectedOperator.afb}">AFB ${selectedOperator.afb}</div>
+            <span style="font-size:0.85em; color:var(--text-secondary);">📖 ${topicName}</span>
+        </div>
 
         <div class="exercise-task">
             <h4>Aufgabe:</h4>
@@ -130,7 +231,7 @@ function startOperatorExercise() {
 
         <div class="exercise-input">
             <h4>Deine Antwort:</h4>
-            <textarea id="exerciseAnswer" rows="10" style="width: 100%; padding: 15px; border: 2px solid var(--border-color); border-radius: 10px; font-size: 1em; resize: vertical;" placeholder="Schreibe hier deine Antwort..."></textarea>
+            <textarea id="exerciseAnswer" rows="10" style="width: 100%; padding: 15px; border: 2px solid var(--border-color); border-radius: 10px; font-size: 1em; resize: vertical;" placeholder="Schreibe hier deine Antwort…"></textarea>
         </div>
 
         <div class="exercise-help" style="margin-top: 20px;">
@@ -140,9 +241,7 @@ function startOperatorExercise() {
 
         <div id="exerciseHelp" style="display: none; margin-top: 15px; padding: 15px; background: #e3f2fd; border-radius: 10px;">
             <h4>💡 Tipps für "${selectedOperator.name}":</h4>
-            <ul>
-                ${selectedOperator.tips.map(tip => `<li>${tip}</li>`).join('')}
-            </ul>
+            <ul>${selectedOperator.tips.map(tip => `<li>${tip}</li>`).join('')}</ul>
         </div>
 
         <div id="sampleAnswer" style="display: none; margin-top: 15px; padding: 15px; background: #e8f5e9; border-radius: 10px;">
@@ -155,8 +254,6 @@ function startOperatorExercise() {
             <button class="btn btn-secondary" onclick="closeExerciseModal()">Abbrechen</button>
         </div>
     `;
-
-    modal.classList.add('active');
 }
 
 // Operator-Übung generieren - nutzt OPERATOR_EXERCISES aus data.js
