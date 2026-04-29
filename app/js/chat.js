@@ -217,7 +217,7 @@ function hideTypingIndicator() {
 }
 
 // KI-Antwort holen
-async function getAIResponse(message) {
+async function getAIResponse(message, extraSystemInstruction = '') {
     // Sicherheitscheck vor API-Aufruf
     const safetyResult = checkMessageSafety(message);
     if (safetyResult === 'blocked') {
@@ -239,13 +239,10 @@ async function getAIResponse(message) {
         let response;
 
         if (apiKey && apiKey.startsWith('sk-')) {
-            // Claude API (Anthropic)
-            response = await callClaudeAPI(message, apiKey);
+            response = await callClaudeAPI(message, apiKey, extraSystemInstruction);
         } else if (apiKey && apiKey.startsWith('AIza')) {
-            // Google Gemini API
             response = await callGeminiAPI(message, apiKey);
         } else {
-            // Fallback: Simulierte Antwort
             response = await getSimulatedResponse(message);
         }
 
@@ -263,8 +260,11 @@ async function getAIResponse(message) {
 }
 
 // Claude API aufrufen
-async function callClaudeAPI(message, apiKey) {
+async function callClaudeAPI(message, apiKey, extraSystemInstruction = '') {
     const mode = AI_MODES[currentAIMode];
+    const systemPrompt = extraSystemInstruction
+        ? `${mode.systemPrompt}\n\n${extraSystemInstruction}`
+        : mode.systemPrompt;
 
     const response = await fetch('/api/messages', {
         method: 'POST',
@@ -274,7 +274,7 @@ async function callClaudeAPI(message, apiKey) {
         body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
             max_tokens: 500,
-            system: mode.systemPrompt,
+            system: systemPrompt,
             messages: chatHistory.slice(-10).map(m => ({
                 role: m.role,
                 content: m.content

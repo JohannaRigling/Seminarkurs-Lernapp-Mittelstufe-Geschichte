@@ -174,20 +174,41 @@ function toggleExerciseFullscreen() {
     if (btn) btn.textContent = isFullscreen ? '✕' : '⤢';
 }
 
-// Öffnet den KI-Tutor-Chat und lässt den Tutor direkt nachfragen
+// Öffnet den KI-Tutor-Chat mit der aktuellen Aufgabenfrage als Kontext
 function openChatForHelp() {
+    // Aktuelle Aufgabenfrage ermitteln
+    let question = '';
+    let operator = '';
+    if (window.currentFilteredExercises && typeof currentExerciseIndex !== 'undefined') {
+        const ex = window.currentFilteredExercises[currentExerciseIndex];
+        if (ex) {
+            question = ex.question || '';
+            operator = ex.operator || '';
+        }
+    }
+
     closeExerciseModal();
     showSection('chat');
-    setTimeout(() => {
-        if (typeof addChatMessage === 'function') {
-            addChatMessage(
-                'Hallo! Ich helfe dir gerne weiter 😊\n\nWas genau verstehst du bei der Aufgabe nicht? Erkläre mir kurz, wo du hängst — dann gehen wir das gemeinsam durch!',
-                'ai'
-            );
-            const input = document.getElementById('chatInput');
-            if (input) input.focus();
-        }
-    }, 250);
+
+    setTimeout(async () => {
+        if (typeof addChatMessage !== 'function' || typeof getAIResponse !== 'function') return;
+
+        const helpPrompt = question
+            ? `🆘 SOS-Hilfe – ich stecke bei dieser Aufgabe fest:\n\n„${question}"\n\nKannst du mir helfen?`
+            : '🆘 SOS-Hilfe – ich stecke bei einer Aufgabe fest. Kannst du mir helfen?';
+
+        const sosInstruction = `Wenn der Schüler eine SOS-Hilfe-Anfrage sendet, gehe so vor:
+1. Zitiere die Aufgabenstellung kurz (falls vorhanden).
+2. Frage freundlich, was genau er nicht versteht.
+3. Biete konkret drei Wege an, wie du helfen kannst – zum Beispiel: (a) das Thema erklären, (b) zeigen, wie man die Aufgabe angeht, (c) die Frage in kleinere Teilfragen aufteilen.
+Halte die Antwort übersichtlich und ermutigend.`;
+
+        addChatMessage(helpPrompt, 'user');
+        await getAIResponse(helpPrompt, sosInstruction);
+
+        const input = document.getElementById('chatInput');
+        if (input) input.focus();
+    }, 300);
 }
 
 // Info-Popup anzeigen
