@@ -1552,5 +1552,20 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 
 ---
 
+---
+
+## 🐛 Bugfix vom 29.04.2026 – Quiz-Vollbild nicht scrollbar
+
+**Problem:** Im Vollbild-Modus war Erklärung + „Weiter"-Button nach einer Quiz-Antwort nicht sichtbar und nicht scrollbar.
+**Ursache:** `#exerciseModal.exercise-fullscreen #exerciseModalContent` hatte `overflow: hidden` — der Quiz-Inhalt wurde abgeschnitten.
+**Fix (`app/css/components.css`):**
+- `overflow: hidden` → `overflow-y: auto` im Fullscreen-ContentRule
+- Neues `#exerciseModal.exercise-fullscreen .quiz-container { padding: 24px 32px; max-width: 760px; margin: 0 auto }` für sauberes Layout
+- Flashcard und kognitive Spiele unberührt (nutzen `flex: 1; min-height: 0` und überlaufen nie)
+
+**Commit:** `658435e`
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 29.04.2026 – Kognitive Übungen im Modal, Belohnungsbildschirm, Quiz-Fix
+**Letzte Aktualisierung:** 29.04.2026 – Quiz-Vollbild-Scroll-Fix
