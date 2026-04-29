@@ -1289,16 +1289,17 @@ function flipMemoryCard(card) {
                 matchedPairs++;
 
                 if (matchedPairs >= memoryTotalPairs) {
-                    showToast('🎉 Gewonnen! Nächste Stufe freigeschaltet!', 'success');
-                    addCoins(5 * memoryCurrentDifficulty, 'Memory gewonnen');
-                    addXP(10 * memoryCurrentDifficulty);
-
                     // Nächste Stufe freischalten
                     const levels = JSON.parse(localStorage.getItem('histolearn_memory_levels') || '{"max":1}');
                     if (memoryCurrentDifficulty >= levels.max) {
                         levels.max = Math.min(memoryCurrentDifficulty + 1, 3);
                         localStorage.setItem('histolearn_memory_levels', JSON.stringify(levels));
                     }
+                    const diff = memoryCurrentDifficulty;
+                    setTimeout(() => showCognitiveReward(
+                        5 * diff, 10 * diff,
+                        () => startMemoryGame(diff)
+                    ), 400);
                 }
             }, 500);
         } else {
@@ -1310,6 +1311,40 @@ function flipMemoryCard(card) {
             }, 1000);
         }
     }
+}
+
+let _cognitiveReplayFn = null;
+
+function showCognitiveReward(coins, xp, replayFn) {
+    const praises = [
+        'Historisches Gespür bewiesen!',
+        'Du kennst die Geschichte wirklich gut!',
+        'Ausgezeichnet — das sitzt!',
+        'Klasse gemacht, weiter so!',
+        'Du bist auf dem richtigen Weg!'
+    ];
+    const praise = praises[Math.floor(Math.random() * praises.length)];
+    addCoins(coins, 'Kognitives Spiel gewonnen');
+    addXP(xp);
+    _cognitiveReplayFn = replayFn;
+
+    const content = document.getElementById('exerciseModalContent');
+    if (!content) return;
+    content.innerHTML = `
+        <div class="cognitive-reward">
+            <div class="cr-trophy">🏆</div>
+            <h2 class="cr-title">Geschafft!</h2>
+            <p class="cr-praise">${praise}</p>
+            <div class="cr-rewards">
+                <div class="cr-badge"><span class="cr-icon">🐄</span><span class="cr-val">+${coins}</span></div>
+                <div class="cr-badge"><span class="cr-icon">⭐</span><span class="cr-val">+${xp} XP</span></div>
+            </div>
+            <div class="cr-actions">
+                <button class="btn btn-secondary" onclick="_cognitiveReplayFn && _cognitiveReplayFn()">🔄 Nochmal</button>
+                <button class="btn btn-primary" onclick="closeExerciseModal()">✓ Fertig</button>
+            </div>
+        </div>
+    `;
 }
 
 // Reihenfolge-Spiel
@@ -1409,9 +1444,7 @@ function checkSequence() {
     const isSorted = years.every((y, i, arr) => i === 0 || arr[i - 1] < y);
 
     if (isSorted) {
-        showToast('🎉 Perfekt! Alle richtig!', 'success');
-        addCoins(10, 'Reihenfolge-Spiel gewonnen');
-        addXP(15);
+        showCognitiveReward(10, 15, startSequenceGame);
     } else {
         items.forEach((item, i) => {
             if (i > 0 && years[i] < years[i - 1]) {
@@ -1425,6 +1458,9 @@ function checkSequence() {
 
 // Zuordnungs-Spiel
 function startMatchingGame() {
+    matchedCount = 0;
+    selectedPerson = null;
+    selectedEvent = null;
     const pairs = [
         { person: 'Napoleon', event: 'Kaiserkrönung 1804' },
         { person: 'Bismarck', event: 'Deutsche Einigung' },
@@ -1513,9 +1549,7 @@ function checkMatch() {
         matchedCount++;
 
         if (matchedCount >= 5) {
-            showToast('🎉 Alle richtig zugeordnet!', 'success');
-            addCoins(10, 'Zuordnungs-Spiel gewonnen');
-            addXP(15);
+            showCognitiveReward(10, 15, startMatchingGame);
         }
     } else {
         personEl.classList.add('wrong');

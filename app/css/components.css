@@ -4990,3 +4990,56 @@
 .matching-item.wrong { animation: shake 0.5s; }
 @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 .matching-results { margin-top: 10px; text-align: center; color: #a09080; }
+
+/* Kognitives Spiel — Belohnungsbildschirm */
+.cognitive-reward {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 40px 20px;
+    text-align: center;
+    min-height: 300px;
+}
+.cr-trophy {
+    font-size: 4rem;
+    animation: cr-bounce 0.6s ease;
+}
+@keyframes cr-bounce {
+    0%   { transform: scale(0.3); opacity: 0; }
+    60%  { transform: scale(1.2); }
+    100% { transform: scale(1);   opacity: 1; }
+}
+.cr-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--secondary-light);
+    margin: 0;
+}
+.cr-praise {
+    font-size: 1.1rem;
+    color: #c8c0b0;
+    margin: 0;
+}
+.cr-rewards {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+}
+.cr-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    padding: 10px 20px;
+}
+.cr-icon { font-size: 1.4rem; }
+.cr-val  { font-size: 1.2rem; font-weight: 700; color: var(--secondary-light); }
+.cr-actions {
+    display: flex;
+    gap: 14px;
+    margin-top: 6px;
+}
