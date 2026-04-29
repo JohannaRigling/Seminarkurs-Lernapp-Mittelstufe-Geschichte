@@ -1142,11 +1142,11 @@
     font-size: 1.4em;
     margin-bottom: 30px;
     text-align: center;
-    color: var(--text-primary);
+    color: #e8e4d9;
 }
 
 .quiz-progress span {
-    color: var(--text-secondary);
+    color: #a09080;
 }
 
 .quiz-options {
@@ -3597,7 +3597,7 @@
     font-size: 1.05em;
     font-weight: 500;
     line-height: 1.6;
-    color: var(--text-primary);
+    color: #e8e4d9;
     max-height: 110px;
     overflow-y: auto;
     background: rgba(255,255,255,0.04);

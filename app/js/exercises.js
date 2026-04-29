@@ -291,7 +291,7 @@ quizStyles.textContent = `
         text-align: center;
         margin-bottom: 30px;
         line-height: 1.5;
-        color: var(--text-primary);
+        color: #e8e4d9;
     }
     .quiz-options {
         display: flex;
