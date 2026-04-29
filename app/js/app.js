@@ -1314,8 +1314,6 @@ function flipMemoryCard(card) {
 
 // Reihenfolge-Spiel
 function startSequenceGame() {
-    const area = document.getElementById('exerciseArea');
-
     const events = [
         { year: 1789, name: 'Französische Revolution' },
         { year: 1815, name: 'Wiener Kongress' },
@@ -1326,9 +1324,9 @@ function startSequenceGame() {
 
     const shuffled = shuffleArray([...events]);
 
-    area.innerHTML = `
-        <h3>🔢 Bringe die Ereignisse in die richtige Reihenfolge!</h3>
-        <p>Ziehe die Ereignisse oder nummeriere sie von 1 (ältestes) bis 5 (neuestes)</p>
+    const html = `
+        <h3 style="color:var(--secondary-light);margin-bottom:8px;">🔢 Bringe die Ereignisse in die richtige Reihenfolge!</h3>
+        <p style="color:#a09080;margin-bottom:12px;">Ziehe die Ereignisse oder nummeriere sie von 1 (ältestes) bis 5 (neuestes)</p>
         <div class="sequence-list" id="sequenceList">
             ${shuffled.map((event, i) => `
                 <div class="sequence-item" draggable="true" data-year="${event.year}">
@@ -1338,17 +1336,9 @@ function startSequenceGame() {
             `).join('')}
         </div>
         <button class="btn btn-primary" onclick="checkSequence()">Überprüfen</button>
-        <style>
-            .sequence-list { max-width: 500px; margin: 20px auto; }
-            .sequence-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: var(--bg-tertiary); border-radius: 10px; margin-bottom: 10px; cursor: grab; transition: var(--transition); }
-            .sequence-item:hover { transform: translateX(5px); }
-            .sequence-number { width: 30px; height: 30px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-            .sequence-item.correct .sequence-number { background: var(--success); }
-            .sequence-item.incorrect .sequence-number { background: var(--danger); }
-        </style>
     `;
 
-    // Drag & Drop Funktionalität
+    _openCognitiveModal(html);
     setupSequenceDragDrop();
 }
 
@@ -1435,8 +1425,6 @@ function checkSequence() {
 
 // Zuordnungs-Spiel
 function startMatchingGame() {
-    const area = document.getElementById('exerciseArea');
-
     const pairs = [
         { person: 'Napoleon', event: 'Kaiserkrönung 1804' },
         { person: 'Bismarck', event: 'Deutsche Einigung' },
@@ -1448,8 +1436,8 @@ function startMatchingGame() {
     const persons = shuffleArray(pairs.map(p => p.person));
     const events = shuffleArray(pairs.map(p => p.event));
 
-    area.innerHTML = `
-        <h3>🔗 Ordne die Personen den Ereignissen zu!</h3>
+    const html = `
+        <h3 style="color:var(--secondary-light);margin-bottom:12px;">🔗 Ordne die Personen den Ereignissen zu!</h3>
         <div class="matching-container">
             <div class="matching-column">
                 <h4>Personen</h4>
@@ -1461,18 +1449,9 @@ function startMatchingGame() {
             </div>
         </div>
         <div class="matching-results" id="matchingResults"></div>
-        <style>
-            .matching-container { display: flex; gap: 40px; justify-content: center; margin: 20px 0; }
-            .matching-column { min-width: 200px; }
-            .matching-column h4 { margin-bottom: 15px; text-align: center; }
-            .matching-item { padding: 15px; background: var(--bg-tertiary); border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: var(--transition); text-align: center; }
-            .matching-item:hover { background: var(--border-color); }
-            .matching-item.selected { background: var(--primary); color: white; }
-            .matching-item.matched { background: var(--success); color: white; pointer-events: none; }
-            .matching-item.wrong { animation: shake 0.5s; }
-            @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        </style>
     `;
+
+    _openCognitiveModal(html);
 }
 
 let selectedPerson = null;
