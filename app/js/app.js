@@ -1152,7 +1152,7 @@ function _openCognitiveModal(html) {
     const content = document.getElementById('exerciseModalContent');
     const modal = document.getElementById('exerciseModal');
     if (!content || !modal) return;
-    content.innerHTML = html;
+    content.innerHTML = `<div class="cognitive-game-wrapper">${html}</div>`;
     modal.classList.add('active');
 }
 

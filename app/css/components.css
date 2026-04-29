@@ -4865,6 +4865,16 @@
     flex-direction: column;
     padding: 0;
 }
+#exerciseModal.exercise-fullscreen .cognitive-game-wrapper {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 20px;
+}
+#exerciseModal.exercise-fullscreen .cognitive-game-wrapper .memory-grid {
+    max-width: none;
+    width: 100%;
+}
 #exerciseModal.exercise-fullscreen .flashcard-header {
     flex-shrink: 0;
 }
