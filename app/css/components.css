@@ -4870,19 +4870,32 @@
     flex-direction: column;
     padding: 0;
 }
+.cognitive-game-wrapper { padding: 10px 16px 16px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.cognitive-game-wrapper > * { width: 100%; }
+.cognitive-game-wrapper .btn { width: auto; align-self: flex-start; }
 #exerciseModal.exercise-fullscreen .cognitive-game-wrapper {
     flex: 1;
     min-height: 0;
-    overflow: hidden;
-    padding: 12px 20px 20px;
+    overflow-y: auto;
+    padding: 20px 40px 30px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    align-items: center;
+}
+#exerciseModal.exercise-fullscreen .cognitive-game-wrapper > * {
+    width: 100%;
+    max-width: 680px;
+}
+#exerciseModal.exercise-fullscreen .cognitive-game-wrapper .btn {
+    width: auto;
+    align-self: center;
+    min-width: 160px;
 }
 #exerciseModal.exercise-fullscreen .cognitive-game-wrapper .memory-grid {
     flex: 1;
     min-height: 0;
-    max-width: none;
+    max-width: none !important;
     width: 100%;
     margin: 0;
     align-content: stretch;
@@ -4959,20 +4972,21 @@
 
 /* Reihenfolge-Spiel */
 .sequence-list { max-width: 500px; margin: 0 auto; }
-.sequence-item { display: flex; align-items: center; gap: 15px; padding: 14px 16px; background: var(--bg-tertiary); border-radius: 10px; margin-bottom: 10px; cursor: grab; transition: var(--transition); color: #e8e4d9; }
-.sequence-item:hover { transform: translateX(5px); }
+.sequence-item { display: flex; align-items: center; gap: 15px; padding: 14px 16px; background: rgba(255,255,255,0.07); border-radius: 10px; margin-bottom: 10px; cursor: grab; transition: var(--transition); color: #e8e4d9; border: 1px solid rgba(255,255,255,0.1); }
+.sequence-item:hover { transform: translateX(5px); background: rgba(255,255,255,0.12); }
 .sequence-number { flex-shrink: 0; width: 30px; height: 30px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+.sequence-name { color: #e8e4d9; }
 .sequence-item.correct .sequence-number { background: var(--success); }
 .sequence-item.incorrect .sequence-number { background: var(--danger); }
 
 /* Zuordnungs-Spiel */
 .matching-container { display: flex; gap: 30px; justify-content: center; margin: 0; flex-wrap: wrap; }
-.matching-column { min-width: 180px; flex: 1; }
+.matching-column { min-width: 180px; flex: 1; max-width: 260px; }
 .matching-column h4 { margin-bottom: 12px; text-align: center; color: #a09080; }
-.matching-item { padding: 12px 14px; background: var(--bg-tertiary); border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: var(--transition); text-align: center; color: #e8e4d9; }
-.matching-item:hover { background: var(--border-color); }
-.matching-item.selected { background: var(--primary); color: white; }
-.matching-item.matched { background: var(--success); color: white; pointer-events: none; }
+.matching-item { padding: 12px 14px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: var(--transition); text-align: center; color: #e8e4d9; }
+.matching-item:hover { background: rgba(255,255,255,0.14); }
+.matching-item.selected { background: var(--primary); color: white; border-color: var(--primary); }
+.matching-item.matched { background: var(--success); color: white; pointer-events: none; border-color: var(--success); }
 .matching-item.wrong { animation: shake 0.5s; }
 @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 .matching-results { margin-top: 10px; text-align: center; color: #a09080; }
