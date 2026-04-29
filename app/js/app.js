@@ -135,6 +135,16 @@ function closeExerciseModal() {
         const btn = modal.querySelector('.modal-fullscreen-btn');
         if (btn) btn.textContent = '⤢';
     }
+    clearInterval(_exercisePomodoroInterval);
+    _exercisePomodoroInterval = null;
+}
+
+let _exercisePomodoroInterval = null;
+
+function _syncExercisePomodoroMini() {
+    const src = document.getElementById('timerDisplay');
+    const dst = document.getElementById('exercisePomodoroTime');
+    if (src && dst) dst.textContent = src.textContent;
 }
 
 function toggleExerciseFullscreen() {
@@ -143,6 +153,14 @@ function toggleExerciseFullscreen() {
     const isFullscreen = modal.classList.toggle('exercise-fullscreen');
     const btn = modal.querySelector('.modal-fullscreen-btn');
     if (btn) btn.textContent = isFullscreen ? '✕' : '⤢';
+
+    if (isFullscreen) {
+        _syncExercisePomodoroMini();
+        _exercisePomodoroInterval = setInterval(_syncExercisePomodoroMini, 1000);
+    } else {
+        clearInterval(_exercisePomodoroInterval);
+        _exercisePomodoroInterval = null;
+    }
 }
 
 // Öffnet den KI-Tutor-Chat und lässt den Tutor direkt nachfragen

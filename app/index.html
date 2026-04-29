@@ -1020,7 +1020,11 @@
     <!-- Modal for Exercises/Quizzes -->
     <div class="modal" id="exerciseModal">
         <div class="modal-content modal-exercise">
-            <button class="modal-close" onclick="closeExerciseModal()">×</button>
+            <div class="modal-top-bar">
+                <button class="modal-fullscreen-btn" onclick="toggleExerciseFullscreen()" title="Vollbild">⤢</button>
+                <div class="exercise-pomodoro-mini" id="exercisePomodoroMini">⏱️ <span id="exercisePomodoroTime">--:--</span></div>
+                <button class="modal-close" onclick="closeExerciseModal()">×</button>
+            </div>
             <div id="exerciseModalContent"></div>
         </div>
     </div>
