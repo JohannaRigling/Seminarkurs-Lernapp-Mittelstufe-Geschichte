@@ -32,6 +32,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Event Listener
     setupEventListeners();
+
+    // Pomodoro-Mini in Übungsmodal synchronisieren
+    _initExercisePomodoroObserver();
 });
 
 // Event Listener einrichten
@@ -147,20 +150,28 @@ function _syncExercisePomodoroMini() {
     if (src && dst) dst.textContent = src.textContent;
 }
 
+function _initExercisePomodoroObserver() {
+    const modal = document.getElementById('exerciseModal');
+    if (!modal) return;
+    new MutationObserver(() => {
+        if (modal.classList.contains('active')) {
+            _syncExercisePomodoroMini();
+            if (!_exercisePomodoroInterval) {
+                _exercisePomodoroInterval = setInterval(_syncExercisePomodoroMini, 1000);
+            }
+        } else {
+            clearInterval(_exercisePomodoroInterval);
+            _exercisePomodoroInterval = null;
+        }
+    }).observe(modal, { attributes: true, attributeFilter: ['class'] });
+}
+
 function toggleExerciseFullscreen() {
     const modal = document.getElementById('exerciseModal');
     if (!modal) return;
     const isFullscreen = modal.classList.toggle('exercise-fullscreen');
     const btn = modal.querySelector('.modal-fullscreen-btn');
     if (btn) btn.textContent = isFullscreen ? '✕' : '⤢';
-
-    if (isFullscreen) {
-        _syncExercisePomodoroMini();
-        _exercisePomodoroInterval = setInterval(_syncExercisePomodoroMini, 1000);
-    } else {
-        clearInterval(_exercisePomodoroInterval);
-        _exercisePomodoroInterval = null;
-    }
 }
 
 // Öffnet den KI-Tutor-Chat und lässt den Tutor direkt nachfragen

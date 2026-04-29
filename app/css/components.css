@@ -3515,12 +3515,9 @@
 }
 
 .modal-exercise .modal-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    position: static;
     margin: 0;
     float: none;
-    z-index: 10;
 }
 
 .flashcard-header {
@@ -4816,7 +4813,7 @@
 }
 
 .exercise-pomodoro-mini {
-    display: none;
+    display: flex;
     align-items: center;
     gap: 4px;
     font-size: 0.9em;
@@ -4824,9 +4821,6 @@
     border: 1px solid var(--secondary-dark);
     border-radius: 6px;
     padding: 3px 10px;
-}
-#exerciseModal.exercise-fullscreen .exercise-pomodoro-mini {
-    display: flex;
 }
 
 .modal-fullscreen-btn {
