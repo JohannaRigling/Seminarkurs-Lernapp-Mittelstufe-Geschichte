@@ -1470,5 +1470,43 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 
 ---
 
+---
+
+## 🎯 Session vom 29.04.2026 (Nachmittag) – Übungsmodal-Verbesserungen
+
+### ✅ Durchgeführte Änderungen:
+
+**1. KI-Hilfe nur in Themenübungen (`app/js/app.js`):**
+- KI-Hilfe-Button aus `showMemoryDifficultySelection()` und `startMemoryGame()` entfernt
+- SOS-Hilfe erscheint jetzt ausschließlich in Themenübungen (Karteikarten)
+
+**2. Vollbild-Modus Karteikarten repariert (`app/css/components.css`):**
+- Flex-Kette durchgezogen: `#exerciseModalContent → #exerciseCardContainer → .fc-card → .fc-answer-section → .fc-textarea`
+- Textarea füllt im Vollbild den gesamten freien Raum zwischen Frage und Navigation
+- `.modal-exercise .modal-close` von `position: absolute` auf `position: static` geändert (war Ursache für Überlappungen)
+
+**3. Vollbild-Button links, X rechts (`app/css/components.css`):**
+- `.modal-top-bar`: `justify-content: space-between` statt `flex-end`
+
+**4. Pomodoro-Timer im Übungsmodal (`app/index.html`, `app/js/app.js`, `app/css/components.css`):**
+- Timer `⏱️ MM:SS` immer in der Top-Bar sichtbar (nicht nur im Vollbild)
+- MutationObserver überwacht `exerciseModal.active` → startet/stoppt Sync automatisch
+- `_initExercisePomodoroObserver()` wird beim App-Start einmalig registriert
+
+**5. Operatorenübung: Themenauswahl vor Start (`app/js/operators.js`):**
+- `startOperatorExercise()` zeigt zuerst Dropdown mit allen 16 Themen
+- `confirmOperatorTopic()` → KI generiert themenspezifische Aufgabe via `/api/messages`
+- `_generateKIOperatorExercise(operator, topicName)` → claude-haiku, Fallback auf statische Übungen
+- `_renderOperatorExerciseContent(exercise, topicName)` rendert die Aufgabe
+
+**6. SOS KI-Hilfe mit Aufgabenkontext (`app/js/app.js`, `app/js/chat.js`):**
+- `openChatForHelp()` liest aktuelle Aufgabenfrage aus `currentFilteredExercises[currentExerciseIndex]`
+- Sendet Aufgabe als User-Nachricht in den Chat
+- `getAIResponse(message, extraSystemInstruction)` — neuer optionaler Parameter für zusätzliche System-Anweisung
+- `callClaudeAPI(message, apiKey, extraSystemInstruction)` — System-Prompt wird bei Bedarf erweitert
+- SOS-Anweisung: Tutor zitiert Aufgabe, fragt was unklar ist, bietet 3 Wege an (Thema erklären / Herangehensweise / in Teilfragen aufteilen)
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 29.04.2026 – Tagesbelohnung-Fix + ÜBEN als direkter Nav-Punkt
+**Letzte Aktualisierung:** 29.04.2026 – Übungsmodal-Vollbild, Timer, Operatoren-Thema, SOS KI-Hilfe
