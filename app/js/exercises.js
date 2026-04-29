@@ -38,7 +38,6 @@ function showQuizQuestion() {
 
     content.innerHTML = `
         <div class="quiz-container">
-            <button class="exercise-close-btn" onclick="closeExerciseArea()">×</button>
             <div class="quiz-header">
                 <h3>${currentQuiz.icon} ${currentQuiz.name}</h3>
                 <div class="quiz-progress">
