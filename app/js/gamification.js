@@ -202,8 +202,9 @@ function checkDailyReward() {
     const lastReward = localStorage.getItem(`lastDailyReward_${currentUser.id}`);
 
     if (lastReward !== today) {
-        // Tägliche Belohnung geben
         const reward = 5 + Math.floor(Math.random() * 10); // 5-15 Münzen
+        // Datum sofort speichern, damit das Modal nicht mehrfach erscheinen kann
+        localStorage.setItem(`lastDailyReward_${currentUser.id}`, today);
 
         setTimeout(() => {
             showDailyRewardModal(reward);
@@ -234,7 +235,6 @@ function showDailyRewardModal(amount) {
 
 function claimDailyReward(amount) {
     addCoins(amount, 'Tägliche Belohnung');
-    localStorage.setItem(`lastDailyReward_${currentUser.id}`, new Date().toDateString());
     closeExerciseModal();
 }
 
