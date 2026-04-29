@@ -1416,5 +1416,42 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 
 ---
 
+---
+
+## 🎯 Session vom 29.04.2026 – Adaptive Diagnostik & Sidebar
+
+### ✅ Adaptive Diagnostik: KI-generierte Fragen
+
+**Neues Verhalten beim „Wissen testen":**
+- Wenn Fokus, Kann-Liste oder Lernzettel vorhanden → KI generiert 5 individuelle Diagnosefragen
+- Ohne diese Angaben → Fallback auf statische Aufgaben (wie bisher)
+- Ladeanzeige „Aufgaben werden vorbereitet…" während KI arbeitet
+- Diagnose-Intro zeigt Hinweis: „✨ Aufgaben individuell auf Fokus/Lernzettel abgestimmt"
+
+**Neue Funktionen (`app/js/app.js`):**
+- `_aiExerciseCache` — globaler Cache für KI-generierte Exercises (als Key-Value `id → exercise`)
+- `getLernzettelContent()` — liest Text-Lernzettel aus `currentUser.notes` (max. 3000 Zeichen, keine PDFs)
+- `generateAIDiagnosticQuestions(examInfo)` — ruft `/api/messages` (claude-haiku-4-5-20251001) auf, erstellt 5 JSON-Aufgaben (2× AFB I, 2× AFB II, 1× AFB III) basierend auf Thema + Fokus + Lernzettel
+- `startWissenTest()` jetzt `async`; bei Fokus/Lernzettel werden KI-Fragen generiert und in `session.aiDiagnosticExercises` gespeichert
+
+**Geänderte Funktionen (`app/js/app.js`):**
+- `startDiagnosticExercises()` — nutzt `session.aiDiagnosticExercises` wenn vorhanden, sonst `selectDiagnosticExercises()`
+- `showDiagnosticIntro()` — zeigt Aufgabenanzahl dynamisch + Hinweis bei KI-Fragen
+
+**Geänderte Funktion (`app/js/adaptive-learning.js`):**
+- `getExerciseById()` — prüft zuerst `_aiExerciseCache`, dann statische Daten
+
+---
+
+### ✅ Sidebar-Umbenennung
+
+- **LERNEN** → **LERNHILFEN** (enthält: Operatoren, Lernstrategien)
+- **ZEITSTRAHL** als eigenständiger Navigationspunkt (wie MEINE BURG/EINSTELLUNGEN)
+
+**Datei:** `app/index.html`
+
+---
+
 **Ende Standpunkt-Dokumentation**
+**Letzte Aktualisierung:** 29.04.2026 – Adaptive KI-Diagnostik + Sidebar-Umbenennung
 **Letzte Aktualisierung:** 22.04.2026 – Materialien-Redesign (Glossar + Bibliothek mit Lernzettel-Upload)
