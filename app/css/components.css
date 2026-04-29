@@ -4871,10 +4871,16 @@
 #exerciseModal.exercise-fullscreen #exerciseModalContent {
     flex: 1;
     min-height: 0;
-    overflow: hidden;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     padding: 0;
+}
+#exerciseModal.exercise-fullscreen .quiz-container {
+    padding: 24px 32px;
+    max-width: 760px;
+    width: 100%;
+    margin: 0 auto;
 }
 .cognitive-game-wrapper { padding: 10px 16px 16px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
 .cognitive-game-wrapper > * { width: 100%; }
