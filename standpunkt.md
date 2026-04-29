@@ -1452,6 +1452,23 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 
 ---
 
+---
+
+## 🐛 Bugfix vom 29.04.2026 – Tagesbelohnung mehrfach abholbar
+
+**Problem:** Tagesbelohnung konnte mehrfach eingesammelt werden (Fenster schließen + neu öffnen).
+**Ursache:** Das Datum wurde erst beim Klick auf „Einsammeln" gespeichert, nicht beim Öffnen des Modals.
+**Fix (`app/js/gamification.js`):** Datum wird jetzt sofort beim Anzeigen des Modals gespeichert → Schließen ohne Claim verhindert die erneute Anzeige.
+
+---
+
+## 🎯 Session vom 29.04.2026 – ÜBEN als direkter Navigationspunkt
+
+**Änderung (`app/index.html`):**
+- ÜBEN ist kein aufklappbarer Unterordner mehr, sondern ein direkter Navigationspunkt wie MEINE BURG und EINSTELLUNGEN
+- 9 Zeilen HTML entfernt (Unterordner-Struktur), durch 2 Zeilen direkter Nav-Link ersetzt
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 29.04.2026 – Adaptive KI-Diagnostik + Sidebar-Umbenennung
-**Letzte Aktualisierung:** 22.04.2026 – Materialien-Redesign (Glossar + Bibliothek mit Lernzettel-Upload)
+**Letzte Aktualisierung:** 29.04.2026 – Tagesbelohnung-Fix + ÜBEN als direkter Nav-Punkt
