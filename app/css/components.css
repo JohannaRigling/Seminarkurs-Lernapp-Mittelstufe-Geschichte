@@ -4806,7 +4806,7 @@
 /* ===== Exercise Modal: Top-Bar, Vollbild, Hilfe ===== */
 .modal-top-bar {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: 8px;
     padding: 6px 10px 0;
     position: sticky;
