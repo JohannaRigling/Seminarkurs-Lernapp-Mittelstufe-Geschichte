@@ -1607,14 +1607,102 @@ function startDirectLernplan() {
     generateLernplan(examInfo, null);
 }
 
+// Cache für KI-generierte Diagnoseaufgaben (wird auch von adaptive-learning.js genutzt)
+let _aiExerciseCache = {};
+
+/**
+ * Gibt den Text-Inhalt aller hochgeladenen Lernzettel zurück (max. 3000 Zeichen)
+ */
+function getLernzettelContent() {
+    if (!currentUser || !currentUser.notes) return '';
+    const texte = currentUser.notes
+        .filter(n => n.type === 'lernzettel' && n.content && !n.content.startsWith('data:'))
+        .map(n => `=== ${n.title} ===\n${n.content}`);
+    return texte.join('\n\n').substring(0, 3000);
+}
+
+/**
+ * Generiert 5 Diagnoseaufgaben per KI, passend zu Thema, Fokus und Lernzetteln
+ * @param {Object} examInfo
+ * @returns {Promise<Array>} Array von Exercise-Objekten
+ */
+async function generateAIDiagnosticQuestions(examInfo) {
+    let prompt = `Du bist ein Geschichtslehrer für Schüler der Klasse 8-10 in Deutschland.
+
+Erstelle genau 5 Diagnoseaufgaben zum Thema "${examInfo.topicName}".`;
+
+    if (examInfo.focus) {
+        prompt += `\n\nFokus des Schülers: ${examInfo.focus}`;
+    }
+    if (examInfo.kannListe) {
+        prompt += `\n\nDer Schüler muss laut Aufgabenblatt folgendes können:\n${examInfo.kannListe}`;
+    }
+    const lernzettel = getLernzettelContent();
+    if (lernzettel) {
+        prompt += `\n\nLernzettel des Schülers (Aufgaben darauf aufbauen):\n${lernzettel}`;
+    }
+
+    prompt += `
+
+Verteile die 5 Aufgaben so: 2× AFB I (Reproduktion), 2× AFB II (Transfer), 1× AFB III (Reflexion).
+Basiere die Fragen konkret auf dem Fokus/den Lernzetteln, nicht allgemein.
+
+Antworte NUR mit einem JSON-Array (kein Text davor/danach):
+[
+  {
+    "question": "Aufgabenstellung",
+    "afb": 1,
+    "operator": "nennen",
+    "points": 3,
+    "sampleAnswer": "Musterantwort als Fließtext",
+    "tips": "Kurzer Hinweis für den Schüler"
+  },
+  ...
+]`;
+
+    const response = await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 2000,
+            messages: [{ role: 'user', content: prompt }]
+        })
+    });
+
+    if (!response.ok) throw new Error(`API ${response.status}`);
+
+    const data = await response.json();
+    const rawText = data.content[0].text;
+
+    const jsonMatch = rawText.match(/\[[\s\S]*\]/);
+    if (!jsonMatch) throw new Error('Kein JSON in KI-Antwort');
+
+    const questions = JSON.parse(jsonMatch[0]);
+
+    return questions.map((q, i) => {
+        const id = `ai_diag_${Date.now()}_${i}`;
+        const exercise = {
+            id,
+            question: q.question || '',
+            afb: q.afb || (i < 2 ? 1 : i < 4 ? 2 : 3),
+            operator: q.operator || 'beschreiben',
+            points: q.points || 3,
+            sampleAnswer: [q.sampleAnswer || ''],
+            tips: q.tips || ''
+        };
+        _aiExerciseCache[id] = exercise;
+        return exercise;
+    });
+}
+
 /**
  * Pfad B: Wissen testen → danach Lernplan anbieten
  */
-function startWissenTest() {
+async function startWissenTest() {
     const examInfo = readSessionSetup();
     if (!examInfo) return;
 
-    // examInfo in localStorage zwischenspeichern für nach der Diagnostik
     localStorage.setItem('histolearn_pending_examinfo', JSON.stringify(examInfo));
 
     const sessionId = startLearningSession(
@@ -1622,6 +1710,36 @@ function startWissenTest() {
         examInfo.topicId,
         examInfo.examDate
     );
+
+    // KI-Fragen generieren, wenn Fokus, Kann-Liste oder Lernzettel vorhanden
+    const hasLernzettel = currentUser?.notes?.some(
+        n => n.type === 'lernzettel' && n.content && !n.content.startsWith('data:')
+    );
+    if (examInfo.focus || examInfo.kannListe || hasLernzettel) {
+        const content = document.getElementById('adaptiveLearningContent');
+        const modal = document.getElementById('adaptiveLearningModal');
+        if (content) {
+            content.innerHTML = `
+                <div class="lernplan-loading">
+                    <div class="loading-spinner">⏳</div>
+                    <h3>Aufgaben werden vorbereitet…</h3>
+                    <p>Die KI erstellt Fragen passend zu deinem Fokus und deinen Lernzetteln.</p>
+                </div>
+            `;
+        }
+        if (modal) modal.style.display = 'block';
+
+        try {
+            const aiExercises = await generateAIDiagnosticQuestions(examInfo);
+            const session = currentUser?.progress?.learningSessions?.current;
+            if (session) {
+                session.aiDiagnosticExercises = aiExercises.map(e => e.id);
+            }
+        } catch (err) {
+            console.error('KI-Fragengenerierung fehlgeschlagen, nutze statische Aufgaben:', err);
+        }
+    }
+
     showDiagnosticIntro(sessionId);
 }
 
@@ -1833,18 +1951,26 @@ function showDiagnosticIntro(sessionId) {
     const content = document.getElementById('adaptiveLearningContent');
     if (!content) return;
 
+    const session = currentUser?.progress?.learningSessions?.current;
+    const hasAiQuestions = session?.aiDiagnosticExercises?.length > 0;
+    const questionCount = hasAiQuestions ? session.aiDiagnosticExercises.length : 10;
+    const aiHint = hasAiQuestions
+        ? '<p>✨ Die Aufgaben wurden <strong>individuell auf deinen Fokus und deine Lernzettel abgestimmt</strong>.</p>'
+        : '';
+
     content.innerHTML = `
         <div class="diagnostic-intro">
             <h2>📊 Diagnose-Phase</h2>
             <p>Ich möchte zunächst einschätzen, wo du stehst!</p>
-            <p>Du bekommst <strong>10 Aufgaben</strong> aus verschiedenen Schwierigkeitsstufen.</p>
+            ${aiHint}
+            <p>Du bekommst <strong>${questionCount} Aufgaben</strong> aus verschiedenen Schwierigkeitsstufen.</p>
 
             <div class="diagnostic-tips">
                 <h4>💡 Tipps:</h4>
                 <ul>
                     <li>Beantworte so gut du kannst</li>
                     <li>Wenn du etwas nicht weißt, überspringe die Aufgabe</li>
-                    <li>Dauer: etwa 10-15 Minuten</li>
+                    <li>Dauer: etwa ${Math.round(questionCount * 1.5)}-${questionCount * 2} Minuten</li>
                 </ul>
             </div>
 
@@ -1852,7 +1978,7 @@ function showDiagnosticIntro(sessionId) {
                 <div class="progress-bar">
                     <div class="progress-fill" id="diagnosticProgressFill" style="width: 0%"></div>
                 </div>
-                <span class="progress-text" id="diagnosticProgressText">0 / 10 Aufgaben</span>
+                <span class="progress-text" id="diagnosticProgressText">0 / ${questionCount} Aufgaben</span>
             </div>
 
             <button class="btn btn-primary" onclick="startDiagnosticExercises('${sessionId}')">
@@ -1873,7 +1999,16 @@ function startDiagnosticExercises(sessionId) {
     }
 
     const session = currentUser.progress.learningSessions.current;
-    const diagnosticExercises = selectDiagnosticExercises(session.topicId);
+
+    // KI-generierte Aufgaben nutzen, falls vorhanden; sonst statische Auswahl
+    let diagnosticExercises;
+    if (session.aiDiagnosticExercises && session.aiDiagnosticExercises.length > 0) {
+        diagnosticExercises = session.aiDiagnosticExercises
+            .map(id => _aiExerciseCache[id])
+            .filter(Boolean);
+    } else {
+        diagnosticExercises = selectDiagnosticExercises(session.topicId);
+    }
 
     if (diagnosticExercises.length === 0) {
         showToast('Keine Übungen gefunden!', 'error');

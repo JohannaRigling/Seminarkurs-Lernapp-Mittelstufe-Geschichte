@@ -450,6 +450,11 @@ function getAllExercisesForTopic(topicId) {
  * @returns {Object|null} Die Übung oder null
  */
 function getExerciseById(exerciseId) {
+    // KI-generierte Übungen aus dem Cache prüfen
+    if (typeof _aiExerciseCache !== 'undefined' && _aiExerciseCache[exerciseId]) {
+        return _aiExerciseCache[exerciseId];
+    }
+
     const sources = [
         TOPIC_EXERCISES_FINAL,
         TOPIC_EXERCISES_COMPLETE,
@@ -463,7 +468,7 @@ function getExerciseById(exerciseId) {
             for (const topicId of Object.keys(source)) {
                 const exercise = source[topicId].find(e => e.id === exerciseId);
                 if (exercise) {
-                    return { ...exercise, topicId }; // Topic-ID hinzufügen
+                    return { ...exercise, topicId };
                 }
             }
         }
