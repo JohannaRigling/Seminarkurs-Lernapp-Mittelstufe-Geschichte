@@ -1508,5 +1508,49 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 
 ---
 
+---
+
+## 🎯 Session vom 29.04.2026 (Abend) – Kognitive Übungen im Modal, Belohnungsbildschirm, Quiz-Fix
+
+### ✅ Durchgeführte Änderungen:
+
+**1. Sidebar-Reihenfolge geändert (`app/index.html`):**
+- Neue Reihenfolge: KI-Tutor → ÜBEN → ZEITSTRAHL → LERNHILFEN → MATERIALIEN → MEINE BURG
+
+**2. Zuordnung & Reihenfolge im exerciseModal (`app/js/app.js`):**
+- `startSequenceGame()` und `startMatchingGame()` rendern jetzt via `_openCognitiveModal()` statt direkt in `#exerciseArea`
+- Beide Spiele öffnen sich jetzt genau wie Memory: mit Top-Bar (Vollbild-Button + Timer + X)
+- `matchedCount`, `selectedPerson`, `selectedEvent` werden beim Neustart zurückgesetzt
+- Inline-`<style>`-Blöcke aus JS entfernt → in `components.css` verschoben
+- Überschriften beider Spiele nutzen `var(--secondary-light)` (Akzentfarbe)
+
+**3. CSS für Reihenfolge- und Zuordnungsspiel (`app/css/components.css`):**
+- Items bekommen `background: rgba(255,255,255,0.07)` + `border: 1px solid rgba(255,255,255,0.1)` statt `var(--bg-tertiary)` → immer lesbar auf dunklem Modal-Hintergrund
+- Text explizit `color: #e8e4d9` (war unsichtbar auf Sepia-Theme weil `--bg-tertiary` cremig ist)
+- Vollbild-Layout: `cognitive-game-wrapper` mit `align-items: center`, `max-width: 680px` für Content, Button bleibt kompakt (nicht full-width)
+- Normale Ansicht: `.cognitive-game-wrapper` als Flex-Column mit `align-items: center`
+
+**4. Belohnungsbildschirm nach kognitiven Spielen (`app/js/app.js`, `app/css/components.css`):**
+- `showCognitiveReward(coins, xp, replayFn)` ersetzt `showToast(...)` bei allen 3 Spielen
+- Zentrierte Anzeige innerhalb des exerciseModals (kein Seiten-Toast mehr)
+- Inhalt: 🏆 Bounce-Animation + „Geschafft!" + zufälliges Lob (5 Varianten) + Rewards-Badges (🐄 +X, ⭐ +Y XP) + zwei Buttons: „🔄 Nochmal" + „✓ Fertig"
+- `_cognitiveReplayFn` globale Variable für sicheren Button-onclick ohne Funktions-Serialisierung
+- Memory: Stufen-Unlock läuft zuerst, dann 400ms Verzögerung → Reward erscheint nach letzter Karten-Flip-Animation
+- CSS-Klassen: `.cognitive-reward`, `.cr-trophy`, `.cr-title`, `.cr-praise`, `.cr-rewards`, `.cr-badge`, `.cr-actions`, `@keyframes cr-bounce`
+
+**5. Quiz-Modal-Fix: Weiter-Button war unsichtbar (`app/css/components.css`, `app/js/exercises.js`):**
+- **Ursache:** `#exerciseModalContent` hatte kein `overflow-y: auto` → Erklärung + „Weiter"-Button wurden nach unten abgeschnitten
+- **Fix:** `#exerciseModalContent { flex: 1; min-height: 0; overflow-y: auto; padding: 20px }` als normale Regel hinzugefügt
+- Abstände im Quiz kompakter: `quiz-header margin-bottom: 30px → 16px`, `quiz-question font-size: 1.4em → 1.15em`, `quiz-question margin-bottom: 30px → 16px`, `quiz-option padding: 20px → 12px 16px`, `quiz-options gap: 15px → 10px`
+- Doppelter Close-Button (`.exercise-close-btn`) aus Quiz-HTML in `exercises.js` entfernt (Modal-Top-Bar hat eigenes X)
+
+**Commits dieser Session:**
+- `7d206a5` — Zuordnung und Reihenfolge öffnen im exerciseModal
+- `7133e6b` — Fix Reihenfolge/Zuordnung: lesbare Items, sauberes Vollbild-Layout
+- `0787333` — Belohnungsbildschirm nach kognitiven Spielen
+- `1a00307` — Fix Quiz-Modal: scrollbar + kompaktere Abstände + doppelten Close-Button entfernt
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 29.04.2026 – Übungsmodal-Vollbild, Timer, Operatoren-Thema, SOS KI-Hilfe
+**Letzte Aktualisierung:** 29.04.2026 – Kognitive Übungen im Modal, Belohnungsbildschirm, Quiz-Fix
