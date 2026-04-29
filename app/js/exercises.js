@@ -266,6 +266,7 @@ quizStyles.textContent = `
     }
     .quiz-header h3 {
         margin-bottom: 15px;
+        color: var(--secondary-light);
     }
     .quiz-progress {
         display: flex;
