@@ -1,429 +1,379 @@
-// ===== BURG-BAUMEISTER (Minecraft-Style) =====
+// ===== BURG-BAUMEISTER (2D Seitenansicht) =====
 
-const CB_ROWS = 14, CB_COLS = 18;
-const CB_CELL = 38; // px pro Zelle
+// Szenen-Abmessungen (Referenz)
+const CB_W = 860, CB_H = 340, CB_GROUND = 42;
 
-// Blocktypen
-const CB_BLOCKS = {
-    stein:        { label: 'Gestein',    emoji: '🪨', cost: 10, cat: 'bau',  desc: 'Robustes Mauerwerk' },
-    ziegel:       { label: 'Ziegel',     emoji: '🧱', cost: 15, cat: 'bau',  desc: 'Gemauerte Ziegel' },
-    holz:         { label: 'Holz',       emoji: '🪵', cost: 8,  cat: 'bau',  desc: 'Balken und Dielen' },
-    fenster:      { label: 'Fenster',    emoji: '🔲', cost: 18, cat: 'bau',  desc: 'Glasfenster' },
-    tuer:         { label: 'Tür',        emoji: '🚪', cost: 25, cat: 'bau',  desc: 'Eichentür' },
-    dach:         { label: 'Dach',       emoji: '🔷', cost: 12, cat: 'bau',  desc: 'Dachziegel' },
-    baum:         { label: 'Baum',       emoji: '🌲', cost: 5,  cat: 'deko', desc: 'Großer Baum' },
-    busch:        { label: 'Busch',      emoji: '🌿', cost: 3,  cat: 'deko', desc: 'Blühender Busch' },
-    blume:        { label: 'Blume',      emoji: '🌸', cost: 2,  cat: 'deko', desc: 'Bunte Blume' },
-    brunnen:      { label: 'Brunnen',    emoji: '⛲', cost: 30, cat: 'deko', desc: 'Steinbrunnen' },
-    fackel:       { label: 'Fackel',     emoji: '🔥', cost: 8,  cat: 'deko', desc: 'Beleuchtung' },
-    kuh:          { label: 'Kuh',        emoji: '🐄', cost: 40, cat: 'tier', desc: 'Milchkuh' },
-    schaf:        { label: 'Schaf',      emoji: '🐑', cost: 25, cat: 'tier', desc: 'Wollschaf' },
-    huhn:         { label: 'Huhn',       emoji: '🐔', cost: 15, cat: 'tier', desc: 'Brathühnchen' },
-    pferd:        { label: 'Pferd',      emoji: '🐴', cost: 35, cat: 'tier', desc: 'Edles Pferd' },
-};
+// Gebäude-Definitionen: id, Name, Typ, Szenen-X, Breite, Höhe je Level, Kosten, Beschreibung
+const CB_DEFS = [
+    { id: 'mauer_l',    name: 'Linke Mauer',    type: 'wall',      x: 0,   w: 118, hh: [58,  75,  95],  costs: [15, 30],        icon: '🧱', desc: 'Äußere Schutzmauer – erste Verteidigungslinie der linken Flanke.' },
+    { id: 'turm_l',     name: 'Linker Turm',    type: 'tower',     x: 74,  w: 78,  hh: [125, 162, 198], costs: [50, 100, 200],  icon: '🗼', desc: 'Eckturm – von hier aus überblicken Wachen das Land.' },
+    { id: 'kirche',     name: 'Burgkapelle',    type: 'church',    x: 156, w: 98,  hh: [138, 180],       costs: [80, 160],       icon: '⛪', desc: 'Geistliches Zentrum – hier beten die Bewohner der Burg.' },
+    { id: 'burgtor',    name: 'Burgtor',        type: 'gate',      x: 258, w: 100, hh: [88,  118, 148], costs: [40, 80, 150],   icon: '🚪', desc: 'Einziger Eingang – gesichert durch Zugbrücke und Fallgitter.' },
+    { id: 'garten',     name: 'Kräutergarten', type: 'garden',    x: 362, w: 88,  hh: [40,  58],        costs: [20, 40],        icon: '🌿', desc: 'Kräuter für Küche und Heilkunst der Burgbewohner.' },
+    { id: 'bergfried',  name: 'Bergfried',      type: 'bergfried', x: 448, w: 108, hh: [200, 258, 318], costs: [100, 200, 400], icon: '🏰', desc: 'Stärkster Turm – Herz der Burg und letzte Zuflucht.' },
+    { id: 'herrenhaus', name: 'Herrenhaus',     type: 'house',     x: 556, w: 100, hh: [98,  136, 170], costs: [60, 120, 240],  icon: '🏠', desc: 'Wohnstätte des Burgherrn und seiner Ritter.' },
+    { id: 'backhaus',   name: 'Backhaus',       type: 'stall',     x: 656, w: 88,  hh: [58,  80],        costs: [25, 50],        icon: '🍞', desc: 'Bäckerei und Vorratskammer für die Burgküche.' },
+    { id: 'turm_r',     name: 'Rechter Turm',   type: 'tower',     x: 706, w: 78,  hh: [125, 162, 198], costs: [50, 100, 200],  icon: '🗼', desc: 'Eckturm – bewacht die rechte Flanke der Burg.' },
+    { id: 'mauer_r',    name: 'Rechte Mauer',   type: 'wall',      x: 744, w: 118, hh: [58,  75,  95],  costs: [15, 30],        icon: '🧱', desc: 'Äußere Schutzmauer der rechten Flanke.' },
+];
 
-// Zonen-Definitionen: welche Zellen gehören zu welcher Zone
-const CB_ZONES = (() => {
-    const border = [];
-    // Obere Mauer (Reihe 0)
-    for (let c = 0; c < CB_COLS; c++) border.push([0, c]);
-    // Untere Mauer (Reihe 13) mit Toreinfahrt bei cols 7-9 frei lassen (nur Außenwand)
-    for (let c = 0; c < CB_COLS; c++) {
-        if (c < 7 || c > 9) border.push([CB_ROWS - 1, c]);
-    }
-    // Linke Mauer (Spalte 0)
-    for (let r = 1; r < CB_ROWS - 1; r++) border.push([r, 0]);
-    // Rechte Mauer (Spalte 17)
-    for (let r = 1; r < CB_ROWS - 1; r++) border.push([r, CB_COLS - 1]);
+// Spielzustand: bldState = { [id]: level }  (0 = nicht gebaut)
+let _bldState = {};
+let _selectedBld = null;
 
-    // Burgtor-Eingang (Reihe 12 bei den Gate-Spalten)
-    const burgtor = [[12, 7], [12, 8], [12, 9], [13, 7], [13, 8], [13, 9]];
-
-    const rect = (r1, c1, r2, c2) => {
-        const cells = [];
-        for (let r = r1; r <= r2; r++)
-            for (let c = c1; c <= c2; c++) cells.push([r, c]);
-        return cells;
-    };
-
-    return {
-        mauer:      { label: 'Mauer',       color: '#5a4832', hcolor: '#8a6840', cells: border,             allowed: ['stein','ziegel','holz','tuer','fenster','fackel'], desc: 'Äußere Befestigungsmauer' },
-        burgtor:    { label: 'Burgtor',      color: '#3a3020', hcolor: '#6a5040', cells: burgtor,            allowed: ['stein','ziegel','holz','tuer','fackel'],           desc: 'Einfahrt und Zugbrücke' },
-        kirche:     { label: 'Kirche',       color: '#3d3d6b', hcolor: '#5555aa', cells: rect(2,2,4,4),     allowed: ['stein','ziegel','fenster','tuer','dach','fackel'],  desc: 'Burgkapelle' },
-        garten:     { label: 'Garten',       color: '#2a5a2a', hcolor: '#3a8a3a', cells: rect(2,7,4,9),     allowed: ['baum','busch','blume','brunnen','fackel'],          desc: 'Burgkräutergarten' },
-        frauenhaus: { label: 'Frauenhaus',   color: '#5a2a5a', hcolor: '#8a4a8a', cells: rect(2,12,4,14),   allowed: ['holz','ziegel','fenster','tuer','dach','blume'],   desc: 'Gemächer der Burgherrin' },
-        herrenhaus: { label: 'Herrenhaus',   color: '#5a4a2a', hcolor: '#8a7040', cells: rect(6,2,8,4),     allowed: ['holz','ziegel','fenster','tuer','dach','fackel'],  desc: 'Wohnbereich des Herrn' },
-        bergfried:  { label: 'Bergfried',    color: '#5a2a2a', hcolor: '#9a4040', cells: rect(6,12,8,15),   allowed: ['stein','ziegel','fenster','tuer','dach','fackel'], desc: 'Hauptturm der Burg' },
-        backhaus:   { label: 'Backhaus',     color: '#5a4020', hcolor: '#8a6030', cells: rect(10,2,11,4),   allowed: ['stein','holz','tuer','dach','fackel'],             desc: 'Bäckerei und Küche' },
-        stall:      { label: 'Stall',        color: '#4a5a2a', hcolor: '#6a8a40', cells: rect(10,8,11,11),  allowed: ['holz','dach','tuer','kuh','schaf','huhn','pferd'], desc: 'Tiere und Pferde' },
-        burghof:    { label: 'Burghof',      color: '#302820', hcolor: '#504030', cells: null,              allowed: ['brunnen','blume','baum','busch','fackel','kuh','schaf','huhn'], desc: 'Zentraler Innenhof' },
-    };
-})();
-
-// Burghof-Zellen = alle nicht-zugewiesenen Innenzellen
-function computeBurghofCells() {
-    const assigned = new Set();
-    Object.values(CB_ZONES).forEach(z => {
-        if (z.cells) z.cells.forEach(([r, c]) => assigned.add(r + ',' + c));
-    });
-    const cells = [];
-    for (let r = 1; r <= CB_ROWS - 2; r++) {
-        for (let c = 1; c <= CB_COLS - 2; c++) {
-            if (!assigned.has(r + ',' + c)) cells.push([r, c]);
-        }
-    }
-    return cells;
-}
-
-// Lookup: [row,col] → zone-id
-let _cellZoneMap = {};
-function buildCellZoneMap() {
-    _cellZoneMap = {};
-    CB_ZONES.burghof.cells = computeBurghofCells();
-    Object.entries(CB_ZONES).forEach(([zoneId, zone]) => {
-        if (zone.cells) {
-            zone.cells.forEach(([r, c]) => {
-                _cellZoneMap[r + ',' + c] = zoneId;
-            });
-        }
-    });
-}
-
-// Spielzustand
-let _selectedBlock = null;  // blockId
-let _zoomZone = null;       // zoneId oder null
-let _currentInventory = {}; // blockId → count
-let _castleGrid = [];       // Array(ROWS*COLS) of null|blockId
+// ───────────────────────── INIT / SPEICHERN ─────────────────────────
 
 function cbInit() {
-    buildCellZoneMap();
     if (!currentUser) return;
-    if (!currentUser.castleBuilder) {
-        currentUser.castleBuilder = { grid: Array(CB_ROWS * CB_COLS).fill(null), inventory: {} };
+    if (!currentUser.castleBuilder2) {
+        currentUser.castleBuilder2 = { bldState: {} };
     }
-    _castleGrid = currentUser.castleBuilder.grid;
-    _currentInventory = currentUser.castleBuilder.inventory;
+    _bldState = currentUser.castleBuilder2.bldState || {};
+    _selectedBld = null;
     renderCastleBuilder();
 }
 
-// Burg speichern
 function cbSave() {
     if (!currentUser) return;
-    currentUser.castleBuilder = { grid: _castleGrid, inventory: _currentInventory };
+    currentUser.castleBuilder2 = { bldState: _bldState };
     updateUserProgress({});
 }
 
-// Index in 1D-Array
-function cbIdx(r, c) { return r * CB_COLS + c; }
-
-// ===== RENDER =====
+// ───────────────────────── HAUPTRENDER ─────────────────────────────
 
 function renderCastleBuilder() {
     const container = document.getElementById('castleBuilderContainer');
     if (!container) return;
 
+    const coins = currentUser ? currentUser.progress.coins : 0;
+
     container.innerHTML = `
-        <div class="cb-layout">
-            <!-- Linkes Panel: Zonen-Info + Inventar -->
-            <div class="cb-left-panel">
-                <div class="cb-zone-info" id="cbZoneInfo">
-                    <div class="cb-zone-info-empty">
-                        <span>🏰</span>
-                        <p>Klicke auf eine Zone im Bauplan</p>
-                    </div>
-                </div>
-                <div class="cb-inventory" id="cbInventory">
-                    ${renderInventoryHTML()}
-                </div>
+        <div class="cb2-wrapper">
+            <div class="cb2-topbar">
+                <span class="cb2-coins">💰 <strong id="cb2CoinsVal">${coins}</strong> Kuh-Münzen</span>
+                <span class="cb2-hint">Klicke auf ein Gebäude, um es zu bauen oder auszubauen</span>
             </div>
-
-            <!-- Mitte: Bauplan-Grid -->
-            <div class="cb-grid-wrapper">
-                <div class="cb-zoom-hint">Doppelklick = Zoom | Klick = bauen/entfernen</div>
-                <div class="cb-grid-outer" id="cbGridOuter">
-                    <div class="cb-grid" id="cbGrid" style="width:${CB_COLS*CB_CELL}px;height:${CB_ROWS*CB_CELL}px">
-                        ${renderGridHTML()}
-                    </div>
-                </div>
+            <div class="cb2-scene" id="cb2Scene">
+                ${renderSceneHTML()}
             </div>
-
-            <!-- Rechtes Panel: Shop -->
-            <div class="cb-right-panel">
-                <div class="cb-shop">
-                    <h3>🛒 Baustoff-Shop</h3>
-                    <div class="cb-coins-display">
-                        <span>💰 Deine Münzen:</span>
-                        <strong id="cbCoinsDisplay">${currentUser ? currentUser.progress.coins : 0} 🐄</strong>
-                    </div>
-                    ${renderShopHTML()}
-                </div>
+            <div class="cb2-info-panel" id="cb2InfoPanel">
+                ${renderInfoPanel(null)}
             </div>
         </div>
     `;
 }
 
-function renderGridHTML() {
-    let html = '';
-    for (let r = 0; r < CB_ROWS; r++) {
-        for (let c = 0; c < CB_COLS; c++) {
-            const zoneId = _cellZoneMap[r + ',' + c] || null;
-            const block = _castleGrid[cbIdx(r, c)];
-            const zone = zoneId ? CB_ZONES[zoneId] : null;
-            const bg = zone ? zone.color : '#1a1a1a';
-            const emoji = block ? (CB_BLOCKS[block]?.emoji || '') : '';
-            const title = zone ? zone.label : '';
+// ───────────────────────── SZENE ───────────────────────────────────
 
-            html += `<div class="cb-cell"
-                data-r="${r}" data-c="${c}" data-zone="${zoneId || ''}"
-                style="background:${bg};left:${c*CB_CELL}px;top:${r*CB_CELL}px;width:${CB_CELL}px;height:${CB_CELL}px"
-                title="${title}"
-                onclick="cbCellClick(${r},${c})"
-                ondblclick="cbCellDblClick(${r},${c})"
-            >${emoji}</div>`;
+function renderSceneHTML() {
+    let html = '<div class="cb2-clouds"><div class="cb2-cloud c1"></div><div class="cb2-cloud c2"></div><div class="cb2-cloud c3"></div></div>';
+    html += '<div class="cb2-ground-strip"></div>';
+
+    // Gebäude von links nach rechts
+    CB_DEFS.forEach(def => {
+        const lv = _bldState[def.id] || 0;
+        const isLocked = lv === 0;
+        const height = isLocked ? (def.hh[0] * 0.65) : def.hh[Math.min(lv - 1, def.hh.length - 1)];
+        const selected = _selectedBld === def.id ? 'selected' : '';
+        const lockedClass = isLocked ? 'locked' : '';
+
+        html += `
+            <div class="cb2-bld ${selected} ${lockedClass}"
+                style="left:${def.x}px; width:${def.w}px; height:${height}px;"
+                onclick="cbClickBuilding('${def.id}')"
+                title="${def.name} ${lv > 0 ? '(Level ' + lv + ')' : '(nicht gebaut)'}">
+                ${renderBuildingArt(def, lv, height)}
+                ${isLocked ? `<div class="cb2-bld-lock">🔒</div>` : ''}
+                ${lv > 0 ? `<div class="cb2-bld-badge">Lv.${lv}</div>` : ''}
+                <div class="cb2-bld-label">${def.name}</div>
+            </div>
+        `;
+    });
+
+    return html;
+}
+
+// ───────────────────────── GEBÄUDE-KUNST ───────────────────────────
+
+function renderBuildingArt(def, lv, height) {
+    const t = def.type;
+    if (t === 'wall')      return renderWall(def, lv, height);
+    if (t === 'tower')     return renderTower(def, lv, height);
+    if (t === 'bergfried') return renderBergfried(def, lv, height);
+    if (t === 'church')    return renderChurch(def, lv, height);
+    if (t === 'gate')      return renderGate(def, lv, height);
+    if (t === 'house')     return renderHouse(def, lv, height);
+    if (t === 'stall')     return renderStall(def, lv, height);
+    if (t === 'garden')    return renderGarden(def, lv, height);
+    return `<div class="bld-body" style="height:${height}px">${def.icon}</div>`;
+}
+
+function renderWall(def, lv, h) {
+    const battH = 10, notchW = 13, blockW = 11;
+    const num = Math.floor(def.w / (notchW + blockW));
+    let battlements = '';
+    for (let i = 0; i < num; i++) {
+        battlements += `<div class="bld-merlon" style="width:${blockW}px;height:${battH}px"></div>
+                        <div class="bld-crenel" style="width:${notchW}px;height:${battH}px"></div>`;
+    }
+    const arrowH = Math.round(h * 0.45), arrowW = 5;
+    return `
+        <div class="bld-top-battlements">${battlements}</div>
+        <div class="bld-wall-body" style="height:${h - battH}px">
+            <div class="bld-arrow-slit" style="height:${arrowH}px;width:${arrowW}px"></div>
+        </div>
+    `;
+}
+
+function renderTower(def, lv, h) {
+    const battH = 12;
+    const blockW = 10, notchW = 8, num = Math.floor(def.w / (blockW + notchW));
+    let battlements = '';
+    for (let i = 0; i < num; i++) {
+        battlements += `<div class="bld-merlon tower-merlon" style="width:${blockW}px;height:${battH}px"></div>
+                        <div class="bld-crenel" style="width:${notchW}px;height:${battH}px"></div>`;
+    }
+    const bodyH = h - battH;
+    const winH = lv >= 1 ? Math.round(bodyH * 0.15) : 0;
+    const winCount = lv >= 2 ? 4 : (lv >= 1 ? 2 : 0);
+    let windows = '';
+    const winPositions = [0.2, 0.45, 0.65, 0.82];
+    for (let i = 0; i < winCount; i++) {
+        windows += `<div class="bld-window arch-window" style="top:${Math.round(bodyH * winPositions[i])}px;width:8px;height:${winH}px"></div>`;
+    }
+    return `
+        <div class="bld-top-battlements tower-battlements">${battlements}</div>
+        <div class="bld-tower-body" style="height:${bodyH}px">
+            ${windows}
+            <div class="bld-door arch-door" style="bottom:0;width:12px;height:18px"></div>
+        </div>
+    `;
+}
+
+function renderBergfried(def, lv, h) {
+    const battH = 14;
+    const blockW = 12, notchW = 10, num = Math.floor(def.w / (blockW + notchW));
+    let battlements = '';
+    for (let i = 0; i < num; i++) {
+        battlements += `<div class="bld-merlon berg-merlon" style="width:${blockW}px;height:${battH}px"></div>
+                        <div class="bld-crenel" style="width:${notchW}px;height:${battH}px"></div>`;
+    }
+    const bodyH = h - battH;
+    const rows = lv >= 3 ? 4 : (lv >= 2 ? 3 : (lv >= 1 ? 2 : 1));
+    const wPerRow = lv >= 2 ? 2 : 1;
+    let winHTML = '';
+    for (let r = 0; r < rows; r++) {
+        const yPos = Math.round(bodyH * (0.12 + r * (0.72 / rows)));
+        let rowWins = '';
+        if (wPerRow === 2) {
+            rowWins = `<div class="bld-window arch-window" style="top:${yPos}px;left:20%;width:10px;height:14px"></div>
+                       <div class="bld-window arch-window" style="top:${yPos}px;right:20%;width:10px;height:14px"></div>`;
+        } else {
+            rowWins = `<div class="bld-window arch-window" style="top:${yPos}px;left:50%;transform:translateX(-50%);width:10px;height:14px"></div>`;
         }
+        winHTML += rowWins;
     }
-    // Beschriftungen der Zonen
-    const labeled = new Set();
-    Object.entries(CB_ZONES).forEach(([zoneId, zone]) => {
-        if (!zone.cells || zone.cells.length === 0) return;
-        // Finde ungefähren Mittelpunkt der Zone
-        const rows = zone.cells.map(([r]) => r);
-        const cols = zone.cells.map(([, c]) => c);
-        const midR = Math.round(rows.reduce((a, b) => a + b, 0) / rows.length);
-        const midC = Math.round(cols.reduce((a, b) => a + b, 0) / cols.length);
-        html += `<div class="cb-zone-label" style="left:${midC*CB_CELL}px;top:${midR*CB_CELL}px"
-            onclick="cbSelectZone('${zoneId}')"
-        >${zone.label}</div>`;
-    });
-    return html;
-}
-
-function renderInventoryHTML() {
-    const items = Object.entries(_currentInventory).filter(([, v]) => v > 0);
-    if (items.length === 0) return '<p class="cb-inv-empty">Inventar leer – kaufe Bausteine im Shop!</p>';
-    return '<h4>🎒 Inventar</h4>' + items.map(([blockId, count]) => {
-        const b = CB_BLOCKS[blockId];
-        if (!b) return '';
-        return `<div class="cb-inv-item ${_selectedBlock === blockId ? 'selected' : ''}" onclick="cbSelectBlock('${blockId}')">
-            <span>${b.emoji}</span>
-            <span>${b.label}</span>
-            <strong>×${count}</strong>
-        </div>`;
-    }).join('');
-}
-
-function renderShopHTML() {
-    const cats = { bau: '🧱 Baumaterial', deko: '🌸 Dekoration', tier: '🐄 Tiere' };
-    let html = '';
-    Object.entries(cats).forEach(([cat, catLabel]) => {
-        const blocks = Object.entries(CB_BLOCKS).filter(([, b]) => b.cat === cat);
-        html += `<div class="cb-shop-cat"><strong>${catLabel}</strong>`;
-        blocks.forEach(([blockId, b]) => {
-            const owned = _currentInventory[blockId] || 0;
-            const canAfford = currentUser && currentUser.progress.coins >= b.cost;
-            html += `<div class="cb-shop-item ${!canAfford ? 'unaffordable' : ''}">
-                <span class="cb-block-emoji">${b.emoji}</span>
-                <span class="cb-block-label">${b.label}</span>
-                <span class="cb-block-owned">×${owned}</span>
-                <span class="cb-block-price">${b.cost}🐄</span>
-                <button class="btn btn-small ${canAfford ? '' : 'disabled'}"
-                    onclick="cbBuyBlock('${blockId}')" ${canAfford ? '' : 'disabled'}>
-                    Kaufen
-                </button>
-            </div>`;
-        });
-        html += '</div>';
-    });
-    return html;
-}
-
-// ===== INTERAKTION =====
-
-function cbSelectBlock(blockId) {
-    _selectedBlock = _selectedBlock === blockId ? null : blockId;
-    document.getElementById('cbInventory').innerHTML = renderInventoryHTML();
-    updateCbCellHighlights();
-    updateZoneInfoDisplay();
-}
-
-function cbSelectZone(zoneId) {
-    const zone = CB_ZONES[zoneId];
-    if (!zone) return;
-    showCbZoneInfo(zoneId);
-    // Hebe Zone hervor
-    document.querySelectorAll('.cb-cell').forEach(cell => {
-        cell.classList.toggle('zone-highlight', cell.dataset.zone === zoneId);
-    });
-}
-
-function updateCbCellHighlights() {
-    if (!_selectedBlock) {
-        document.querySelectorAll('.cb-cell.placeable').forEach(el => el.classList.remove('placeable'));
-        return;
-    }
-    document.querySelectorAll('.cb-cell').forEach(cell => {
-        const zoneId = cell.dataset.zone;
-        if (!zoneId) { cell.classList.remove('placeable'); return; }
-        const zone = CB_ZONES[zoneId];
-        const allowed = zone && zone.allowed.includes(_selectedBlock);
-        cell.classList.toggle('placeable', !!allowed);
-    });
-}
-
-function cbCellClick(r, c) {
-    const zoneId = _cellZoneMap[r + ',' + c];
-    if (!zoneId) return;
-
-    const idx = cbIdx(r, c);
-    const currentBlock = _castleGrid[idx];
-
-    if (currentBlock) {
-        // Block entfernen → zurück ins Inventar
-        _currentInventory[currentBlock] = (_currentInventory[currentBlock] || 0) + 1;
-        _castleGrid[idx] = null;
-        updateCell(r, c);
-        document.getElementById('cbInventory').innerHTML = renderInventoryHTML();
-        cbSave();
-        showToast(`${CB_BLOCKS[currentBlock]?.emoji || ''} ${CB_BLOCKS[currentBlock]?.label} entfernt → Inventar`, 'info');
-        return;
-    }
-
-    if (!_selectedBlock) {
-        // Kein Block ausgewählt → Zone-Info zeigen
-        cbSelectZone(zoneId);
-        return;
-    }
-
-    // Prüfen ob Block in dieser Zone erlaubt
-    const zone = CB_ZONES[zoneId];
-    if (!zone.allowed.includes(_selectedBlock)) {
-        showToast(`${CB_BLOCKS[_selectedBlock]?.label} kann hier nicht platziert werden.`, 'warning');
-        return;
-    }
-
-    // Prüfen ob Block im Inventar
-    if (!_currentInventory[_selectedBlock] || _currentInventory[_selectedBlock] <= 0) {
-        showToast('Nicht genug im Inventar! Kaufe mehr im Shop.', 'warning');
-        return;
-    }
-
-    // Block platzieren
-    _currentInventory[_selectedBlock]--;
-    _castleGrid[idx] = _selectedBlock;
-    updateCell(r, c);
-    document.getElementById('cbInventory').innerHTML = renderInventoryHTML();
-    cbSave();
-
-    if (_currentInventory[_selectedBlock] <= 0) {
-        _selectedBlock = null;
-        updateCbCellHighlights();
-    }
-}
-
-function cbCellDblClick(r, c) {
-    const zoneId = _cellZoneMap[r + ',' + c];
-    const outer = document.getElementById('cbGridOuter');
-    const grid = document.getElementById('cbGrid');
-    if (!outer || !grid) return;
-
-    if (_zoomZone === zoneId) {
-        // Rauszoomen
-        _zoomZone = null;
-        grid.style.transform = '';
-        grid.style.transformOrigin = '';
-        outer.classList.remove('zoomed');
-    } else {
-        // Reinzoomen: Mittelpunkt der Zone berechnen
-        const zone = CB_ZONES[zoneId];
-        if (!zone || !zone.cells || zone.cells.length === 0) return;
-        const rows = zone.cells.map(([r2]) => r2);
-        const cols = zone.cells.map(([, c2]) => c2);
-        const midR = rows.reduce((a, b) => a + b, 0) / rows.length;
-        const midC = cols.reduce((a, b) => a + b, 0) / cols.length;
-        const originX = midC * CB_CELL + CB_CELL / 2;
-        const originY = midR * CB_CELL + CB_CELL / 2;
-
-        _zoomZone = zoneId;
-        grid.style.transformOrigin = `${originX}px ${originY}px`;
-        grid.style.transform = 'scale(2.8)';
-        outer.classList.add('zoomed');
-    }
-}
-
-function updateCell(r, c) {
-    const cell = document.querySelector(`.cb-cell[data-r="${r}"][data-c="${c}"]`);
-    if (!cell) return;
-    const block = _castleGrid[cbIdx(r, c)];
-    cell.textContent = block ? (CB_BLOCKS[block]?.emoji || '') : '';
-    updateCbCellHighlights();
-}
-
-function showCbZoneInfo(zoneId) {
-    const zone = CB_ZONES[zoneId];
-    if (!zone) return;
-    const panel = document.getElementById('cbZoneInfo');
-    if (!panel) return;
-
-    const allowedBlocks = zone.allowed.map(id => {
-        const b = CB_BLOCKS[id];
-        return b ? `<span class="cb-allowed-block" onclick="cbSelectBlock('${id}')" title="${b.label} – ${b.cost}🐄">${b.emoji}</span>` : '';
-    }).join('');
-
-    panel.innerHTML = `
-        <div class="cb-zone-detail" style="border-top: 3px solid ${zone.hcolor}">
-            <strong style="color:${zone.hcolor}">${zone.label}</strong>
-            <p>${zone.desc}</p>
-            <div class="cb-allowed-blocks">${allowedBlocks}</div>
-            <small>Klicke auf einen Block um ihn auszuwählen</small>
+    const banner = lv >= 2 ? `<div class="bld-banner">⚑</div>` : '';
+    return `
+        ${banner}
+        <div class="bld-top-battlements berg-battlements">${battlements}</div>
+        <div class="bld-bergfried-body" style="height:${bodyH}px">
+            ${winHTML}
+            <div class="bld-door arch-door" style="bottom:0;width:16px;height:22px;left:50%;transform:translateX(-50%)"></div>
         </div>
     `;
 }
 
-function updateZoneInfoDisplay() {
-    // nichts → Inventar-Auswahl zeigt sich durch renderInventoryHTML
+function renderChurch(def, lv, h) {
+    const spireH = Math.round(h * 0.35);
+    const bodyH = h - spireH;
+    const win = `<div class="bld-rose-window" style="top:${Math.round(bodyH * 0.22)}px"></div>`;
+    const door = `<div class="bld-door arch-door" style="bottom:0;width:14px;height:20px;left:50%;transform:translateX(-50%)"></div>`;
+    const cross = lv >= 2 ? `<div class="bld-cross">✝</div>` : '';
+    return `
+        <div class="bld-spire" style="height:${spireH}px;width:${Math.round(def.w * 0.45)}px">
+            ${cross}
+        </div>
+        <div class="bld-church-body" style="height:${bodyH}px">
+            ${lv >= 1 ? win : ''}
+            ${door}
+        </div>
+    `;
 }
 
-// ===== SHOP: Block kaufen =====
-function cbBuyBlock(blockId) {
-    const b = CB_BLOCKS[blockId];
-    if (!b || !currentUser) return;
+function renderGate(def, lv, h) {
+    const battH = 12;
+    const bodyH = h - battH;
+    const gateW = Math.round(def.w * 0.42);
+    const gateH = Math.round(bodyH * 0.62);
+    const blockW = 10, notchW = 8, num = Math.floor(def.w / (blockW + notchW));
+    let battlements = '';
+    for (let i = 0; i < num; i++) {
+        battlements += `<div class="bld-merlon" style="width:${blockW}px;height:${battH}px"></div>
+                        <div class="bld-crenel" style="width:${notchW}px;height:${battH}px"></div>`;
+    }
+    const chains = lv >= 2 ? `<div class="bld-chains">⛓</div>` : '';
+    return `
+        <div class="bld-top-battlements">${battlements}</div>
+        <div class="bld-gate-body" style="height:${bodyH}px">
+            <div class="bld-gate-arch" style="width:${gateW}px;height:${gateH}px"></div>
+            ${chains}
+            ${lv >= 3 ? `<div class="bld-window" style="top:6px;left:10%;width:8px;height:10px"></div>
+                          <div class="bld-window" style="top:6px;right:10%;width:8px;height:10px"></div>` : ''}
+        </div>
+    `;
+}
 
-    if (currentUser.progress.coins < b.cost) {
+function renderHouse(def, lv, h) {
+    const roofH = Math.round(h * 0.32);
+    const bodyH = h - roofH;
+    const chimney = lv >= 2 ? `<div class="bld-chimney"></div>` : '';
+    const wCount = lv >= 2 ? 2 : 1;
+    let wins = '';
+    if (wCount === 2) {
+        wins = `<div class="bld-window rect-win" style="top:${Math.round(bodyH*0.25)}px;left:20%;width:12px;height:10px"></div>
+                <div class="bld-window rect-win" style="top:${Math.round(bodyH*0.25)}px;right:20%;width:12px;height:10px"></div>`;
+    } else {
+        wins = `<div class="bld-window rect-win" style="top:${Math.round(bodyH*0.25)}px;left:50%;transform:translateX(-50%);width:12px;height:10px"></div>`;
+    }
+    return `
+        ${chimney}
+        <div class="bld-roof" style="height:${roofH}px;width:${def.w + 8}px;margin-left:-4px"></div>
+        <div class="bld-house-body" style="height:${bodyH}px">
+            ${wins}
+            <div class="bld-door rect-door" style="bottom:0;width:14px;height:20px;left:50%;transform:translateX(-50%)"></div>
+        </div>
+    `;
+}
+
+function renderStall(def, lv, h) {
+    const roofH = Math.round(h * 0.28);
+    const bodyH = h - roofH;
+    const animal = lv >= 2 ? `<span class="bld-animal">🐄</span>` : '';
+    return `
+        <div class="bld-stall-roof" style="height:${roofH}px;width:${def.w + 6}px;margin-left:-3px"></div>
+        <div class="bld-stall-body" style="height:${bodyH}px">
+            <div class="bld-door rect-door" style="bottom:0;width:18px;height:22px;left:50%;transform:translateX(-50%)"></div>
+            ${animal}
+        </div>
+    `;
+}
+
+function renderGarden(def, lv, h) {
+    const trees = lv >= 2 ? `🌲🌲🌸🌲` : `🌲🌿`;
+    const well = lv >= 2 ? `<div class="bld-well">⛲</div>` : '';
+    return `
+        <div class="bld-garden" style="height:${h}px">
+            <div class="bld-garden-trees">${trees}</div>
+            <div class="bld-garden-wall"></div>
+            ${well}
+        </div>
+    `;
+}
+
+// ───────────────────────── INFO-PANEL ─────────────────────────────
+
+function renderInfoPanel(bldId) {
+    if (!bldId) {
+        return `<div class="cb2-info-empty">
+            <span class="cb2-info-arrow">👆</span>
+            Klicke auf ein Gebäude, um es zu bauen oder zu verbessern
+        </div>`;
+    }
+    const def = CB_DEFS.find(d => d.id === bldId);
+    if (!def) return '';
+    const lv = _bldState[bldId] || 0;
+    const maxLv = def.hh.length;
+    const coins = currentUser ? currentUser.progress.coins : 0;
+
+    let actionHTML = '';
+    if (lv === 0) {
+        const cost = def.costs[0];
+        const canAfford = coins >= cost;
+        actionHTML = `
+            <button class="btn btn-primary cb2-build-btn ${canAfford ? '' : 'disabled'}"
+                onclick="cbBuyBuilding('${bldId}')" ${canAfford ? '' : 'disabled'}>
+                🏗️ Bauen — ${cost} 🐄
+            </button>`;
+    } else if (lv < maxLv) {
+        const cost = def.costs[lv];
+        const canAfford = coins >= cost;
+        actionHTML = `
+            <div class="cb2-level-info">
+                ${'⭐'.repeat(lv)}${'☆'.repeat(maxLv - lv)} Level ${lv}/${maxLv}
+            </div>
+            <button class="btn btn-primary cb2-build-btn ${canAfford ? '' : 'disabled'}"
+                onclick="cbBuyBuilding('${bldId}')" ${canAfford ? '' : 'disabled'}>
+                ⬆️ Ausbauen auf Level ${lv + 1} — ${cost} 🐄
+            </button>`;
+    } else {
+        actionHTML = `
+            <div class="cb2-level-info">
+                ${'⭐'.repeat(lv)} Level ${lv}/${maxLv} — vollständig ausgebaut!
+            </div>
+            <div class="cb2-maxed">✅ Fertig ausgebaut</div>`;
+    }
+
+    return `
+        <div class="cb2-info-content">
+            <div class="cb2-info-icon">${def.icon}</div>
+            <div class="cb2-info-text">
+                <strong>${def.name}</strong>
+                <p>${def.desc}</p>
+            </div>
+            <div class="cb2-info-actions">${actionHTML}</div>
+        </div>
+    `;
+}
+
+// ───────────────────────── INTERAKTION ────────────────────────────
+
+function cbClickBuilding(id) {
+    _selectedBld = id;
+    // Selektions-Highlight
+    document.querySelectorAll('.cb2-bld').forEach(el => el.classList.remove('selected'));
+    const bldEl = document.querySelector(`.cb2-bld[onclick*="'${id}'"]`);
+    if (bldEl) bldEl.classList.add('selected');
+    // Info-Panel aktualisieren
+    document.getElementById('cb2InfoPanel').innerHTML = renderInfoPanel(id);
+}
+
+function cbBuyBuilding(id) {
+    const def = CB_DEFS.find(d => d.id === id);
+    if (!def || !currentUser) return;
+    const lv = _bldState[id] || 0;
+    const maxLv = def.hh.length;
+    if (lv >= maxLv) return;
+    const cost = def.costs[lv];
+    if (currentUser.progress.coins < cost) {
         showToast('Nicht genug Münzen! 🐄', 'warning');
         return;
     }
-
-    currentUser.progress.coins -= b.cost;
-    _currentInventory[blockId] = (_currentInventory[blockId] || 0) + 1;
+    currentUser.progress.coins -= cost;
+    _bldState[id] = lv + 1;
     updateUserProgress({ coins: currentUser.progress.coins });
     cbSave();
-
-    // UI aktualisieren
-    document.getElementById('cbInventory').innerHTML = renderInventoryHTML();
-    document.getElementById('cbCoinsDisplay').textContent = currentUser.progress.coins + ' 🐄';
-    // Shop neu rendern (Affordability update)
-    document.querySelector('.cb-shop').innerHTML = `
-        <h3>🛒 Baustoff-Shop</h3>
-        <div class="cb-coins-display">
-            <span>💰 Deine Münzen:</span>
-            <strong id="cbCoinsDisplay">${currentUser.progress.coins} 🐄</strong>
-        </div>
-        ${renderShopHTML()}
-    `;
-
-    showToast(`${b.emoji} ${b.label} gekauft!`, 'success');
-    if (_selectedBlock === null) cbSelectBlock(blockId);
+    // Szene neu rendern
+    document.getElementById('cb2Scene').innerHTML = renderSceneHTML();
+    document.getElementById('cb2InfoPanel').innerHTML = renderInfoPanel(id);
+    document.getElementById('cb2CoinsVal').textContent = currentUser.progress.coins;
+    // Selektiert lassen
+    const bldEl = document.querySelector(`.cb2-bld[onclick*="'${id}'"]`);
+    if (bldEl) bldEl.classList.add('selected');
+    showToast(`${def.icon} ${def.name} ${lv === 0 ? 'gebaut' : 'ausgebaut'}!`, 'success');
+    if (lv === 0) { addXP(10); addActivity('castle', `${def.name} gebaut`); }
+    else { addXP(5); }
 }
 
-// Wird von showSection('castle') aufgerufen
+// ───────────────────────── INIT-OBSERVER ──────────────────────────
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Castle section becomes active → init builder
-    const observer = new MutationObserver(() => {
-        const section = document.getElementById('castle');
-        if (section && section.classList.contains('active') && document.getElementById('castleBuilderContainer') && !document.getElementById('cbGrid')) {
+    const castle = document.getElementById('castle');
+    if (!castle) return;
+    const obs = new MutationObserver(() => {
+        if (castle.classList.contains('active') && document.getElementById('castleBuilderContainer') && !document.getElementById('cb2Scene')) {
             cbInit();
         }
     });
-    const castle = document.getElementById('castle');
-    if (castle) observer.observe(castle, { attributes: true, attributeFilter: ['class'] });
+    obs.observe(castle, { attributes: true, attributeFilter: ['class'] });
 });

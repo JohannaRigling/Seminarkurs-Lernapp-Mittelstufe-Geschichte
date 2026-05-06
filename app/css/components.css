@@ -5522,198 +5522,371 @@
 .archive-lightbox-info strong { font-size: 1em; }
 .archive-lightbox-info span { font-size: 0.85em; opacity: 0.7; }
 
-/* ===== BURG-BAUMEISTER ===== */
-.cb-layout {
+/* ===== BURG-BAUMEISTER 2D-SZENERIE ===== */
+
+/* Wrapper */
+.cb2-wrapper {
     display: flex;
-    gap: 12px;
-    align-items: flex-start;
+    flex-direction: column;
+    gap: 0;
     width: 100%;
-    min-height: 0;
 }
-.cb-left-panel {
-    width: 180px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-.cb-right-panel {
-    width: 200px;
-    flex-shrink: 0;
-}
-.cb-grid-wrapper {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-}
-.cb-zoom-hint {
-    font-size: 0.72em;
-    color: var(--text-muted, #888);
-    text-align: center;
-}
-.cb-grid-outer {
-    overflow: auto;
-    border: 2px solid var(--border-gold, #8b7355);
-    border-radius: 6px;
-    background: #111;
-    max-width: 100%;
-    max-height: 560px;
-    cursor: crosshair;
-}
-.cb-grid-outer.zoomed {
-    overflow: hidden;
-}
-.cb-grid {
-    position: relative;
-    transition: transform 0.25s ease;
-}
-.cb-cell {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    box-sizing: border-box;
-    border: 1px solid rgba(255,255,255,0.06);
-    cursor: pointer;
-    user-select: none;
-    transition: filter 0.1s;
-}
-.cb-cell:hover {
-    filter: brightness(1.4);
-    z-index: 1;
-}
-.cb-cell.placeable {
-    outline: 2px solid rgba(80,220,80,0.7);
-    outline-offset: -2px;
-}
-.cb-cell.zone-highlight {
-    outline: 2px solid rgba(255,220,60,0.9);
-    outline-offset: -2px;
-    filter: brightness(1.35);
-}
-.cb-zone-label {
-    position: absolute;
-    font-size: 9px;
-    font-weight: 700;
-    color: rgba(255,255,255,0.55);
-    pointer-events: auto;
-    cursor: pointer;
-    transform: translate(-50%, -50%);
-    white-space: nowrap;
-    text-shadow: 0 1px 3px #000;
-    z-index: 2;
-}
-.cb-zone-label:hover { color: rgba(255,255,255,0.9); }
 
-/* Zone Info Panel */
-.cb-zone-info {
-    background: var(--card-bg, #2a2420);
-    border: 1px solid var(--border-gold, #8b7355);
-    border-radius: 8px;
-    padding: 10px;
-    min-height: 100px;
-}
-.cb-zone-info-empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    color: var(--text-muted, #888);
-    font-size: 0.8em;
-    text-align: center;
-    padding: 12px 0;
-}
-.cb-zone-info-empty span { font-size: 1.8em; }
-.cb-zone-detail { padding: 4px 0; }
-.cb-zone-detail strong { font-size: 0.95em; display: block; margin-bottom: 4px; }
-.cb-zone-detail p { font-size: 0.78em; color: var(--text-secondary, #b0a898); margin: 0 0 6px; }
-.cb-zone-detail small { font-size: 0.72em; color: var(--text-muted, #888); }
-.cb-allowed-blocks { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
-.cb-allowed-block {
-    font-size: 18px;
-    cursor: pointer;
-    padding: 2px;
-    border-radius: 4px;
-    transition: background 0.15s;
-}
-.cb-allowed-block:hover { background: rgba(255,255,255,0.15); }
-
-/* Inventar */
-.cb-inventory {
-    background: var(--card-bg, #2a2420);
-    border: 1px solid var(--border-gold, #8b7355);
-    border-radius: 8px;
-    padding: 10px;
-}
-.cb-inventory h4 { margin: 0 0 8px; font-size: 0.85em; color: var(--text-gold, #daa520); }
-.cb-inv-empty { font-size: 0.75em; color: var(--text-muted, #888); text-align: center; }
-.cb-inv-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 6px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.82em;
-    transition: background 0.15s;
-    border: 1px solid transparent;
-}
-.cb-inv-item:hover { background: rgba(255,255,255,0.08); }
-.cb-inv-item.selected {
-    background: rgba(var(--primary-rgb, 139,99,60), 0.3);
-    border-color: var(--border-gold, #8b7355);
-}
-.cb-inv-item span:first-child { font-size: 16px; }
-.cb-inv-item strong { margin-left: auto; color: var(--text-gold, #daa520); }
-
-/* Shop */
-.cb-shop {
-    background: var(--card-bg, #2a2420);
-    border: 1px solid var(--border-gold, #8b7355);
-    border-radius: 8px;
-    padding: 10px;
-    max-height: 540px;
-    overflow-y: auto;
-}
-.cb-shop h3 { margin: 0 0 8px; font-size: 0.9em; color: var(--text-gold, #daa520); }
-.cb-coins-display {
+/* Top-Bar */
+.cb2-topbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.8em;
-    background: rgba(0,0,0,0.2);
-    padding: 5px 8px;
-    border-radius: 5px;
-    margin-bottom: 10px;
+    padding: 10px 16px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 10px 10px 0 0;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-bottom: none;
 }
-.cb-coins-display strong { color: var(--text-gold, #daa520); }
-.cb-shop-cat { margin-bottom: 10px; }
-.cb-shop-cat > strong {
-    display: block;
-    font-size: 0.75em;
-    color: var(--text-secondary, #b0a898);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 4px;
-    padding-bottom: 2px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+.cb2-coins {
+    font-size: 0.95em;
+    color: var(--text-gold, #daa520);
 }
-.cb-shop-item {
+.cb2-coins strong { font-size: 1.1em; }
+.cb2-hint {
+    font-size: 0.78em;
+    color: rgba(255,255,255,0.4);
+}
+
+/* Szene */
+.cb2-scene {
+    position: relative;
+    width: 100%;
+    max-width: 860px;
+    height: 340px;
+    overflow: hidden;
+    background: linear-gradient(
+        180deg,
+        #1a2535 0%,
+        #2a3d5a 28%,
+        #3d6080 48%,
+        #7aabca 65%,
+        #aac8d8 72%,
+        #8aab82 72%,
+        #5a8052 80%,
+        #3a5a32 100%
+    );
+    border: 2px solid rgba(255,255,255,0.1);
+    border-top: none;
+    border-radius: 0;
+}
+
+/* Wolken */
+.cb2-clouds { position: absolute; top: 0; left: 0; right: 0; pointer-events: none; }
+.cb2-cloud {
+    position: absolute;
+    background: rgba(255,255,255,0.18);
+    border-radius: 50px;
+    filter: blur(6px);
+}
+.cb2-cloud.c1 { width: 120px; height: 35px; top: 28px; left: 8%; }
+.cb2-cloud.c2 { width: 170px; height: 42px; top: 18px; left: 32%; }
+.cb2-cloud.c3 { width: 100px; height: 28px; top: 38px; right: 15%; }
+
+/* Boden-Streifen */
+.cb2-ground-strip {
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+    height: 42px;
+    background: linear-gradient(180deg, #4a6a38 0%, #3a5028 60%, #2a3a1a 100%);
+    border-top: 2px solid #6a8a4a;
+}
+
+/* Gebäude-Wrapper */
+.cb2-bld {
+    position: absolute;
+    bottom: 42px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    cursor: pointer;
+    transition: filter 0.2s, transform 0.15s;
+}
+.cb2-bld:hover { filter: brightness(1.18); transform: translateY(-3px); }
+.cb2-bld.selected { filter: brightness(1.25) drop-shadow(0 0 8px rgba(220,190,80,0.8)); transform: translateY(-4px); }
+.cb2-bld.locked { filter: grayscale(0.8) brightness(0.5); cursor: pointer; }
+.cb2-bld.locked:hover { filter: grayscale(0.6) brightness(0.65); }
+
+.cb2-bld-lock {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.4em;
+    text-shadow: 0 0 6px #000;
+    pointer-events: none;
+}
+.cb2-bld-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(201,162,39,0.85);
+    color: #fff;
+    font-size: 0.6em;
+    font-weight: 700;
+    padding: 1px 4px;
+    border-radius: 4px;
+    pointer-events: none;
+}
+.cb2-bld-label {
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.6em;
+    color: rgba(255,255,255,0.7);
+    white-space: nowrap;
+    text-shadow: 0 1px 3px #000;
+    pointer-events: none;
+}
+
+/* ── Bau-Elemente ── */
+
+/* Zinnen (battlements) */
+.bld-top-battlements {
+    display: flex;
+    flex-shrink: 0;
+    width: 100%;
+    overflow: hidden;
+}
+.bld-merlon {
+    background: #6a5a4a;
+    flex-shrink: 0;
+}
+.tower-merlon { background: #4a3a2a; }
+.berg-merlon  { background: #3a2a1a; }
+.bld-crenel   { background: transparent; flex-shrink: 0; }
+
+/* Mauer-Körper */
+.bld-wall-body {
+    width: 100%;
+    background:
+        repeating-linear-gradient(90deg, rgba(0,0,0,0) 0,rgba(0,0,0,0) 14px, rgba(0,0,0,0.08) 14px, rgba(0,0,0,0.08) 15px),
+        repeating-linear-gradient(0deg,  rgba(0,0,0,0) 0,rgba(0,0,0,0) 10px, rgba(0,0,0,0.08) 10px, rgba(0,0,0,0.08) 11px),
+        linear-gradient(180deg, #7a6a58 0%, #5a4a38 100%);
+    position: relative;
+}
+.bld-arrow-slit {
+    position: absolute;
+    top: 18%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.75);
+    border-radius: 3px 3px 0 0;
+}
+
+/* Turm-Körper */
+.bld-tower-body {
+    width: 100%;
+    background:
+        repeating-linear-gradient(90deg, rgba(0,0,0,0) 0,rgba(0,0,0,0) 11px, rgba(0,0,0,0.07) 11px, rgba(0,0,0,0.07) 12px),
+        repeating-linear-gradient(0deg,  rgba(0,0,0,0) 0,rgba(0,0,0,0) 9px,  rgba(0,0,0,0.07) 9px,  rgba(0,0,0,0.07) 10px),
+        linear-gradient(180deg, #5a4a38 0%, #3a2a1a 100%);
+    position: relative;
+}
+
+/* Bergfried-Körper */
+.bld-bergfried-body {
+    width: 100%;
+    background:
+        repeating-linear-gradient(90deg, rgba(0,0,0,0) 0,rgba(0,0,0,0) 13px, rgba(0,0,0,0.08) 13px, rgba(0,0,0,0.08) 14px),
+        repeating-linear-gradient(0deg,  rgba(0,0,0,0) 0,rgba(0,0,0,0) 11px, rgba(0,0,0,0.08) 11px, rgba(0,0,0,0.08) 12px),
+        linear-gradient(180deg, #3a2a18 0%, #251810 100%);
+    position: relative;
+}
+
+/* Fenster */
+.bld-window {
+    position: absolute;
+    background: rgba(0,0,0,0.8);
+}
+.arch-window { border-radius: 50% 50% 0 0; }
+.rect-win { border-radius: 2px; }
+
+/* Türen */
+.bld-door {
+    position: absolute;
+    background: rgba(0,0,0,0.85);
+}
+.arch-door { border-radius: 50% 50% 0 0; }
+.rect-door { border-radius: 2px; }
+
+/* Kirche */
+.bld-spire {
+    position: relative;
+    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+    background: linear-gradient(180deg, #4a4a6a 0%, #3a3a5a 100%);
+    margin-left: auto;
+    margin-right: auto;
+    flex-shrink: 0;
+}
+.bld-church-body {
+    width: 100%;
+    background:
+        repeating-linear-gradient(90deg, rgba(0,0,0,0) 0,rgba(0,0,0,0) 12px, rgba(0,0,0,0.07) 12px, rgba(0,0,0,0.07) 13px),
+        linear-gradient(180deg, #6a6a82 0%, #4a4a62 100%);
+    position: relative;
+}
+.bld-rose-window {
+    position: absolute;
+    width: 18px; height: 18px;
+    left: 50%; transform: translateX(-50%);
+    background: rgba(180,140,80,0.5);
+    border: 2px solid rgba(220,180,80,0.6);
+    border-radius: 50%;
+}
+.bld-cross {
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    color: rgba(220,200,140,0.9);
+    text-shadow: 0 0 4px #000;
+}
+
+/* Burgtor */
+.bld-gate-body {
+    width: 100%;
+    background:
+        linear-gradient(180deg, #4a3828 0%, #382818 100%);
+    position: relative;
+}
+.bld-gate-arch {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.92);
+    border-radius: 50% 50% 0 0;
+}
+.bld-chains {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: rgba(180,150,80,0.8);
+}
+
+/* Herrenhaus */
+.bld-roof {
+    flex-shrink: 0;
+    clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+    background: linear-gradient(180deg, #8a3a2a 0%, #6a2a1a 100%);
+}
+.bld-house-body {
+    width: 100%;
+    background:
+        repeating-linear-gradient(90deg, rgba(0,0,0,0) 0,rgba(0,0,0,0) 14px, rgba(0,0,0,0.06) 14px, rgba(0,0,0,0.06) 15px),
+        linear-gradient(180deg, #8a6a4a 0%, #6a4a2a 100%);
+    position: relative;
+}
+.bld-chimney {
+    position: absolute;
+    width: 8px; height: 18px;
+    background: #6a5a4a;
+    right: 20%;
+    top: -14px;
+}
+
+/* Stall/Backhaus */
+.bld-stall-roof {
+    flex-shrink: 0;
+    clip-path: polygon(0% 100%, 4% 0%, 96% 0%, 100% 100%);
+    background: linear-gradient(180deg, #6a5030 0%, #4a3820 100%);
+}
+.bld-stall-body {
+    width: 100%;
+    background: linear-gradient(180deg, #7a5a38 0%, #5a3a18 100%);
+    position: relative;
+}
+.bld-animal {
+    position: absolute;
+    bottom: 0px;
+    left: 8px;
+    font-size: 12px;
+}
+
+/* Garten */
+.bld-garden {
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+.bld-garden-trees {
+    text-align: center;
+    font-size: 15px;
+    line-height: 1;
+    margin-bottom: 2px;
+}
+.bld-garden-wall {
+    width: 100%;
+    height: 14px;
+    background: linear-gradient(180deg, #7a6a58 0%, #5a4a38 100%);
+    border-radius: 3px 3px 0 0;
+}
+.bld-well {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+}
+
+/* Banner am Bergfried */
+.bld-banner {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 18px;
+    color: #c9a227;
+    text-shadow: 0 0 4px #000;
+    z-index: 2;
+}
+
+/* ── Info-Panel ── */
+.cb2-info-panel {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 14px 18px;
+    min-height: 72px;
     display: flex;
     align-items: center;
-    gap: 5px;
-    padding: 4px 2px;
-    border-radius: 4px;
-    font-size: 0.78em;
 }
-.cb-shop-item.unaffordable { opacity: 0.45; }
-.cb-block-emoji { font-size: 15px; flex-shrink: 0; }
-.cb-block-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.cb-block-owned { color: var(--text-muted, #888); flex-shrink: 0; }
-.cb-block-price { color: var(--text-gold, #daa520); flex-shrink: 0; font-size: 0.9em; }
-.cb-shop-item .btn-small { padding: 2px 7px; font-size: 0.75em; flex-shrink: 0; }
-.cb-shop-item .btn-small.disabled { opacity: 0.4; cursor: not-allowed; }
+.cb2-info-empty {
+    color: rgba(255,255,255,0.4);
+    font-size: 0.88em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.cb2-info-arrow { font-size: 1.4em; }
+.cb2-info-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+.cb2-info-icon { font-size: 2em; flex-shrink: 0; }
+.cb2-info-text { flex: 1; min-width: 160px; }
+.cb2-info-text strong { font-size: 1em; color: var(--text-gold, #daa520); display: block; margin-bottom: 2px; }
+.cb2-info-text p { margin: 0; font-size: 0.82em; color: rgba(255,255,255,0.65); line-height: 1.4; }
+.cb2-info-actions { flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+.cb2-build-btn { font-size: 0.88em; padding: 8px 18px; white-space: nowrap; }
+.cb2-build-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+.cb2-level-info { font-size: 0.78em; color: var(--text-gold, #daa520); }
+.cb2-maxed { font-size: 0.85em; color: rgba(80,200,80,0.9); font-weight: 600; }
