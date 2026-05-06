@@ -1711,5 +1711,53 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 
 ---
 
+## 🎯 Session vom 06.05.2026 (4. Teil) – Burg-Baumeister Redesign: 2D-Seitenansicht
+
+### ✅ Komplette Neuentwicklung des Burg-Baumeister
+
+**Vorher:** Vogelperspektive 14×18 Emoji-Kacheln (Minecraft-Grid)
+**Jetzt:** 2D-Seitenansicht mit CSS-gezeichneten Gebäuden (ähnlich einem Aufbau-Spiel)
+
+**Szene (`app/js/castle-builder.js`, `app/css/components.css`):**
+- 860×340px Szene mit Himmels-Gradient (Nacht → Tag → Boden) + animierten Wolken + Grasstreifenboden
+- 10 Gebäude nebeneinander, von links nach rechts in der Szene platziert
+
+**10 Gebäude mit Positionen und Levels:**
+| Gebäude       | Typ        | Max. Level | Kosten |
+|---------------|------------|-----------|--------|
+| Linke Mauer   | wall       | 3         | 15/30 🐄 |
+| Linker Turm   | tower      | 3         | 50/100/200 🐄 |
+| Burgkapelle   | church     | 2         | 80/160 🐄 |
+| Burgtor       | gate       | 3         | 40/80/150 🐄 |
+| Kräutergarten | garden     | 2         | 20/40 🐄 |
+| Bergfried     | bergfried  | 3         | 100/200/400 🐄 |
+| Herrenhaus    | house      | 3         | 60/120/240 🐄 |
+| Backhaus      | stall      | 2         | 25/50 🐄 |
+| Rechter Turm  | tower      | 3         | 50/100/200 🐄 |
+| Rechte Mauer  | wall       | 3         | 15/30 🐄 |
+
+**CSS-Gebäude-Illustrationen (reine CSS/HTML, keine Bilder):**
+- **Zinnen:** `bld-merlon` + `bld-crenel` Divs für Mauerzacken
+- **Steinstruktur:** `repeating-linear-gradient` für Quader-Textur in 3 Tönen (Mauer, Turm, Bergfried)
+- **Fenster:** Absolute `.bld-window` Divs (Rundbogen via `border-radius 50% 50% 0 0`)
+- **Kirchenspire:** `clip-path: polygon(50% 0%, 100% 100%, 0% 100%)` mit Kreuz-Emoji
+- **Satteldächer:** `clip-path: polygon(0% 100%, 50% 0%, 100% 100%)` für Herrenhaus/Backhaus
+- **Torbogen:** Absolutes `.bld-gate-arch` mit border-radius Halbkreis
+- **Garten:** Baum/Blumen-Emojis + niedrige Steinmauer
+- **Stall:** Schrägdach via `clip-path: polygon(0% 100%, 4% 0%, 96% 0%, 100% 100%)`
+
+**Spielmechanik:**
+- Nicht gebaute Gebäude: graue Silhouette + 🔒, `filter: grayscale(0.8) brightness(0.5)`
+- Level-Badge (Lv.1/2/3) oben rechts auf gebautem Gebäude
+- Gebäude werden mit jedem Level **höher** und bekommen mehr Details (mehr Fenster, Banner, Tiere)
+- Klick auf Gebäude → Info-Panel darunter: Name, Beschreibung, Kaufen/Ausbauen-Button
+- Hover: `brightness(1.18)` + 3px nach oben; Selektion: gold-glow drop-shadow
+- `currentUser.castleBuilder2 = { bldState: { [id]: level } }` (neue Datenstruktur, getrennt von altem castleBuilder)
+- `cbSave()` speichert via `updateUserProgress({})`
+
+**Commit:** `66a2a5d`
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 06.05.2026 – Timer sticky, Quellenarbeit-UI, Operator+Thema, Library-Cards
+**Letzte Aktualisierung:** 06.05.2026 – Burg-Baumeister Redesign (2D-Seitenansicht)
