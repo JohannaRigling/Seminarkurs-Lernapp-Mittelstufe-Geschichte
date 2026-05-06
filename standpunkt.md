@@ -1567,5 +1567,69 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 
 ---
 
+---
+
+## 🎯 Session vom 06.05.2026 – Bewertungssystem, Foto-Upload, Chat-Anhänge, Bildarchiv, Fortschrittstracking
+
+### ✅ Durchgeführte Änderungen:
+
+**1. Echter KI-Bewertung in Themenübungen (`app/js/integration.js`):**
+- `evaluateAnswer()` ruft jetzt echten Claude-API-Call auf (`/api/messages`, claude-haiku-4-5-20251001)
+- Prompt enthält: Frage, Operator, AFB-Level, Musterantwort, Schülerantwort
+- Antwort als JSON: `{"grade": 75, "label": "...", "feedback": "Was gut ist: ... Was fehlt: ..."}`
+- Fallback auf simulierte Keyword-Bewertung wenn kein API-Key vorhanden
+- `buildFeedbackHTML(evaluation)` erstellt strukturiertes Feedback mit farbiger Header-Box
+
+**2. Foto/Handschrift-Upload in Übungen (`app/js/integration.js`):**
+- `📷 Foto`-Button in der Aktions-Leiste jeder Karteikarte
+- Foto-Vorschau unter der Textarea (`.fc-photo-preview`)
+- `submitPhotoAnswer()` — Vision-API: schickt base64-Bild + Aufgabenkontext an Claude
+  - Claude transkribiert handgeschriebenen Text und bewertet ihn
+  - Transkription wird in die Textarea übernommen
+  - Feedback und Musterlösung erscheinen wie bei Text-Auswertung
+- `handleExercisePhotoUpload()`, `clearExercisePhoto()`
+
+**3. Anhänge im KI-Chat (`app/js/chat.js`, `app/index.html`):**
+- `📎`-Button links neben dem Chat-Eingabefeld
+- Akzeptiert: Bilder (image/*) und Textdateien (.txt, .md)
+- **Bild-Anhang**: base64-kodiert, wird als Vision-Block an Claude geschickt
+- **Text-Anhang**: Inhalt wird als "[Hochgeladene Datei: name]...[Frage]" in die Nachricht eingebettet
+- `chatAttachment`-Variable, `handleChatAttachment()`, `showChatAttachmentPreview()`, `clearChatAttachment()`
+- `callClaudeAPI()` um optionalen `attachment`-Parameter erweitert
+- Vorschau erscheint über dem Eingabefeld, × zum Entfernen
+
+**4. Bildarchiv — Schulbuch-Scans (`app/js/image-archive.js` NEU, `app/data/images/`):**
+- 33 Schulbuch-Fotos in `app/data/images/` kopiert (klasse8 / klasse9 / klasse10-1 / klasse10-2)
+- `IMAGE_ARCHIVE`-Objekt mit Metadaten (Titel, Beschreibung, Kategorie) für alle 33 Bilder
+- Neue Klassen-Tabs (Kl. 8 / Kl. 9 / Kl. 10 T1 / Kl. 10 T2) + Kategorie-Filter
+- Bildergalerie als Grid mit Lazy-Loading-Thumbnails
+- Lightbox beim Klick auf ein Bild (Vollbild, ESC zum Schließen, Klick außen = schließen)
+- Erreichbar über: **Bibliothek → Ordner „📸 Schulbuch-Scans"**
+- Lightbox-Modal `#archiveLightbox` am Ende von index.html
+
+**5. Fortschrittstracking (`app/js/integration.js`, `app/index.html`, `app/css/components.css`):**
+- `currentUser.progress.topicProgress = { topic: { completed, total, scores, completedIds } }`
+- `getTopicProgress(topic)` — liest/initialisiert Fortschritt pro Thema
+- `saveExerciseProgress(exercise, grade)` — speichert nach jeder Auswertung
+- **Topic-Karten** in der Themenübungen-Übersicht zeigen jetzt Fortschrittsbalken + "X/20"
+- **Modal-Header** zeigt "Erledigt: X / Y" mit Balken, der sich live aktualisiert
+- Badge `✅` auf Karteikarte wenn Aufgabe bereits erledigt
+- `updateAllTopicCardProgress()` wird beim Öffnen der Übungs-Sektion aufgerufen
+- Fortschritt wird in localStorage gespeichert (via `updateUserProgress()`)
+
+**6. Neue CSS-Klassen (`app/css/components.css`):**
+- `.topic-overall-progress`, `.topic-prog-bar`, `.topic-prog-fill` — Balken im Modal
+- `.topic-card-progress`, `.tcp-bar`, `.tcp-fill` — Balken auf Topic-Karten
+- `.badge-done` — grünes Erledigt-Badge
+- `.fc-action-bar`, `.fc-photo-btn`, `.fc-photo-preview`, `.fc-photo-actions` — Foto-Upload-UI
+- `.chat-attach-btn`, `.chat-attachment-preview`, `.chat-attach-thumb`, etc. — Chat-Anhang-UI
+- `.feedback-text` — Feedback-Text nach Bewertung
+- `.image-archive-wrapper`, `.archive-class-tabs`, `.archive-cat-tabs`, `.archive-grid`,
+  `.archive-card`, `.archive-thumb`, `.archive-lightbox` usw. — komplettes Bildarchiv-UI
+
+**Commit:** `38e9d37`
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 29.04.2026 – Quiz-Vollbild-Scroll-Fix
+**Letzte Aktualisierung:** 06.05.2026 – Bewertungssystem, Foto-Upload, Chat-Anhänge, Bildarchiv, Fortschrittstracking
