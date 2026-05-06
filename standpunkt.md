@@ -1631,5 +1631,55 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 
 ---
 
+## 🎯 Session vom 06.05.2026 (Fortsetzung) – Pause-Overlay, Upload-Fix, Gelernt-Ordner, Burg-Baumeister
+
+### ✅ Durchgeführte Änderungen:
+
+**1. Pause-Overlay: Erlaubte Bereiche während Pause (`app/js/app.js`, `app/js/timer.js`, `app/css/main.css`):**
+- `BREAK_BLOCKED_SECTIONS = ['chat', 'exercises', 'library-materials', 'library-glossary', 'adaptive-session']`
+- Erlaubt während Pause: Dashboard, Zeitstrahl, Lernhilfen, Einstellungen, **Burg** (castle)
+- Break-Overlay-Message aktualisiert: "Du kannst die Burg, den Zeitstrahl, Lernhilfen und Einstellungen nutzen."
+- `showSection()` prüft `window.isBreakActive` vor jedem Sektionswechsel
+- `window.isBreakActive` wird in `showBreakOverlay()` / `hideBreakOverlay()` gesetzt
+- Sidebar z-index auf 100001 erhöht (über Break-Overlay z-index 99999)
+
+**2. Upload-Button-Überlappung (`app/css/components.css`):**
+- `.library-filters { padding-right: 150px; }` — schiebt Filter-Leiste weg vom fixed Timer-Toggle-Button
+
+**3. Gelernt-Ordner (`app/js/app.js`):**
+- `displayLibraryContent()`: Für `folderId === 'gelernt'` werden synthetische Einträge aus `currentUser.progress.topicProgress` generiert
+- Themen mit mind. 1 erledigter Aufgabe erscheinen als "📚 Thema — X von Y Übungen erledigt • Ø N%"
+- Klick auf Eintrag öffnet `showTopicExercises(topic)` direkt
+- `TOPIC_NAMES`-Lookup-Objekt für lesbare Themenbezeichnungen
+
+**4. Burg-Baumeister — Komplett neues Minecraft-Style Baufeld (`app/js/castle-builder.js` NEU):**
+- 14×18 Zellen-Grid, Vogelperspektive, 38px pro Zelle
+- **10 Zonen:** Mauer (Außenring), Burgtor, Kirche, Garten, Frauenhaus, Herrenhaus, Bergfried, Backhaus, Stall, Burghof
+- **15 Blocktypen:** Baumaterial (Stein, Ziegel, Holz, Fenster, Tür, Dach) + Dekoration (Baum, Busch, Blume, Brunnen, Fackel) + Tiere (Kuh, Schaf, Huhn, Pferd)
+- **Shop:** Blöcke kaufen mit Kuh-Münzen; Preise je nach Block (2–40 🐄)
+- **Inventar:** Links angezeigt; Block auswählen → grüne Plazierbarkeits-Highlights
+- **Plazierungsregeln:** Jede Zone erlaubt nur bestimmte Blocktypen
+- **Zoom:** Doppelklick auf Zelle → `scale(2.8)` auf Zonenmittelpunkt; nochmaliger Doppelklick = herauszoomen
+- **Block entfernen:** Klick auf belegtes Feld → Block zurück ins Inventar
+- **Zone-Info:** Links zeigt Zone-Name, Beschreibung, erlaubte Blöcke beim Klick
+- **Persistenz:** `currentUser.castleBuilder = { grid: [...], inventory: {...} }` in localStorage
+- `cbInit()` lädt beim Betreten der Sektion; initialisiert leeres Grid falls kein Spielstand
+- Integration: `app/index.html` Castle-Section durch `<div id="castleBuilderContainer"></div>` ersetzt
+- `showSection('castle')` ruft `cbInit()` auf
+- `updateCastleDisplay()` (Legacy) wird via Null-Guard abgefangen (kein crash)
+
+**5. Neue CSS-Klassen — Burg-Baumeister (`app/css/components.css`):**
+- `.cb-layout`, `.cb-left-panel`, `.cb-right-panel`, `.cb-grid-wrapper` — 3-Spalten-Layout
+- `.cb-grid-outer`, `.cb-grid-outer.zoomed`, `.cb-grid`, `.cb-cell` — Grid-Darstellung
+- `.cb-cell.placeable`, `.cb-cell.zone-highlight` — Interaktions-Highlights
+- `.cb-zone-label` — Beschriftungen auf dem Grid
+- `.cb-zone-info`, `.cb-zone-detail`, `.cb-allowed-blocks`, `.cb-allowed-block` — Zonen-Info-Panel
+- `.cb-inventory`, `.cb-inv-item`, `.cb-inv-item.selected`, `.cb-inv-empty` — Inventar-UI
+- `.cb-shop`, `.cb-shop-cat`, `.cb-shop-item`, `.cb-coins-display` — Shop-UI
+- `.cb-block-emoji`, `.cb-block-label`, `.cb-block-owned`, `.cb-block-price` — Shop-Zeile
+- `.cb-zoom-hint` — Hinweistext unter dem Grid
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 06.05.2026 – Bewertungssystem, Foto-Upload, Chat-Anhänge, Bildarchiv, Fortschrittstracking
+**Letzte Aktualisierung:** 06.05.2026 – Pause-Overlay, Upload-Fix, Gelernt-Ordner, Burg-Baumeister

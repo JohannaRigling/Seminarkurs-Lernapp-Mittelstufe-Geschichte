@@ -825,75 +825,9 @@
             <section id="castle" class="content-section">
                 <div class="section-header">
                     <h1>🏰 Meine Burg</h1>
-                    <p>Baue deine Burg mit deinem Lernfortschritt aus!</p>
+                    <p>Baue deine Burg Stein für Stein – Vogelperspektive, Doppelklick zum Zoomen!</p>
                 </div>
-
-                <div class="castle-layout">
-                    <div class="castle-view">
-                        <div class="castle-display" id="castleDisplay">
-                            <!-- Castle SVG/Graphics will be rendered here -->
-                            <div class="castle-base">
-                                <div class="castle-part wall-left locked" id="wallLeft">🧱</div>
-                                <div class="castle-part gate" id="gate">🚪</div>
-                                <div class="castle-part wall-right locked" id="wallRight">🧱</div>
-                                <div class="castle-part tower-left locked" id="towerLeft">🗼</div>
-                                <div class="castle-part keep locked" id="keep">🏰</div>
-                                <div class="castle-part tower-right locked" id="towerRight">🗼</div>
-                                <div class="castle-part flag locked" id="flag">🚩</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="castle-info">
-                        <div class="castle-stats">
-                            <h3>Burg-Status</h3>
-                            <div class="castle-stat">
-                                <span>Ausbaustufe:</span>
-                                <strong id="castleLevel">1/7</strong>
-                            </div>
-                            <div class="castle-stat">
-                                <span>Nächster Ausbau:</span>
-                                <strong id="nextUpgradeCost">100 🐄</strong>
-                            </div>
-                        </div>
-
-                        <div class="castle-shop">
-                            <h3>🛒 Burg-Shop</h3>
-                            <div class="shop-items" id="shopItems">
-                                <div class="shop-item">
-                                    <span class="shop-icon">🧱</span>
-                                    <span class="shop-name">Mauer</span>
-                                    <span class="shop-price">50 🐄</span>
-                                    <button class="btn btn-small" onclick="buyUpgrade('wall')">Kaufen</button>
-                                </div>
-                                <div class="shop-item">
-                                    <span class="shop-icon">🗼</span>
-                                    <span class="shop-name">Turm</span>
-                                    <span class="shop-price">100 🐄</span>
-                                    <button class="btn btn-small" onclick="buyUpgrade('tower')">Kaufen</button>
-                                </div>
-                                <div class="shop-item">
-                                    <span class="shop-icon">🏰</span>
-                                    <span class="shop-name">Bergfried</span>
-                                    <span class="shop-price">200 🐄</span>
-                                    <button class="btn btn-small" onclick="buyUpgrade('keep')">Kaufen</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="rank-info">
-                            <h3>⚔️ Rang-Übersicht</h3>
-                            <div class="ranks-list">
-                                <div class="rank-item current">🌾 Tagelöhner</div>
-                                <div class="rank-item">🌾 Bauer</div>
-                                <div class="rank-item">🔨 Handwerker</div>
-                                <div class="rank-item">⚔️ Ritter</div>
-                                <div class="rank-item">👑 Adel</div>
-                                <div class="rank-item">⚡ Legende</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div id="castleBuilderContainer"></div>
             </section>
 
             <!-- Settings Section -->
@@ -1126,6 +1060,7 @@
     <script src="js/timeline.js"></script>
     <script src="js/exercises.js"></script>
     <script src="js/gamification.js"></script>
+    <script src="js/castle-builder.js"></script>
     <script src="js/adaptive-learning.js"></script>
     <script src="js/study-notes.js"></script>
     <script src="js/avatar-editor.js"></script>

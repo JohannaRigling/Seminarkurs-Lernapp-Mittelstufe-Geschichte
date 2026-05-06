@@ -53,7 +53,15 @@ function setupEventListeners() {
 }
 
 // Sektion anzeigen
+const BREAK_BLOCKED_SECTIONS = ['chat', 'exercises', 'library-materials', 'library-glossary', 'adaptive-session'];
+
 function showSection(sectionId) {
+    // Während Pause: Lernbereiche sperren
+    if (window.isBreakActive && BREAK_BLOCKED_SECTIONS.includes(sectionId)) {
+        showToast('⏸️ Du bist in der Pause! Genieße deine Auszeit.', 'info');
+        return;
+    }
+
     // Alle Sektionen ausblenden
     document.querySelectorAll('.content-section').forEach(section => {
         section.classList.remove('active');
@@ -97,6 +105,11 @@ function showSection(sectionId) {
             setTimeout(() => {
                 if (typeof updateAllTopicCardProgress === 'function') updateAllTopicCardProgress();
             }, 100);
+            break;
+        case 'castle':
+            setTimeout(() => {
+                if (typeof cbInit === 'function' && !document.getElementById('cbGrid')) cbInit();
+            }, 50);
             break;
         case 'library-materials':
         case 'library-glossary':
@@ -428,9 +441,10 @@ function saveApiKey() {
     }
 }
 
-// Burg-Anzeige aktualisieren
+// Burg-Anzeige aktualisieren (Legacy – ersetzt durch castle-builder.js)
 function updateCastleDisplay() {
     if (!currentUser) return;
+    if (!document.getElementById('castleLevel')) return; // neuer Baumeister ist aktiv
 
     const parts = currentUser.progress.castleParts;
 
@@ -677,6 +691,34 @@ function displayLibraryContent(folderId = 'alle', searchQuery = '') {
     if (folderId === 'gelernt' && currentUser) {
         const learned = currentUser.learnedMaterials || [];
         materials = materials.filter(m => learned.includes(m.id));
+
+        // Abgeschlossene Themenübungen hinzufügen
+        if (currentUser.progress && currentUser.progress.topicProgress) {
+            const TOPIC_NAMES = {
+                'französische-revolution': 'Französische Revolution', 'industrialisierung': 'Industrialisierung',
+                'imperialismus': 'Imperialismus', 'erster-weltkrieg': 'Erster Weltkrieg',
+                'weimarer-republik': 'Weimarer Republik', 'revolution-1848': 'Revolution 1848',
+                'nationalsozialismus': 'Nationalsozialismus', 'zweiter-weltkrieg': 'Zweiter Weltkrieg',
+                'holocaust': 'Holocaust', 'brd-ddr': 'BRD und DDR', 'kalter-krieg': 'Kalter Krieg',
+                'wiedervereinigung': 'Wiedervereinigung', 'russland': 'Russland', 'china': 'China',
+                'tuerkei': 'Türkei / Osmanisches Reich', 'europaeische-union': 'Europäische Union'
+            };
+            Object.entries(currentUser.progress.topicProgress).forEach(([topic, prog]) => {
+                if (prog.completed > 0) {
+                    const avgScore = prog.scores.length > 0
+                        ? Math.round(prog.scores.reduce((a, b) => a + b, 0) / prog.scores.length) : 0;
+                    materials.push({
+                        id: 'topic-progress-' + topic,
+                        title: '📚 ' + (TOPIC_NAMES[topic] || topic),
+                        category: 'gelernt',
+                        type: 'topic-progress',
+                        content: `${prog.completed} von ${prog.total} Übungen erledigt • Ø ${avgScore}%`,
+                        isTopicProgress: true,
+                        topic
+                    });
+                }
+            });
+        }
     }
 
     // Suche
@@ -747,7 +789,8 @@ function getTypeIcon(type) {
         timeline: '📅',
         source: '📜',
         lernzettel: '📋',
-        lernplan: '🗓️'
+        lernplan: '🗓️',
+        'topic-progress': '📚'
     };
     return icons[type] || '📄';
 }
@@ -770,6 +813,13 @@ function getCategoryName(category) {
 
 // Material öffnen
 function openMaterial(materialId) {
+    // Topic-Fortschritts-Eintrag: direkt Übungen öffnen
+    if (materialId.startsWith('topic-progress-')) {
+        const topic = materialId.replace('topic-progress-', '');
+        showTopicExercises(topic);
+        return;
+    }
+
     const modal = document.getElementById('exerciseModal');
     const content = document.getElementById('exerciseModalContent');
 

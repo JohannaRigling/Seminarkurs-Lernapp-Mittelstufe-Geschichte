@@ -114,11 +114,12 @@ function showBreakOverlay() {
     let breakSeconds = getBreakTime();
 
     titleEl.textContent = '☕ Pause!';
-    msgEl.textContent = 'Gönn dir eine Auszeit. Die App ist während der Pause gesperrt.';
+    msgEl.textContent = 'Gönn dir eine Auszeit! Du kannst die Burg, den Zeitstrahl, Lernhilfen und Einstellungen nutzen.';
     countdownEl.textContent = formatTimerTime(breakSeconds);
     countdownEl.style.display = 'block';
     actionsEl.style.display = 'none';
     overlay.style.display = 'flex';
+    window.isBreakActive = true;
 
     breakOverlayInterval = setInterval(() => {
         breakSeconds--;
@@ -145,6 +146,7 @@ function showBreakOverlay() {
 function hideBreakOverlay() {
     const overlay = document.getElementById('breakOverlay');
     if (overlay) overlay.style.display = 'none';
+    window.isBreakActive = false;
 
     if (breakOverlayInterval) {
         clearInterval(breakOverlayInterval);
