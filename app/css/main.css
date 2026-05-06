@@ -768,7 +768,9 @@ body::before {
     align-items: center;
     gap: 25px;
     box-shadow: var(--shadow-gold);
-    position: relative;
+    position: sticky;
+    top: 10px;
+    z-index: 200;
     flex-wrap: wrap;
 }
 

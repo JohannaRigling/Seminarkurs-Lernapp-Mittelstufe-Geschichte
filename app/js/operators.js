@@ -840,25 +840,40 @@ function showQuizResult(correct, total) {
 }
 
 // Operator-Übung aus Übungs-Bereich starten
-function startOperatorPractice() {
-    const select = document.getElementById('operatorExerciseSelect');
-    const operatorId = select.value;
+async function startOperatorPractice() {
+    const operatorSelect = document.getElementById('operatorExerciseSelect');
+    const topicPreSelect = document.getElementById('operatorTopicPreSelect');
+    const operatorId = operatorSelect.value;
 
     if (!operatorId) {
         showToast('Bitte wähle einen Operator aus.', 'warning');
         return;
     }
 
-    // Operator finden und auswählen
     for (const afb of ['afb1', 'afb2', 'afb3']) {
         const found = OPERATORS[afb].find(op => op.id === operatorId);
-        if (found) {
-            selectedOperator = found;
-            break;
-        }
+        if (found) { selectedOperator = found; break; }
     }
 
-    startOperatorExercise();
+    const topicId = topicPreSelect ? topicPreSelect.value : '';
+    if (topicId) {
+        const topicName = topicPreSelect.options[topicPreSelect.selectedIndex].text;
+        const modal = document.getElementById('exerciseModal');
+        const content = document.getElementById('exerciseModalContent');
+        content.innerHTML = `<div style="text-align:center;padding:40px;"><p>⏳ Aufgabe wird generiert…</p></div>`;
+        modal.classList.add('active');
+        let exercise;
+        try {
+            exercise = await _generateKIOperatorExercise(selectedOperator, topicName);
+        } catch (e) {
+            exercise = generateOperatorExercise(selectedOperator);
+            exercise.task = `[${topicName}] ${exercise.task}`;
+        }
+        currentExercise = exercise;
+        _renderOperatorExerciseContent(exercise, topicName);
+    } else {
+        startOperatorExercise();
+    }
 }
 
 // Operatoren-Dropdown für Übungsbereich füllen

@@ -668,11 +668,31 @@
                     <!-- Operator Exercises (THIRD) -->
                     <div class="exercise-type" id="exerciseOperator">
                         <h3>Operator-Übungen</h3>
+                        <p class="exercise-hint">Wähle Operator und Thema – dann wird eine passende Aufgabe generiert.</p>
                         <div class="operator-exercise-select">
                             <select id="operatorExerciseSelect">
-                                <option value="">Wähle einen Operator...</option>
+                                <option value="">Operator auswählen…</option>
                             </select>
-                            <button class="btn btn-primary" onclick="startOperatorPractice()">Übung starten</button>
+                            <select id="operatorTopicPreSelect">
+                                <option value="">Thema auswählen…</option>
+                                <option value="französische-revolution">Französische Revolution</option>
+                                <option value="industrialisierung">Industrialisierung</option>
+                                <option value="imperialismus">Imperialismus</option>
+                                <option value="erster-weltkrieg">Erster Weltkrieg</option>
+                                <option value="weimarer-republik">Weimarer Republik</option>
+                                <option value="revolution-1848">Revolution 1848</option>
+                                <option value="nationalsozialismus">Nationalsozialismus</option>
+                                <option value="zweiter-weltkrieg">Zweiter Weltkrieg</option>
+                                <option value="holocaust">Holocaust</option>
+                                <option value="brd-ddr">BRD / DDR</option>
+                                <option value="kalter-krieg">Kalter Krieg</option>
+                                <option value="wiedervereinigung">Wiedervereinigung</option>
+                                <option value="russland">Russland</option>
+                                <option value="china">China</option>
+                                <option value="tuerkei">Türkei / Osmanisches Reich</option>
+                                <option value="eu">Europäische Union</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="startOperatorPractice()">Übung starten →</button>
                         </div>
                     </div>
 

@@ -872,15 +872,25 @@ function openQuellenarbeitItem(topicId, index) {
                 ${item.autor ? `<p class="ql-autor">${item.autor}</p>` : ''}
 
                 ${isKarikatur ? `
-                    <div class="ql-karikatur-box">
-                        <div class="ql-karikatur-icon">🎨</div>
-                        <h4>Bildbeschreibung</h4>
-                        <p>${item.beschreibung}</p>
-                        <small class="ql-hinweis">Hinweis: Da keine Originalbilder vorliegen, arbeitest du mit dieser detaillierten Beschreibung – wie in echten Prüfungen, wo du die Quelle auch erst kennenlernen musst.</small>
+                    <div class="ql-karikatur-frame">
+                        <div class="ql-karikatur-label">🎨 Historische Karikatur</div>
+                        <div class="ql-karikatur-visual">
+                            <div class="ql-karikatur-icon-large">🖼️</div>
+                            <div class="ql-karikatur-desc-block">
+                                <div class="ql-karikatur-desc-title">Bildbeschreibung (Analyse-Grundlage)</div>
+                                <p class="ql-karikatur-desc-text">${item.beschreibung}</p>
+                            </div>
+                        </div>
+                        <div class="ql-karikatur-meta">
+                            <span>📅 ${item.title.match(/\d{4}/) ? item.title.match(/\d{4}/)[0] : 'Historische Quelle'}</span>
+                            <span>Quelle: Schulbuch-Karikatur</span>
+                        </div>
                     </div>
                 ` : `
                     <div class="ql-text-box">
+                        <div class="ql-text-label">📄 Historikertext / Primärquelle</div>
                         <blockquote>${item.text}</blockquote>
+                        ${item.quelle ? `<p class="ql-text-quelle">Quelle: ${item.quelle}</p>` : ''}
                     </div>
                 `}
             </div>

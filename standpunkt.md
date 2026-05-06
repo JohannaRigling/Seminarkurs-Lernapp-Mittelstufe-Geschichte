@@ -1681,5 +1681,35 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 
 ---
 
+## 🎯 Session vom 06.05.2026 (3. Teil) – Timer-Fix, Quellenarbeit-UI, Operator+Thema, Library-Cards
+
+### ✅ Durchgeführte Änderungen:
+
+**1. Timer-Bar sticky beim Scrollen (`app/css/main.css`):**
+- `.timer-bar` jetzt `position: sticky; top: 10px; z-index: 200`
+- Bleibt beim Scrollen oben sichtbar; normale Darstellung (Border-Radius + Margin) bleibt erhalten
+
+**2. Quellenarbeit – Karikaturen visuell überarbeitet (`app/js/source-analysis.js`, `app/css/components.css`):**
+- Neues `.ql-karikatur-frame` Design: Goldener Rahmen, farbiger Header-Strip, Icon-Spalte + Text-Spalte
+- `.ql-karikatur-visual` = flex-Layout: großes 🖼️-Icon (Bildplatzhalter) + ausführliche Beschreibung daneben
+- Quellen-Metazeile mit Jahr und Quellenangabe unten
+- Historikertext-Box ebenfalls überarbeitet: `.ql-text-label` + `.ql-text-quelle` als Rahmen-Elemente
+- Entfernt: apologetischer "keine Originalbilder"-Hinweis → Beschreibung ist jetzt die Hauptquelle
+
+**3. Operator-Übungen: Thema vorauswählen (`app/index.html`, `app/js/operators.js`, `app/css/components.css`):**
+- Zweites Dropdown `#operatorTopicPreSelect` neben dem Operator-Dropdown (16 Themen)
+- `startOperatorPractice()` ist jetzt async: wenn Thema vorgewählt → sofort Aufgabe generieren (kein Zwischen-Modal); wenn kein Thema → wie bisher Themen-Modal
+- Hint-Text "Wähle Operator und Thema – dann wird eine passende Aufgabe generiert."
+- CSS: `.operator-exercise-select` als flex-wrap + Select-Styling
+
+**4. Library-Cards verbessert (`app/css/components.css`, `app/js/app.js`):**
+- Inline `<style>`-Injection aus `displayLibraryContent()` entfernt → echte CSS-Klassen in components.css
+- `.library-grid` mit `minmax(260px, 1fr)`, `.library-card` mit `min-height: 110px`, flex-column
+- `topic-progress-card` bekommt gold-seitlichen Rand statt grün
+- `.lib-card-progress-info` für Fortschrittstext in gelernt-Karten
+- `.library-card-meta` mit `margin-top: auto` für Bottom-Ausrichtung
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 06.05.2026 – Pause-Overlay, Upload-Fix, Gelernt-Ordner, Burg-Baumeister
+**Letzte Aktualisierung:** 06.05.2026 – Timer sticky, Quellenarbeit-UI, Operator+Thema, Library-Cards

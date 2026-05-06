@@ -744,10 +744,10 @@ function displayLibraryContent(folderId = 'alle', searchQuery = '') {
     content.innerHTML = `
         <div class="library-grid">
             ${materials.map(m => `
-                <div class="library-card ${m.isUserNote ? 'user-note' : ''}" onclick="openMaterial('${m.id}')">
+                <div class="library-card ${m.isUserNote ? 'user-note' : ''} ${m.isTopicProgress ? 'topic-progress-card' : ''}" onclick="openMaterial('${m.id}')">
                     <div class="library-card-header">
                         <span class="library-type">${getTypeIcon(m.type)}</span>
-                        ${currentUser ? `
+                        ${currentUser && !m.isTopicProgress ? `
                             <button class="favorite-btn ${(currentUser.favorites || []).includes(m.id) ? 'active' : ''}"
                                     onclick="event.stopPropagation(); toggleFavorite('${m.id}')">
                                 ${(currentUser.favorites || []).includes(m.id) ? '★' : '☆'}
@@ -755,6 +755,7 @@ function displayLibraryContent(folderId = 'alle', searchQuery = '') {
                         ` : ''}
                     </div>
                     <h4>${m.title}</h4>
+                    ${m.content && m.isTopicProgress ? `<p class="lib-card-progress-info">${m.content}</p>` : ''}
                     <div class="library-card-meta">
                         <span>${getCategoryName(m.category)}</span>
                         ${m.readTime ? `<span>~${m.readTime} min</span>` : ''}
@@ -763,18 +764,6 @@ function displayLibraryContent(folderId = 'alle', searchQuery = '') {
                 </div>
             `).join('')}
         </div>
-        <style>
-            .library-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-            .library-card { background: var(--bg-tertiary); border-radius: 15px; padding: 20px; cursor: pointer; transition: var(--transition); border: 2px solid transparent; }
-            .library-card:hover { transform: translateY(-5px); border-color: var(--primary); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-            .library-card.user-note { border-left: 4px solid var(--primary); }
-            .library-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-            .library-type { font-size: 1.5em; }
-            .favorite-btn { background: none; border: none; font-size: 1.3em; cursor: pointer; color: var(--text-secondary); }
-            .favorite-btn.active { color: #f39c12; }
-            .library-card h4 { margin: 10px 0; color: var(--text-primary); }
-            .library-card-meta { display: flex; gap: 15px; font-size: 0.85em; color: var(--text-secondary); flex-wrap: wrap; }
-        </style>
     `;
 }
 
