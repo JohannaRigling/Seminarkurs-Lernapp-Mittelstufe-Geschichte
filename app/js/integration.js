@@ -2,9 +2,9 @@
 // ERWEITERTE ÜBUNGEN-INTEGRATION
 // ========================================
 
-// Globale Variablen für Karteikarten
 let currentExerciseIndex = 0;
 let currentTopicName = '';
+let currentTopicKey = '';
 
 // Themenbasierte Übungen als kompakte Karteikarte anzeigen
 function showTopicExercises(topic) {
@@ -28,13 +28,15 @@ function showTopicExercises(topic) {
     const afb3 = exercises.filter(ex => ex.afb === 3);
 
     currentTopicName = getTopicName(topic);
+    currentTopicKey = topic;
     window.currentTopicExercises = exercises;
     window.currentFilteredExercises = exercises;
     currentExerciseIndex = 0;
 
-    // Karteikarten-Modal befüllen und öffnen
     const modal = document.getElementById('exerciseModal');
     const content = document.getElementById('exerciseModalContent');
+    const prog = getTopicProgress(topic);
+    const pct = prog.total > 0 ? Math.round((prog.completed / prog.total) * 100) : 0;
 
     content.innerHTML = `
         <div class="flashcard-header">
@@ -44,6 +46,10 @@ function showTopicExercises(topic) {
                 <button class="filter-btn" onclick="filterExercisesByAFB('afb1','${topic}')">AFB&nbsp;I&nbsp;(${afb1.length})</button>
                 <button class="filter-btn" onclick="filterExercisesByAFB('afb2','${topic}')">AFB&nbsp;II&nbsp;(${afb2.length})</button>
                 <button class="filter-btn" onclick="filterExercisesByAFB('afb3','${topic}')">AFB&nbsp;III&nbsp;(${afb3.length})</button>
+            </div>
+            <div class="topic-overall-progress">
+                <span id="topic-prog-label">Erledigt: ${prog.completed} / ${prog.total}</span>
+                <div class="topic-prog-bar"><div class="topic-prog-fill" id="topic-prog-fill" style="width:${pct}%"></div></div>
             </div>
         </div>
         <div id="exerciseCardContainer"></div>
@@ -89,9 +95,11 @@ function renderExerciseCard() {
         ? ex.sampleAnswer.map(p => `<li>${p}</li>`).join('')
         : `<li>${ex.sampleAnswer}</li>`;
 
+    const prog = getTopicProgress(currentTopicKey);
+    const alreadyDone = prog.completedIds && prog.completedIds.includes(ex.id);
+
     container.innerHTML = `
         <div class="fc-card">
-            <!-- Fortschritt -->
             <div class="fc-progress">
                 <span>${currentExerciseIndex + 1} / ${exercises.length}</span>
                 <div class="fc-progress-bar"><div class="fc-progress-fill" style="width:${progress}%"></div></div>
@@ -99,13 +107,12 @@ function renderExerciseCard() {
                     <span class="badge badge-afb">AFB ${ex.afb}</span>
                     <span class="badge badge-operator">${ex.operator}</span>
                     <span class="badge badge-points">${ex.points}P</span>
+                    ${alreadyDone ? '<span class="badge badge-done">✅</span>' : ''}
                 </span>
             </div>
 
-            <!-- Frage -->
             <div class="fc-question">${ex.question}</div>
 
-            <!-- Antwort -->
             <div class="fc-answer-section">
                 <textarea
                     id="answer-input-current"
@@ -114,22 +121,35 @@ function renderExerciseCard() {
                     rows="3"
                     ${isAnswered ? 'disabled' : ''}
                 >${ex.userAnswer || ''}</textarea>
-                ${!isAnswered ? `<button class="btn btn-primary fc-submit-btn" onclick="submitCurrentExerciseAnswer()">✓ Überprüfen</button>` : ''}
+
+                <div class="fc-action-bar">
+                    ${!isAnswered ? `<button class="btn btn-primary fc-submit-btn" onclick="submitCurrentExerciseAnswer()">✓ KI-Auswertung</button>` : ''}
+                    <label class="btn btn-secondary fc-photo-btn" for="exercisePhotoInput" title="Handschriftliche Antwort als Foto hochladen">
+                        📷 Foto
+                    </label>
+                    <input type="file" id="exercisePhotoInput" accept="image/*" capture="environment" style="display:none" onchange="handleExercisePhotoUpload(event)">
+                    <button class="fc-help-btn" onclick="openChatForHelp()">🆘 KI-Hilfe</button>
+                </div>
+
+                <div id="photo-preview-area" class="fc-photo-preview" style="display:none">
+                    <img id="photo-preview-img" src="" alt="Foto-Vorschau">
+                    <div class="fc-photo-actions">
+                        <button class="btn btn-primary" onclick="submitPhotoAnswer()">🤖 Foto auswerten</button>
+                        <button class="btn btn-secondary" onclick="clearExercisePhoto()">🗑️ Entfernen</button>
+                    </div>
+                </div>
             </div>
 
-            <!-- Feedback (nach Submit) -->
             <div class="fc-feedback" id="feedback-current" style="${isAnswered && ex.feedback ? '' : 'display:none;'}">
                 ${isAnswered && ex.feedback ? ex.feedback : ''}
             </div>
 
-            <!-- Musterlösung (nach Submit) -->
             <div class="fc-sample" id="sample-current" style="${isAnswered ? '' : 'display:none;'}">
                 <strong>📝 Musterlösung:</strong>
                 <ul>${sampleHtml}</ul>
             </div>
         </div>
 
-        <!-- Navigation -->
         <div class="fc-navigation">
             <button class="btn btn-secondary" onclick="previousExercise()" ${currentExerciseIndex === 0 ? 'disabled' : ''}>← Zurück</button>
             <span class="fc-nav-counter">${currentExerciseIndex + 1} / ${exercises.length}</span>
@@ -138,7 +158,148 @@ function renderExerciseCard() {
     `;
 }
 
-// Zur nächsten Übung
+// Foto hochladen
+function handleExercisePhotoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (file.size > 15 * 1024 * 1024) {
+        showToast('Bild zu groß (max. 15 MB)', 'warning');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        window._exercisePhotoData = e.target.result;
+        window._exercisePhotoMediaType = file.type || 'image/jpeg';
+
+        const preview = document.getElementById('photo-preview-area');
+        const img = document.getElementById('photo-preview-img');
+        if (preview && img) {
+            img.src = e.target.result;
+            preview.style.display = 'flex';
+        }
+
+        // Textarea ausblenden wenn Foto vorhanden
+        const textarea = document.getElementById('answer-input-current');
+        if (textarea) textarea.placeholder = 'Antwort wird aus dem Foto gelesen...';
+    };
+    reader.readAsDataURL(file);
+}
+
+function clearExercisePhoto() {
+    window._exercisePhotoData = null;
+    const preview = document.getElementById('photo-preview-area');
+    if (preview) preview.style.display = 'none';
+    const input = document.getElementById('exercisePhotoInput');
+    if (input) input.value = '';
+    const textarea = document.getElementById('answer-input-current');
+    if (textarea) textarea.placeholder = 'Schreibe hier deine Antwort...';
+}
+
+// Foto-Antwort durch KI auswerten
+async function submitPhotoAnswer() {
+    if (!window._exercisePhotoData) return;
+
+    const exercise = window.currentFilteredExercises[currentExerciseIndex];
+    const btn = document.querySelector('.fc-photo-actions .btn-primary');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Wird ausgewertet...'; }
+
+    try {
+        const base64 = window._exercisePhotoData.split(',')[1];
+        const mediaType = window._exercisePhotoMediaType || 'image/jpeg';
+
+        const apiKey = (typeof HISTOLEARN_CONFIG !== 'undefined' && HISTOLEARN_CONFIG.apiKey)
+            ? HISTOLEARN_CONFIG.apiKey
+            : localStorage.getItem('histolearn_apiKey');
+
+        if (!apiKey) {
+            showToast('Kein API-Key konfiguriert. Bitte in Einstellungen eintragen.', 'error');
+            if (btn) { btn.disabled = false; btn.textContent = '🤖 Foto auswerten'; }
+            return;
+        }
+
+        const sampleText = Array.isArray(exercise.sampleAnswer)
+            ? exercise.sampleAnswer.join('; ')
+            : exercise.sampleAnswer;
+
+        const response = await fetch('/api/messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: 'claude-haiku-4-5-20251001',
+                max_tokens: 700,
+                system: 'Du bist ein Geschichtslehrer der Klassen 8-10. Erkenne handgeschriebene Texte und bewerte sie konstruktiv und motivierend. Antworte immer auf Deutsch.',
+                messages: [{
+                    role: 'user',
+                    content: [
+                        {
+                            type: 'image',
+                            source: { type: 'base64', media_type: mediaType, data: base64 }
+                        },
+                        {
+                            type: 'text',
+                            text: `Aufgabe: ${exercise.question}\nOperator: ${exercise.operator} (AFB ${exercise.afb})\nMusterantwort: ${sampleText}\n\nBitte:\n1. Erkenne den handgeschriebenen Text (schreibe: "Dein Text: ...")\n2. Bewerte die Antwort (0–100%) anhand von Operator und Musterantwort\n3. Gib kurzes, motivierendes Feedback\n\nAntworte NUR als JSON: {"transcription": "...", "grade": 75, "label": "Gut gemacht! ✅", "feedback": "Was gut ist: ... Was fehlt: ..."}`
+                        }
+                    ]
+                }]
+            })
+        });
+
+        const data = await response.json();
+        const text = data.content?.[0]?.text || '';
+
+        let result;
+        try {
+            const match = text.match(/\{[\s\S]*?\}/);
+            result = match ? JSON.parse(match[0]) : null;
+        } catch(e) { result = null; }
+
+        if (!result) {
+            result = { grade: 50, label: '✅ Bewertet', transcription: '(Text erkannt)', feedback: text.substring(0, 300) };
+        }
+
+        // Transkription in Textarea übernehmen
+        const textarea = document.getElementById('answer-input-current');
+        if (textarea) {
+            textarea.value = result.transcription || '';
+            textarea.disabled = true;
+        }
+
+        // Foto-Bereich ausblenden
+        const preview = document.getElementById('photo-preview-area');
+        if (preview) preview.style.display = 'none';
+
+        // Feedback anzeigen
+        const feedbackDiv = document.getElementById('feedback-current');
+        if (feedbackDiv) {
+            feedbackDiv.style.display = 'block';
+            feedbackDiv.innerHTML = buildFeedbackHTML(result);
+        }
+
+        document.getElementById('sample-current')?.style && (document.getElementById('sample-current').style.display = 'block');
+        document.querySelector('.fc-submit-btn')?.style && (document.querySelector('.fc-submit-btn').style.display = 'none');
+
+        exercise.answered = true;
+        exercise.userAnswer = result.transcription || '';
+        exercise.feedback = feedbackDiv?.innerHTML || '';
+
+        saveExerciseProgress(exercise, result.grade || 50);
+
+        if (currentUser && (result.grade || 0) >= 50) {
+            const xpGain = Math.floor(exercise.points * ((result.grade || 50) / 100) * 10);
+            addXP(xpGain);
+            addCoins(Math.floor(xpGain / 5), 'Übung abgeschlossen');
+        }
+
+    } catch(error) {
+        console.error('Photo evaluation error:', error);
+        showToast('Fehler beim Auswerten des Fotos. Versuche es erneut.', 'error');
+        if (btn) { btn.disabled = false; btn.textContent = '🤖 Foto auswerten'; }
+    }
+}
+
+// Navigation
 function nextExercise() {
     if (currentExerciseIndex < window.currentFilteredExercises.length - 1) {
         currentExerciseIndex++;
@@ -146,7 +307,6 @@ function nextExercise() {
     }
 }
 
-// Zur vorherigen Übung
 function previousExercise() {
     if (currentExerciseIndex > 0) {
         currentExerciseIndex--;
@@ -154,7 +314,80 @@ function previousExercise() {
     }
 }
 
-// Aktuelle Übung (Karteikarte) bewerten
+// ===== FORTSCHRITTSTRACKING =====
+
+function getTopicProgress(topic) {
+    if (!currentUser) return { completed: 0, total: 20, scores: [], completedIds: [] };
+    if (!currentUser.progress.topicProgress) currentUser.progress.topicProgress = {};
+
+    const mapped = topic === 'tuerkei' ? 'tuerkei-osmanisches-reich' : topic;
+    let exercises = [];
+    if (typeof TOPIC_EXERCISES !== 'undefined' && TOPIC_EXERCISES[mapped]) exercises = TOPIC_EXERCISES[mapped];
+    else if (typeof TOPIC_EXERCISES_PART2 !== 'undefined' && TOPIC_EXERCISES_PART2[mapped]) exercises = TOPIC_EXERCISES_PART2[mapped];
+    else if (typeof TOPIC_EXERCISES_PART3 !== 'undefined' && TOPIC_EXERCISES_PART3[mapped]) exercises = TOPIC_EXERCISES_PART3[mapped];
+    else if (typeof TOPIC_EXERCISES_COMPLETE !== 'undefined' && TOPIC_EXERCISES_COMPLETE[mapped]) exercises = TOPIC_EXERCISES_COMPLETE[mapped];
+    else if (typeof TOPIC_EXERCISES_FINAL !== 'undefined' && TOPIC_EXERCISES_FINAL[mapped]) exercises = TOPIC_EXERCISES_FINAL[mapped];
+
+    if (!currentUser.progress.topicProgress[topic]) {
+        currentUser.progress.topicProgress[topic] = {
+            completed: 0,
+            total: exercises.length || 20,
+            scores: [],
+            completedIds: []
+        };
+    }
+    return currentUser.progress.topicProgress[topic];
+}
+
+function saveExerciseProgress(exercise, grade) {
+    if (!currentUser || !currentTopicKey) return;
+    const prog = getTopicProgress(currentTopicKey);
+
+    if (!prog.completedIds.includes(exercise.id)) {
+        prog.completedIds.push(exercise.id);
+        prog.completed = prog.completedIds.length;
+        prog.scores.push(grade);
+    }
+
+    updateUserProgress({ topicProgress: currentUser.progress.topicProgress });
+    updateTopicCardProgress(currentTopicKey);
+
+    const fill = document.getElementById('topic-prog-fill');
+    const label = document.getElementById('topic-prog-label');
+    if (fill) fill.style.width = Math.round((prog.completed / prog.total) * 100) + '%';
+    if (label) label.textContent = `Erledigt: ${prog.completed} / ${prog.total}`;
+}
+
+function updateTopicCardProgress(topic) {
+    const card = document.querySelector(`.topic-card[data-topic="${topic}"]`);
+    if (!card) return;
+    const prog = getTopicProgress(topic);
+    const pct = prog.total > 0 ? Math.round((prog.completed / prog.total) * 100) : 0;
+    const avgScore = prog.scores.length > 0
+        ? Math.round(prog.scores.reduce((a, b) => a + b, 0) / prog.scores.length)
+        : 0;
+
+    let progEl = card.querySelector('.topic-card-progress');
+    if (!progEl) {
+        progEl = document.createElement('div');
+        progEl.className = 'topic-card-progress';
+        card.appendChild(progEl);
+    }
+    progEl.innerHTML = `
+        <div class="tcp-bar"><div class="tcp-fill" style="width:${pct}%"></div></div>
+        <span>${prog.completed}/${prog.total}${avgScore > 0 ? ' · ⌀' + avgScore + '%' : ''}</span>
+    `;
+}
+
+function updateAllTopicCardProgress() {
+    if (!currentUser) return;
+    document.querySelectorAll('.topic-card[data-topic]').forEach(card => {
+        updateTopicCardProgress(card.dataset.topic);
+    });
+}
+
+// ===== KI-BEWERTUNG (Text) =====
+
 async function submitCurrentExerciseAnswer() {
     const exercise = window.currentFilteredExercises[currentExerciseIndex];
     const answerInput = document.getElementById('answer-input-current');
@@ -165,94 +398,109 @@ async function submitCurrentExerciseAnswer() {
         return;
     }
 
-    // Button deaktivieren während Bewertung läuft
-    const submitBtn = event.target;
-    submitBtn.disabled = true;
-    submitBtn.textContent = '⏳ Wird bewertet...';
+    const submitBtn = document.querySelector('.fc-submit-btn');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '⏳ KI bewertet...'; }
 
     try {
-        // KI-Bewertung
         const evaluation = await evaluateAnswer(exercise, userAnswer);
 
-        // Feedback anzeigen
         const feedbackDiv = document.getElementById('feedback-current');
         feedbackDiv.style.display = 'block';
-        feedbackDiv.innerHTML = `
-            <div class="feedback-header ${evaluation.grade >= 70 ? 'feedback-good' : evaluation.grade >= 50 ? 'feedback-ok' : 'feedback-poor'}">
-                <span class="feedback-score">${evaluation.grade}%</span>
-                <span class="feedback-label">${evaluation.label}</span>
-            </div>
-            <div class="feedback-text">
-                ${evaluation.feedback}
-            </div>
-        `;
+        feedbackDiv.innerHTML = buildFeedbackHTML(evaluation);
 
-        // Musterantwort anzeigen
         document.getElementById('sample-current').style.display = 'block';
-
-        // Input deaktivieren
         answerInput.disabled = true;
-        submitBtn.style.display = 'none';
+        if (submitBtn) submitBtn.style.display = 'none';
 
-        // Speichere Antwort in der Übung
         exercise.answered = true;
         exercise.userAnswer = userAnswer;
         exercise.feedback = feedbackDiv.innerHTML;
 
-        // XP vergeben
+        saveExerciseProgress(exercise, evaluation.grade);
+
         if (currentUser && evaluation.grade >= 50) {
             const xpGain = Math.floor(exercise.points * (evaluation.grade / 100) * 10);
             addXP(xpGain);
-            showToast(`+${xpGain} XP verdient!`, 'success');
+            addCoins(Math.floor(xpGain / 5), 'Übung abgeschlossen');
         }
 
     } catch (error) {
+        console.error('Evaluation error:', error);
         showToast('Fehler bei der Bewertung. Versuche es erneut.', 'error');
-        submitBtn.disabled = false;
-        submitBtn.textContent = '✓ Antwort überprüfen';
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '✓ KI-Auswertung'; }
     }
 }
 
-// KI-Bewertung der Antwort
+function buildFeedbackHTML(evaluation) {
+    const grade = evaluation.grade || 50;
+    const cls = grade >= 70 ? 'feedback-good' : grade >= 50 ? 'feedback-ok' : 'feedback-poor';
+    return `
+        <div class="feedback-header ${cls}">
+            <span class="feedback-score">${grade}%</span>
+            <span class="feedback-label">${evaluation.label || ''}</span>
+        </div>
+        <div class="feedback-text">${evaluation.feedback || ''}</div>
+    `;
+}
+
 async function evaluateAnswer(exercise, userAnswer) {
-    // Simulierte KI-Bewertung (später durch echte API ersetzen)
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            // Einfache Bewertungslogik basierend auf Schlüsselwörtern
-            const sampleAnswerText = Array.isArray(exercise.sampleAnswer)
-                ? exercise.sampleAnswer.join(' ')
-                : exercise.sampleAnswer;
+    const apiKey = (typeof HISTOLEARN_CONFIG !== 'undefined' && HISTOLEARN_CONFIG.apiKey)
+        ? HISTOLEARN_CONFIG.apiKey
+        : localStorage.getItem('histolearn_apiKey');
 
-            const keywords = sampleAnswerText.toLowerCase().match(/\b\w{4,}\b/g) || [];
-            const userWords = userAnswer.toLowerCase();
+    if (!apiKey) return simulatedEvaluate(exercise, userAnswer);
 
-            let matchCount = 0;
-            keywords.forEach(keyword => {
-                if (userWords.includes(keyword)) matchCount++;
-            });
+    const sampleText = Array.isArray(exercise.sampleAnswer)
+        ? exercise.sampleAnswer.join('; ')
+        : exercise.sampleAnswer;
 
-            const matchPercentage = keywords.length > 0 ? (matchCount / keywords.length) * 100 : 0;
-            const lengthScore = Math.min(userAnswer.length / 100, 1) * 30; // Bis zu 30% für Länge
-            const grade = Math.min(Math.round(matchPercentage * 0.7 + lengthScore), 100);
+    const prompt = `Du bewertest die Antwort eines Geschichtsschülers (Klasse 8-10).
 
-            let label, feedback;
-            if (grade >= 85) {
-                label = '🌟 Hervorragend!';
-                feedback = 'Deine Antwort ist sehr gut und deckt die wichtigsten Punkte ab. Du hast das Thema verstanden!';
-            } else if (grade >= 70) {
-                label = '✅ Gut gemacht!';
-                feedback = 'Deine Antwort ist gut, aber es fehlen noch einige Details. Vergleiche mit der Musterantwort.';
-            } else if (grade >= 50) {
-                label = '👍 Okay';
-                feedback = 'Du bist auf dem richtigen Weg, aber deine Antwort könnte ausführlicher sein. Schau dir die Musterantwort an.';
-            } else {
-                label = '📚 Noch üben';
-                feedback = 'Deine Antwort ist noch zu knapp. Versuche, mehr Details einzubauen und orientiere dich an der Musterantwort.';
-            }
+Aufgabe: ${exercise.question}
+Operator: ${exercise.operator} (AFB ${exercise.afb})
+Musterantwort: ${sampleText}
+Schülerantwort: ${userAnswer}
 
-            resolve({ grade, label, feedback });
-        }, 1500);
+Bewerte auf einer Skala von 0–100 und erkläre kurz was gut ist und was fehlt. Sei motivierend.
+
+Antworte NUR als JSON: {"grade": 75, "label": "Gut gemacht! ✅", "feedback": "Was gut ist: ... Was noch fehlt: ..."}`;
+
+    const response = await fetch('/api/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 400,
+            system: 'Du bist ein Geschichtslehrer. Bewerte sachlich, kurz und motivierend auf Deutsch.',
+            messages: [{ role: 'user', content: prompt }]
+        })
     });
+
+    const data = await response.json();
+    const text = data.content?.[0]?.text || '';
+
+    try {
+        const match = text.match(/\{[\s\S]*?\}/);
+        if (match) return JSON.parse(match[0]);
+    } catch(e) {}
+
+    return { grade: 60, label: '✅ Bewertet', feedback: text.substring(0, 300) };
+}
+
+function simulatedEvaluate(exercise, userAnswer) {
+    const sampleText = Array.isArray(exercise.sampleAnswer)
+        ? exercise.sampleAnswer.join(' ') : exercise.sampleAnswer;
+    const keywords = sampleText.toLowerCase().match(/\b\w{5,}\b/g) || [];
+    const userLower = userAnswer.toLowerCase();
+    const matchCount = keywords.filter(kw => userLower.includes(kw)).length;
+    const matchPct = keywords.length > 0 ? (matchCount / keywords.length) * 100 : 0;
+    const lengthScore = Math.min(userAnswer.length / 100, 1) * 30;
+    const grade = Math.min(Math.round(matchPct * 0.7 + lengthScore), 100);
+
+    if (grade >= 80) return { grade, label: '🌟 Hervorragend!', feedback: 'Sehr vollständige Antwort! Du hast das Thema verstanden.' };
+    if (grade >= 65) return { grade, label: '✅ Gut gemacht!', feedback: 'Gute Antwort – einige Details könnten noch ergänzt werden.' };
+    if (grade >= 45) return { grade, label: '👍 Okay', feedback: 'Auf dem richtigen Weg! Schau dir noch die Musterantwort an.' };
+    return { grade, label: '📚 Noch üben', feedback: 'Versuche mehr Details einzubauen. Die Musterantwort zeigt dir was fehlt.' };
 }
 
 // Themenname ermitteln
@@ -279,11 +527,8 @@ function getTopicName(topic) {
     return names[topic] || topic;
 }
 
-// Beim Laden der Seite
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
-        if (typeof TOPIC_EXERCISES !== 'undefined') {
-            console.log('✅ Themenübungen geladen');
-        }
-    }, 1000);
+        updateAllTopicCardProgress();
+    }, 1200);
 });

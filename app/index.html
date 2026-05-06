@@ -386,6 +386,8 @@
                         </div>
 
                         <div class="chat-input-area">
+                            <label class="chat-attach-btn" for="chatFileInput" title="Bild oder Textdatei anhängen">📎</label>
+                            <input type="file" id="chatFileInput" accept="image/*,.txt,.md" style="display:none" onchange="handleChatAttachment(event)">
                             <input type="text" id="chatInput" placeholder="Stelle eine Frage zur Geschichte..." onkeypress="if(event.key==='Enter') sendChatMessage()">
                             <button class="btn btn-primary" onclick="sendChatMessage()">Senden</button>
                         </div>
@@ -568,67 +570,67 @@
                         <h3>Themenübungen</h3>
                         <p>Bearbeite spezifische Übungen zu jedem Thema (je 20 Übungen pro Thema)</p>
                         <div class="topic-grid" id="topicExercisesGrid">
-                            <div class="topic-card" onclick="showTopicExercises('französische-revolution')">
+                            <div class="topic-card" data-topic="französische-revolution" onclick="showTopicExercises('französische-revolution')">
                                 <h4>🇫🇷 Französische Revolution</h4>
                                 <p>20 Übungen • Klasse 8</p>
                             </div>
-                            <div class="topic-card" onclick="showTopicExercises('industrialisierung')">
+                            <div class="topic-card" data-topic="industrialisierung" onclick="showTopicExercises('industrialisierung')">
                                 <h4>🏭 Industrialisierung</h4>
                                 <p>20 Übungen • Klasse 8</p>
                             </div>
-                            <div class="topic-card" onclick="showTopicExercises('imperialismus')">
+                            <div class="topic-card" data-topic="imperialismus" onclick="showTopicExercises('imperialismus')">
                                 <h4>🌍 Imperialismus</h4>
                                 <p>20 Übungen • Klasse 8</p>
                             </div>
-                            <div class="topic-card" onclick="showTopicExercises('erster-weltkrieg')">
+                            <div class="topic-card" data-topic="erster-weltkrieg" onclick="showTopicExercises('erster-weltkrieg')">
                                 <h4>⚔️ Erster Weltkrieg</h4>
                                 <p>20 Übungen • Klasse 8</p>
                             </div>
-                            <div class="topic-card" onclick="showTopicExercises('weimarer-republik')">
+                            <div class="topic-card" data-topic="weimarer-republik" onclick="showTopicExercises('weimarer-republik')">
                                 <h4>🏛️ Weimarer Republik</h4>
                                 <p>20 Übungen • Klasse 8</p>
                             </div>
-                            <div class="topic-card" onclick="showTopicExercises('revolution-1848')">
+                            <div class="topic-card" data-topic="revolution-1848" onclick="showTopicExercises('revolution-1848')">
                                 <h4>📜 Revolution 1848</h4>
                                 <p>20 Übungen • Klasse 8</p>
                             </div>
-                            <div class="topic-card" onclick="showTopicExercises('nationalsozialismus')">
+                            <div class="topic-card" data-topic="nationalsozialismus" onclick="showTopicExercises('nationalsozialismus')">
                                 <h4>🕯️ Nationalsozialismus</h4>
                                 <p>20 Übungen • Klasse 9</p>
                             </div>
-                            <div class="topic-card" onclick="showTopicExercises('zweiter-weltkrieg')">
+                            <div class="topic-card" data-topic="zweiter-weltkrieg" onclick="showTopicExercises('zweiter-weltkrieg')">
                                 <h4>🌐 Zweiter Weltkrieg</h4>
                                 <p>20 Übungen • Klasse 9</p>
                             </div>
-                            <div class="topic-card" onclick="showTopicExercises('holocaust')">
+                            <div class="topic-card" data-topic="holocaust" onclick="showTopicExercises('holocaust')">
                                 <h4>🕯️ Holocaust</h4>
                                 <p>20 Übungen • Klasse 9</p>
                             </div>
-                            <div class="topic-card" onclick="showTopicExercises('brd-ddr')">
+                            <div class="topic-card" data-topic="brd-ddr" onclick="showTopicExercises('brd-ddr')">
                                 <h4>🇩🇪 BRD/DDR</h4>
                                 <p>20 Übungen • Klasse 9</p>
                             </div>
-                            <div class="topic-card" onclick="showTopicExercises('kalter-krieg')">
+                            <div class="topic-card" data-topic="kalter-krieg" onclick="showTopicExercises('kalter-krieg')">
                                 <h4>❄️ Kalter Krieg</h4>
                                 <p>20 Übungen • Klasse 9</p>
                             </div>
-                            <div class="topic-card" onclick="showTopicExercises('wiedervereinigung')">
+                            <div class="topic-card" data-topic="wiedervereinigung" onclick="showTopicExercises('wiedervereinigung')">
                                 <h4>🎉 Wiedervereinigung</h4>
                                 <p>20 Übungen • Klasse 9</p>
                             </div>
-                            <div class="topic-card" onclick="showTopicExercises('russland')">
+                            <div class="topic-card" data-topic="russland" onclick="showTopicExercises('russland')">
                                 <h4>🇷🇺 Russland</h4>
                                 <p>20 Übungen • Klasse 10</p>
                             </div>
-                            <div class="topic-card" onclick="showTopicExercises('china')">
+                            <div class="topic-card" data-topic="china" onclick="showTopicExercises('china')">
                                 <h4>🇨🇳 China</h4>
                                 <p>20 Übungen • Klasse 10</p>
                             </div>
-                            <div class="topic-card" onclick="showTopicExercises('tuerkei')">
+                            <div class="topic-card" data-topic="tuerkei" onclick="showTopicExercises('tuerkei')">
                                 <h4>🇹🇷 Türkei</h4>
                                 <p>20 Übungen • Klasse 10</p>
                             </div>
-                            <div class="topic-card" onclick="showTopicExercises('europaeische-union')">
+                            <div class="topic-card" data-topic="europaeische-union" onclick="showTopicExercises('europaeische-union')">
                                 <h4>🇪🇺 Europäische Union</h4>
                                 <p>20 Übungen • Klasse 10</p>
                             </div>
@@ -732,6 +734,9 @@
                                 </div>
                                 <div class="folder-item" onclick="openFolder('notizen')">
                                     <span>📄</span> Lernzettel
+                                </div>
+                                <div class="folder-item" data-folder="bildarchiv" onclick="showImageArchive('klasse8')">
+                                    <span>📸</span> Schulbuch-Scans
                                 </div>
                             </div>
                         </div>
@@ -1084,6 +1089,18 @@
         </div>
     </div>
 
+    <!-- Bildarchiv Lightbox -->
+    <div id="archiveLightbox" class="archive-lightbox" onclick="if(event.target===this) closeArchiveLightbox()">
+        <div class="archive-lightbox-content">
+            <button class="archive-lightbox-close" onclick="closeArchiveLightbox()">×</button>
+            <img id="archiveLightboxImg" src="" alt="Schulbuchseite">
+            <div class="archive-lightbox-info">
+                <strong id="archiveLightboxTitle"></strong>
+                <span id="archiveLightboxDesc"></span>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="js/config.js"></script>
     <script src="js/data.js"></script>
@@ -1095,6 +1112,8 @@
     <script src="js/topic-exercises-final.js"></script>
     <!-- Quellenarbeit: Karikaturen & Historikertexte -->
     <script src="js/source-analysis.js"></script>
+    <!-- Bildarchiv -->
+    <script src="js/image-archive.js"></script>
     <!-- Integration von Bildarchiv & Übungen -->
     <script src="js/integration.js"></script>
     <script src="js/auth.js"></script>

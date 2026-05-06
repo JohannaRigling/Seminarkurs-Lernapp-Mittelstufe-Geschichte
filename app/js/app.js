@@ -93,6 +93,11 @@ function showSection(sectionId) {
             loadProfileSettings();
             updateAllAvatarDisplays();
             break;
+        case 'exercises':
+            setTimeout(() => {
+                if (typeof updateAllTopicCardProgress === 'function') updateAllTopicCardProgress();
+            }, 100);
+            break;
         case 'library-materials':
         case 'library-glossary':
             document.getElementById('library').classList.add('active');

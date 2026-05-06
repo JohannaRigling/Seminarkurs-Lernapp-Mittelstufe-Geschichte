@@ -120,17 +120,23 @@ async function sendChatMessage() {
     const input = document.getElementById('chatInput');
     const message = input.value.trim();
 
-    if (!message) return;
+    if (!message && !chatAttachment) return;
 
-    // Nachricht anzeigen
-    addChatMessage(message, 'user');
+    // Anzeigenachricht mit Anhang-Info
+    let displayMessage = message;
+    if (chatAttachment) {
+        displayMessage = chatAttachment.type === 'image'
+            ? `[📷 ${chatAttachment.name}]${message ? ' ' + message : ''}`
+            : `[📄 ${chatAttachment.name}]${message ? ' ' + message : ''}`;
+    }
+
+    addChatMessage(displayMessage, 'user');
     input.value = '';
 
-    // Chat-Timer starten
+    const attachment = chatAttachment;
+    clearChatAttachment();
     startChatTimer();
-
-    // KI-Antwort holen
-    await getAIResponse(message);
+    await getAIResponse(message || 'Bitte analysiere diesen Inhalt.', '', attachment);
 }
 
 // Quick Prompt senden
@@ -217,7 +223,7 @@ function hideTypingIndicator() {
 }
 
 // KI-Antwort holen
-async function getAIResponse(message, extraSystemInstruction = '') {
+async function getAIResponse(message, extraSystemInstruction = '', attachment = null) {
     // Sicherheitscheck vor API-Aufruf
     const safetyResult = checkMessageSafety(message);
     if (safetyResult === 'blocked') {
@@ -239,7 +245,7 @@ async function getAIResponse(message, extraSystemInstruction = '') {
         let response;
 
         if (apiKey && apiKey.startsWith('sk-')) {
-            response = await callClaudeAPI(message, apiKey, extraSystemInstruction);
+            response = await callClaudeAPI(message, apiKey, extraSystemInstruction, attachment);
         } else if (apiKey && apiKey.startsWith('AIza')) {
             response = await callGeminiAPI(message, apiKey);
         } else {
@@ -260,11 +266,30 @@ async function getAIResponse(message, extraSystemInstruction = '') {
 }
 
 // Claude API aufrufen
-async function callClaudeAPI(message, apiKey, extraSystemInstruction = '') {
+async function callClaudeAPI(message, apiKey, extraSystemInstruction = '', attachment = null) {
     const mode = AI_MODES[currentAIMode];
     const systemPrompt = extraSystemInstruction
         ? `${mode.systemPrompt}\n\n${extraSystemInstruction}`
         : mode.systemPrompt;
+
+    // Nachrichteninhalt aufbauen (mit oder ohne Anhang)
+    let userContent;
+    if (attachment && attachment.type === 'image') {
+        userContent = [
+            {
+                type: 'image',
+                source: { type: 'base64', media_type: attachment.mediaType, data: attachment.data }
+            },
+            {
+                type: 'text',
+                text: message || 'Bitte analysiere dieses Bild und erkläre was du siehst.'
+            }
+        ];
+    } else if (attachment && attachment.type === 'text') {
+        userContent = `[Hochgeladene Datei: ${attachment.name}]\n\n${attachment.data.substring(0, 3000)}\n\n---\nFrage: ${message}`;
+    } else {
+        userContent = message;
+    }
 
     const response = await fetch('/api/messages', {
         method: 'POST',
@@ -278,7 +303,7 @@ async function callClaudeAPI(message, apiKey, extraSystemInstruction = '') {
             messages: chatHistory.slice(-10).map(m => ({
                 role: m.role,
                 content: m.content
-            })).concat([{ role: 'user', content: message }])
+            })).concat([{ role: 'user', content: userContent }])
         })
     });
 
@@ -1120,3 +1145,71 @@ chatStyles.textContent = `
     }
 `;
 document.head.appendChild(chatStyles);
+
+// ===== CHAT ANHÄNGE =====
+
+let chatAttachment = null;
+
+function handleChatAttachment(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    if (file.size > 15 * 1024 * 1024) {
+        showToast('Datei zu groß (max. 15 MB)', 'warning');
+        return;
+    }
+
+    const reader = new FileReader();
+
+    if (file.type.startsWith('image/')) {
+        reader.onload = function(e) {
+            chatAttachment = {
+                type: 'image',
+                data: e.target.result.split(',')[1],
+                mediaType: file.type,
+                name: file.name,
+                previewUrl: e.target.result
+            };
+            showChatAttachmentPreview();
+        };
+        reader.readAsDataURL(file);
+    } else {
+        reader.onload = function(e) {
+            chatAttachment = { type: 'text', data: e.target.result, name: file.name };
+            showChatAttachmentPreview();
+        };
+        reader.readAsText(file);
+    }
+}
+
+function showChatAttachmentPreview() {
+    let preview = document.getElementById('chatAttachmentPreview');
+    if (!preview) {
+        preview = document.createElement('div');
+        preview.id = 'chatAttachmentPreview';
+        preview.className = 'chat-attachment-preview';
+        const inputArea = document.querySelector('.chat-input-area');
+        if (inputArea) inputArea.insertBefore(preview, inputArea.firstChild);
+    }
+
+    if (chatAttachment.type === 'image') {
+        preview.innerHTML = `
+            <img src="${chatAttachment.previewUrl}" alt="${chatAttachment.name}" class="chat-attach-thumb">
+            <span class="chat-attach-name">${chatAttachment.name}</span>
+            <button onclick="clearChatAttachment()" class="chat-attach-remove" title="Entfernen">×</button>
+        `;
+    } else {
+        preview.innerHTML = `
+            <span class="chat-attach-icon">📄</span>
+            <span class="chat-attach-name">${chatAttachment.name}</span>
+            <button onclick="clearChatAttachment()" class="chat-attach-remove" title="Entfernen">×</button>
+        `;
+    }
+}
+
+function clearChatAttachment() {
+    chatAttachment = null;
+    document.getElementById('chatAttachmentPreview')?.remove();
+    const fi = document.getElementById('chatFileInput');
+    if (fi) fi.value = '';
+}
