@@ -1759,5 +1759,202 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 
 ---
 
+## 🎯 Session vom 08.05.2026 – 3D-Voxel-Burg (Three.js), Atmosphäre, Tiere, Master-Account
+
+### ✅ Komplette Neu-Entwicklung: Burg-Baumeister 3D
+
+**Vorher:** 2D-Seitenansicht mit CSS-gezeichneten Gebäuden (10 feste Plätze, Level-Ausbau)
+**Jetzt:** Vollständiges 3D-Voxel-Bausystem mit Three.js — Block-für-Block-Bau wie Minecraft, drehbar, mit Tieren, Atmosphäre und Master-Account
+
+### 🛠️ Technische Architektur
+
+**Three.js-Einbindung (`app/index.html`, `app/js/castle-builder.js`):**
+- `castle-builder.js` läuft als **ES-Module** (`<script type="module">`)
+- Three.js geladen über **esm.sh** (umgeht ImportMap-Probleme):
+  ```js
+  import * as THREE from 'https://esm.sh/three@0.160.0';
+  import { OrbitControls } from 'https://esm.sh/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+  ```
+- Globale Funktionen werden über `window.cbInit = cbInit` etc. exponiert
+- Mehrstufiges try/catch im Init für robustes Fehlerhandling
+- 1700+ Zeilen, kein Build-Schritt nötig
+
+**3D-Szene:**
+- 24×24 Bauplatz, max. 14 Etagen Höhe
+- Heller Pastell-Himmel (Skybox-Gradient) + Sonne mit Halo + Wolken
+- Lambert/Standard-Materialien mit Schatten (PCFSoftShadowMap)
+- OrbitControls für Drehen/Zoomen, Pfeiltasten/WASD für Bewegung
+- Renderer geteilt mit `_blockGeo` und `_materials`-Cache für Performance
+
+### 🧱 Block-Typen (insgesamt 30+)
+
+**Bau-Materialien (Pixel-Texturen, 16×16 Logikpixel, NearestFilter):**
+- Stein (2 🐄), Ziegel (3 🐄), Sandstein (4 🐄), Holz (Eichenbrett-Look, 2 🐄)
+- Dachziegel (3 🐄), Mauerzinne (5 🐄), Goldblock (50 🐄, metallic)
+
+**Funktionale Blöcke:**
+- **Fenster** (6 🐄) — transparent (35% Opacity), dünner Rahmen + Glashighlight
+- **Tür** (8 🐄) — schmaler 3D-Mesh (14×16×3 Px, kein Würfel), 2 Blöcke hoch (lower mit Klinke + upper mit Sichtfenster)
+- **Fackel** (4 🐄) — eigene 3D-Geometrie (Holzstiel + 3-schichtige Flamme), animiertes Flackern, leuchtet mit `PointLight`. Wand-Variante: 25° gekippt an Block-Seiten platzierbar
+- **Banner** (10 🐄) — 3D-Stoffbahn mit Holzstange + V-förmig gezacktem Saum + goldenem Wappen, Wand-Variante drehbar
+
+**Möbel & Treppen (neu):**
+- **Bücherregal** (8 🐄) — Holzrahmen mit 2 Reihen bunter Bücher
+- **6 Bett-Farben** (12 🐄 jede) — Rot, Blau, Grün, Gelb, Weiß, Lila — 2 Slots in z-Richtung, hohes Kopfteil-Brett mit Verzierungen, niedrigeres Fußteil, dicke Decke + großes Kissen, **Auto-Drehung**: Kopfteil zeigt automatisch von der Kamera weg
+- **5 Treppen-Varianten** (Stein/Ziegel/Sandstein/Holz/Dach, 3-5 🐄) — L-förmiges Profil aus zwei Box-Geometrien, verwendet Material des Voll-Blocks, Drehung folgt Wand-Klick
+
+**Deko:**
+- Wasser (3 🐄) — animiert via Texture-Offset, transparent
+- Blume (3 🐄) — 2 gekreuzte Sprite-Planes (von allen Seiten sichtbar), mit Stiel + bunten Blütenblättern
+- Zaun (4 🐄) — Pfosten mit Querbalken in 4 Richtungen
+- Baumblock (5 🐄) — 3D-Stamm + Krone
+
+### 🐑 Tier-System (animiert + intelligente Bewegung)
+
+**5 Tier-Arten** (separat von _blocks in `_animals[]`):
+- Schaf (15 🐄), Kuh (18 🐄), Huhn (12 🐄, **2 Beine!**), Pferd (25 🐄), Schwein (14 🐄)
+- Jedes Tier: Box-Geometrie-Komposition (Körper + Kopf + Beine + Spezial-Details)
+- **Pferd**: dunkle Mähne, Schwanz, Schnauze
+- **Schwein**: Rüssel + Nasenlöcher + Ringelschwanz
+- **Kuh**: Hörner + weißer Fleck
+- **Huhn**: Schnabel + roter Kamm
+
+**Bewegungs-Logik:**
+- `cb3UpdateAnimals()` läuft pro Frame
+- `cb3PickAnimalTarget()` wählt zufälliges Ziel im 5er-Radius vom Spawn-Punkt (Home-Position)
+- Tiere drehen sich in Laufrichtung, Beine animieren Schritt-für-Schritt
+- **Kollisionsprüfung mit ALLEN Blöcken** (nicht nur Zäunen): bei blockierter Achse wird ausgewichen oder neues Ziel gewählt
+- `cb3PickReverseTarget()` bei Komplett-Blockade: Ziel in entgegengesetzter Richtung (90-270° Drehung)
+- Tiere können nicht durch Mauern/Häuser/Zäune laufen → echte Tiergehege möglich
+- Verschiedene Geschwindigkeiten: Pferd 1.6, Huhn 1.4, Schaf 0.9, Schwein 0.8, Kuh 0.6
+
+### 🎨 Atmosphäre (`cb3CreateSurroundings`)
+
+**Filter-Hilfsfunktionen ganz oben** (Hoisting-Bug behoben in ES-Module):
+- `isLandPosition(x,z)`: nur Wiesen-Zone (z < 1.42 GRID_SIZE, x < GRID_SIZE)
+- `isOnPlateau(x,z)`: Bauplatz selbst
+
+**Himmel & Sonne:**
+- Sonne: gelbe Sphere mit Halo am Himmel
+- 6 Wolken (Box-Cluster) verteilt
+- Heller Pastell-Skybox-Gradient (#6cb4e8 → #eaf5ff am Horizont)
+- Sanfter Fog (60-140 Einheiten, helles #dbeaf5)
+
+**Vier Himmelsrichtungen:**
+- 🌲 **Wald** (Norden): 60 Bäume in zufälligen Größen
+- 🌊 **Meer** (Süden): animiert, große Plane mit Pixel-Textur, Muscheln am Strand
+- 🏖️ **Sandstrand** zwischen Plateau und Meer (GRID_SIZE × 4 breit, 0.5 tief, prozedurale Sand-Textur)
+- ⛰️ **Berge** (Osten): 6 Pyramiden-Geometrien, hohe mit Schneekuppen + 15 Hügel-Vorland-Halbkugeln
+- 🏘️ **Dorf** (Westen): 5 Häuschen mit Fachwerk-Akzenten, Pyramidendächern, Türen + Fenster (emissiv) + Brunnen
+- 🌸 **130 Atmosphäre-Blumen** (cross-plane, 6 Farben, deterministisch verteilt)
+
+**Beleuchtung "sonniger Tag":**
+- AmbientLight: 0.75 (vorher 0.5)
+- HemisphereLight: 0.7 mit hellerem Sky-Ton (#a9d4f2)
+- DirectionalLight (Sonne): 1.25 mit warm-gelb (#fff8e0), Schatten via PCFSoftShadowMap
+
+### 🎮 Steuerung & UX
+
+- **Linksklick** auf leeres Feld: ausgewählten Block platzieren
+- **Rechtsklick** auf Block/Tier: zurück ins Inventar
+- **Linksklick auf Wand** + Fackel/Banner/Treppe: Wand-Variante (rotiert/gekippt)
+- **Maus-Drag** (im Canvas): Kamera drehen
+- **Scrollen**: Zoomen
+- **Pfeiltasten / WASD**: Kamera vorwärts/rückwärts/seitwärts (sliding über das Plateau)
+- **ESC**: aktuell ausgewählten Block wieder loslassen
+- **Hover-Geistblock**: grün = platzierbar, rot = blockiert/Außerhalb, mit pulsierender Opacity
+- **Status-Anzeige** unten: zeigt was platziert wird + Position, oder Fehlergrund
+
+### 🔧 Wichtige Bugfixes
+
+**1. Persistenz-Bug** (`app/js/auth.js` Z.4): `let currentUser` → `var currentUser`
+- ES-Module konnten nicht auf `window.currentUser` zugreifen → mein Modul hat ein separates Demo-User-Objekt verwendet → Käufe wurden nie gespeichert
+- `var` macht die Variable als `window.currentUser` sichtbar → Modul + andere Scripts arbeiten am selben Objekt
+
+**2. Source-analysis.js Syntax-Crash** (Z.462, Z.723):
+- Typografisches Apostroph `'` (U+2019) sah wie ASCII-`'` aus, beendete einen String vorzeitig
+- Crash blockierte ALLE nachfolgenden Scripts (auch Burg)
+- Fix: ASCII-Apostroph nach `‚Blankoscheck` und `Mäuse` durch `'` (U+2019) ersetzt
+
+**3. Hoisting-Bug in cb3CreateSurroundings:**
+- `function isLandPosition()` wurde verwendet bevor sie definiert war
+- ES-Modul (strict mode): inner functions werden nicht zuverlässig hoisted
+- Fix: Funktion als `const` arrow function ganz am Anfang
+
+**4. Atmosphäre-Crash → defensive Init:**
+- Mehrstufige try/catch um cb3SetupLights/Plateau/Grid/Surroundings/Ghost
+- Bei Fehler in Atmosphäre läuft der Bauplatz trotzdem
+- Klare Konsolen-Meldungen wie `[Burg] Atmosphäre fehlgeschlagen: ...`
+
+**5. Layout-Bug**: `min-height: 540px` zwang Section auf Mindesthöhe → Scroll
+- Fix: `min-height: 0`, `max-height: calc(100vh - 140px)`, kompakter Section-Header
+
+### 💾 Datenmodell
+
+**Storage in `currentUser.castleBuilder3`:**
+```js
+{
+  blocks: [{ x, y, z, type, wall? }],     // wall optional für Wand-Fackel/Banner
+  inventory: { type: count },             // Block-IDs → Anzahl
+  animals: [{ type, x, z, homeX, homeZ }] // Tiere mit Spawn-Position
+}
+```
+
+**Block-Type-Mapping** (mit Suffix für Multi-Slot-Blöcke):
+- `tuer_lower` / `tuer_upper` → Türen-Hälften (multiHeight: 2)
+- `bett_<farbe>_foot` / `bett_<farbe>_head` → Bett-Hälften (multiLength: 2)
+- Beim Entfernen: beide Hälften gemeinsam, 1 Item zurück ins Inventar
+- Beim Setzen: Validierung prüft beide Slots frei
+
+### 🧙‍♂️ Master-Account "Gandalf" (Admin-Zugang)
+
+**Auto-Init in `app/js/auth.js`** (`ensureMasterAccount()`):
+- Beim ersten App-Start wird automatisch ein Account angelegt:
+  - Username: `Gandalf`, Passwort: `0510`
+  - Rang 5 (Legende), 9.999.999 XP/Münzen
+  - Volles Burg-Inventar (jeder Block-Typ × 999)
+  - Alle Achievements freigeschaltet
+  - Tutorial bereits abgeschlossen
+  - `isAdmin: true`-Flag
+- Falls Account schon existiert: wird upgegraded (bestehende Bauten bleiben erhalten)
+- **Unlimited Münzen**: in `cb3BuyBlock()` werden bei `currentUser.isAdmin === true` keine Münzen abgezogen → Counter bleibt auf 9.999.999
+
+### 🎨 Visuelle Feinheiten
+
+- **Karolinien auf Plateau**: weiß mit 45% Opacity (deutlich sichtbare Bau-Markierungen, ohne harte schwarze Kanten)
+- **Plateau-Gras = Außenwiese-Gras**: gleiche Pixel-Textur, nahtloser Übergang ohne hellen Fleck
+- **Schwarze Plateau-Umrandung entfernt** (alte Steinkante)
+- **Block-Vorschauen** im Inventar/Shop: nutzen die echte Pixel-Textur als Hintergrund-Bild + pseudo-3D-Lichtkante (oben hell, unten dunkel)
+- **Special-Vorschauen**: Tier-Silhouette für Tiere, Stairs-Profil mit L-Form, Bett mit Decken-Farbe + weißem Kissen, Fackel auf dunklem Hintergrund
+- **Layout-Höhe**: `calc(100vh - 140px)` mit `max-height` und `overflow: hidden` → kein Scroll auf Burg-Seite, alles im Viewport sichtbar
+
+### 📋 Wichtige Dateien (Stand 08.05.2026)
+
+- `app/js/castle-builder.js` — **kompletter Rewrite** als ES-Module, ~1700 Zeilen
+- `app/js/auth.js` — `var currentUser`, `ensureMasterAccount()`
+- `app/js/source-analysis.js` — Apostroph-Fix Z.462 & Z.723
+- `app/js/app.js` — `cb3Canvas`-Check (statt `cb2Scene`)
+- `app/index.html` — `<script type="module" src="js/castle-builder.js">`, ImportMap (optional/legacy)
+- `app/css/components.css` — `cb3-*` Styles, Layout ohne Scroll, kompakter castle-Section-Header
+
+### Konstanten & Magic Numbers
+
+- `GRID_SIZE = 24` (Plateau 24×24)
+- `MAX_HEIGHT = 14` (max. 14 Etagen)
+- `BLOCK = 1` (Block-Größe in Welt-Einheiten)
+- `TEX = 64` (Canvas-Texture-Auflösung, 16 logische Pixel à 4 Canvas-Pixel)
+- `LAND_Z_LIMIT = GRID_SIZE * 1.0` (kein Grünes ab z=24, dort beginnt der Sandstrand)
+
+### User-Präferenzen (bestätigt in Session)
+
+- Minecraft-Pixel-Stil bevorzugt (klare Quadrat-Pixel, NearestFilter, kein Anti-Aliasing)
+- Echte 3D-Meshes statt Würfel mit Textur (Fackel, Banner, Tür, Bett, Treppe)
+- Atmosphäre-Objekte respektieren Land-Filter (kein Tree/Haus/Blume in Wasser/Sand/Bergen)
+- Funktionale Defaults (Bett-Auto-Drehung, ESC zum Loslassen) statt manuelle Konfiguration
+- Karolinien sichtbar zur Block-Orientierung
+- Grünstreifen zwischen Strand und Meer **verboten** — Übergang muss nahtlos sein
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 06.05.2026 – Burg-Baumeister Redesign (2D-Seitenansicht)
+**Letzte Aktualisierung:** 08.05.2026 – 3D-Voxel-Burg mit Three.js, Atmosphäre, Tiere, Gandalf-Account

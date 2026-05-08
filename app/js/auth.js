@@ -1,7 +1,120 @@
 // ===== AUTHENTICATION & USER MANAGEMENT =====
 
-// Aktueller Benutzer
-let currentUser = null;
+// Aktueller Benutzer (var statt let, damit auch aus ES-Modulen via window.currentUser erreichbar)
+var currentUser = null;
+
+// === MASTER-ACCOUNT "Gandalf" — wird automatisch beim ersten Start angelegt ===
+function ensureMasterAccount() {
+    try {
+        const users = JSON.parse(localStorage.getItem('histolearn_users') || '[]');
+        const existing = users.find(u => u.username === 'Gandalf');
+
+        // Alle Block-/Tier-IDs für volles Inventar
+        const allBlockIds = [
+            'stein','ziegel','sandstein','holz','dachziegel','zinne','fenster','tuer',
+            'fackel','banner','baum','gold','wasser','blume','zaun','buecherregal',
+            'bett_rot','bett_blau','bett_gruen','bett_gelb','bett_weiss','bett_lila',
+            'treppe_stein','treppe_ziegel','treppe_sandstein','treppe_holz','treppe_dachziegel',
+            'schaf','kuh','huhn','pferd','schwein'
+        ];
+        const fullInventory = {};
+        allBlockIds.forEach(id => fullInventory[id] = 999);
+
+        // Alle Achievement-IDs (falls Liste verfügbar)
+        const allAchievements = (typeof ACHIEVEMENTS !== 'undefined')
+            ? ACHIEVEMENTS.map(a => a.id) : [];
+
+        if (existing) {
+            // Bestehenden Account auf Admin-Werte aktualisieren
+            existing.isAdmin = true;
+            existing.password = '0510';
+            existing.progress.coins = 9999999;
+            existing.progress.totalCoins = 9999999;
+            existing.progress.rank = 5;
+            existing.progress.xp = 9999999;
+            existing.tutorialCompleted = true;
+            if (allAchievements.length) existing.achievements = allAchievements;
+            // Burg-Inventar auffüllen — bestehende Bauten bleiben erhalten
+            if (!existing.castleBuilder3) {
+                existing.castleBuilder3 = { blocks: [], inventory: {}, animals: [] };
+            }
+            allBlockIds.forEach(id => {
+                if ((existing.castleBuilder3.inventory[id] || 0) < 999) {
+                    existing.castleBuilder3.inventory[id] = 999;
+                }
+            });
+            localStorage.setItem('histolearn_users', JSON.stringify(users));
+            return;
+        }
+
+        // Neu anlegen
+        const newUser = {
+            id: 'master-gandalf',
+            username: 'Gandalf',
+            email: 'gandalf@mittelerde.com',
+            password: '0510',
+            displayName: 'Gandalf der Graue',
+            class: 10,
+            avatar: null,
+            isAdmin: true,
+            createdAt: new Date().toISOString(),
+            progress: {
+                coins: 9999999,
+                totalCoins: 9999999,
+                rank: 5,
+                xp: 9999999,
+                topicsCompleted: 100,
+                exercisesDone: 1000,
+                quizCorrect: 1000,
+                totalMinutes: 9999,
+                todayMinutes: 0,
+                lastActive: new Date().toISOString(),
+                operatorsViewed: 17,
+                strategiesViewed: 12,
+                timelineViewed: 50,
+                castleLevel: 5,
+                castleParts: {
+                    gate: true, wallLeft: true, wallRight: true,
+                    towerLeft: true, towerRight: true, keep: true, flag: true
+                },
+                learningSessions: { current: null, history: [] }
+            },
+            castleBuilder3: {
+                blocks: [],
+                inventory: fullInventory,
+                animals: []
+            },
+            exerciseAttempts: {},
+            performanceAnalytics: { byTopic: {}, byOperator: {}, byAFB: { 1: {}, 2: {}, 3: {} } },
+            weaknesses: [],
+            achievements: allAchievements,
+            preferences: {
+                theme: 'light',
+                accentColor: '#daa520',
+                aiMode: 'tutor',
+                pomodoroWork: 20,
+                pomodoroBreak: 5,
+                pomodoroSound: true,
+                preferredStrategy: ''
+            },
+            savedChats: [],
+            folders: [],
+            activities: [],
+            tutorialCompleted: true
+        };
+        users.push(newUser);
+        localStorage.setItem('histolearn_users', JSON.stringify(users));
+        console.log('[Auth] Master-Account "Gandalf" angelegt. Login: Gandalf / 0510');
+    } catch (e) {
+        console.error('[Auth] Master-Account konnte nicht angelegt werden:', e);
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', ensureMasterAccount);
+} else {
+    ensureMasterAccount();
+}
 
 // Login Tab wechseln
 function showLoginTab(tab) {

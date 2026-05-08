@@ -108,7 +108,7 @@ function showSection(sectionId) {
             break;
         case 'castle':
             setTimeout(() => {
-                if (typeof cbInit === 'function' && !document.getElementById('cb2Scene')) cbInit();
+                if (typeof cbInit === 'function' && !document.getElementById('cb3Canvas')) cbInit();
             }, 50);
             break;
         case 'library-materials':

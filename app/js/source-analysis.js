@@ -459,7 +459,7 @@ const HISTORIKERTEXTE_DATA = {
             id: 'wk1-txt-1',
             title: 'Die Kriegsschuldfrage: Die Fischer-Kontroverse',
             autor: 'Fritz Fischer, „Griff nach der Weltmacht" (1961)',
-            text: '„Deutschland trägt die Hauptverantwortung für den Ausbruch des Ersten Weltkriegs. Die deutsche Führung gab Österreich-Ungarn den ‚Blankoscheck' in vollem Bewusstsein, dass dies zum allgemeinen Krieg führen würde. Die Kriegsziele, die Deutschland ab September 1914 formulierte, zeigen: Es ging nicht nur um Verteidigung, sondern um Welthegemonie – Annexionen in West und Ost, Kontrolle des Kontinents. Der Krieg war nicht zufällig, sondern gewollt."',
+            text: '„Deutschland trägt die Hauptverantwortung für den Ausbruch des Ersten Weltkriegs. Die deutsche Führung gab Österreich-Ungarn den ‚Blankoscheck’ in vollem Bewusstsein, dass dies zum allgemeinen Krieg führen würde. Die Kriegsziele, die Deutschland ab September 1914 formulierte, zeigen: Es ging nicht nur um Verteidigung, sondern um Welthegemonie – Annexionen in West und Ost, Kontrolle des Kontinents. Der Krieg war nicht zufällig, sondern gewollt."',
             fragen: [
                 { frage: 'Arbeite Fischers Hauptthese über die Kriegsverantwortung heraus.', hinweis: 'Wer trägt die Hauptverantwortung? Was ist der „Blankoscheck"? Was belegt Fischer mit den Kriegszielen?' },
                 { frage: 'Erkläre, warum Fischers Buch 1961 in Deutschland einen Skandal auslöste.', hinweis: 'Was bedeutete seine These für das Selbstbild der Deutschen nach dem Krieg? Wer widersprach ihm und warum?' },
@@ -720,7 +720,7 @@ const HISTORIKERTEXTE_DATA = {
             id: 'cn-txt-2',
             title: 'Chinas Öffnung nach 1978: Deng Xiaopings Revolution',
             autor: 'Ezra Vogel, „Deng Xiaoping and the Transformation of China" (2011)',
-            text: '„Dengs Reform war in ihrer Art revolutionärer als Maos Revolution. Mao brach mit der Vergangenheit durch Zerstörung. Deng brach mit Mao durch pragmatische Anpassung. Sein Grundsatz: ‚Es spielt keine Rolle, ob die Katze schwarz oder weiß ist – Hauptsache, sie fängt Mäuse.' Dieser Pragmatismus, so banal er klingt, veränderte China und damit die Welt. Die Öffnung führte zur größten Armutsreduktion der Menschheitsgeschichte – und zur Entstehung eines autoritären Kapitalismus."',
+            text: '„Dengs Reform war in ihrer Art revolutionärer als Maos Revolution. Mao brach mit der Vergangenheit durch Zerstörung. Deng brach mit Mao durch pragmatische Anpassung. Sein Grundsatz: ‚Es spielt keine Rolle, ob die Katze schwarz oder weiß ist – Hauptsache, sie fängt Mäuse.’ Dieser Pragmatismus, so banal er klingt, veränderte China und damit die Welt. Die Öffnung führte zur größten Armutsreduktion der Menschheitsgeschichte – und zur Entstehung eines autoritären Kapitalismus."',
             fragen: [
                 { frage: 'Erkläre Dengs Grundsatz mit der Katze. Was meinte er damit, und wie setzte er das politisch um?', hinweis: 'Schwarz/weiß = Kapitalismus/Sozialismus spielen keine Rolle – nur Ergebnisse zählen. Was bedeutete das in der Praxis?' },
                 { frage: 'Arbeite heraus, welche Folgen Vogel für Dengs Öffnungspolitik nennt – positive und negative.', hinweis: 'Armutsreduktion auf der einen Seite, autoritärer Kapitalismus auf der anderen.' },

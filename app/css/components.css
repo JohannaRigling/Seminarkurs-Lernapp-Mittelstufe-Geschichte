@@ -5522,371 +5522,286 @@
 .archive-lightbox-info strong { font-size: 1em; }
 .archive-lightbox-info span { font-size: 0.85em; opacity: 0.7; }
 
-/* ===== BURG-BAUMEISTER 2D-SZENERIE ===== */
+/* ===== BURG-BAUMEISTER 3D (Voxel) ===== */
 
-/* Wrapper */
-.cb2-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    width: 100%;
+/* Section-Header der Burg kompakt, damit alles in den Viewport passt */
+#castle .section-header {
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+}
+#castle .section-header h1 {
+    font-size: 1.5em;
+    margin: 0;
+}
+#castle .section-header p {
+    font-size: 0.85em;
+    margin-top: 2px;
+    opacity: 0.8;
 }
 
-/* Top-Bar */
-.cb2-topbar {
+.cb3-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: calc(100vh - 140px);
+    max-height: calc(100vh - 140px);
+    min-height: 0;
+    background: linear-gradient(180deg, rgba(20,18,30,0.4), rgba(20,18,30,0.6));
+    border: 1px solid rgba(255,215,0,0.18);
+    border-radius: 14px;
+    padding: 12px 16px 14px;
+    overflow: hidden;
+}
+
+.cb3-topbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 16px;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 8px 14px;
     background: rgba(0,0,0,0.25);
-    border-radius: 10px 10px 0 0;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-bottom: none;
+    border-radius: 10px;
 }
-.cb2-coins {
+
+.cb3-coins-display {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     font-size: 0.95em;
+    color: #e8e4d9;
+}
+.cb3-coin-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffe066, #cc8a1f);
+    box-shadow: 0 0 6px rgba(255,200,80,0.6);
+}
+.cb3-coins-label { font-size: 0.85em; color: rgba(255,255,255,0.6); }
+.cb3-coins-display strong {
+    font-size: 1.15em;
     color: var(--text-gold, #daa520);
 }
-.cb2-coins strong { font-size: 1.1em; }
-.cb2-hint {
+
+.cb3-controls-hint {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
     font-size: 0.78em;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.55);
+}
+.cb3-controls-hint strong {
+    color: var(--secondary-light, #e8c976);
+    font-weight: 600;
+    margin-right: 3px;
 }
 
-/* Szene */
-.cb2-scene {
-    position: relative;
-    width: 100%;
-    max-width: 860px;
-    height: 340px;
-    overflow: hidden;
-    background: linear-gradient(
-        180deg,
-        #1a2535 0%,
-        #2a3d5a 28%,
-        #3d6080 48%,
-        #7aabca 65%,
-        #aac8d8 72%,
-        #8aab82 72%,
-        #5a8052 80%,
-        #3a5a32 100%
-    );
-    border: 2px solid rgba(255,255,255,0.1);
-    border-top: none;
-    border-radius: 0;
+.cb3-main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 220px 1fr 240px;
+    gap: 12px;
+    min-height: 0;
 }
 
-/* Wolken */
-.cb2-clouds { position: absolute; top: 0; left: 0; right: 0; pointer-events: none; }
-.cb2-cloud {
-    position: absolute;
-    background: rgba(255,255,255,0.18);
-    border-radius: 50px;
-    filter: blur(6px);
-}
-.cb2-cloud.c1 { width: 120px; height: 35px; top: 28px; left: 8%; }
-.cb2-cloud.c2 { width: 170px; height: 42px; top: 18px; left: 32%; }
-.cb2-cloud.c3 { width: 100px; height: 28px; top: 38px; right: 15%; }
-
-/* Boden-Streifen */
-.cb2-ground-strip {
-    position: absolute;
-    bottom: 0;
-    left: 0; right: 0;
-    height: 42px;
-    background: linear-gradient(180deg, #4a6a38 0%, #3a5028 60%, #2a3a1a 100%);
-    border-top: 2px solid #6a8a4a;
-}
-
-/* Gebäude-Wrapper */
-.cb2-bld {
-    position: absolute;
-    bottom: 42px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    cursor: pointer;
-    transition: filter 0.2s, transform 0.15s;
-}
-.cb2-bld:hover { filter: brightness(1.18); transform: translateY(-3px); }
-.cb2-bld.selected { filter: brightness(1.25) drop-shadow(0 0 8px rgba(220,190,80,0.8)); transform: translateY(-4px); }
-.cb2-bld.locked { filter: grayscale(0.8) brightness(0.5); cursor: pointer; }
-.cb2-bld.locked:hover { filter: grayscale(0.6) brightness(0.65); }
-
-.cb2-bld-lock {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.4em;
-    text-shadow: 0 0 6px #000;
-    pointer-events: none;
-}
-.cb2-bld-badge {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    background: rgba(201,162,39,0.85);
-    color: #fff;
-    font-size: 0.6em;
-    font-weight: 700;
-    padding: 1px 4px;
-    border-radius: 4px;
-    pointer-events: none;
-}
-.cb2-bld-label {
-    position: absolute;
-    bottom: -18px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.6em;
-    color: rgba(255,255,255,0.7);
-    white-space: nowrap;
-    text-shadow: 0 1px 3px #000;
-    pointer-events: none;
-}
-
-/* ── Bau-Elemente ── */
-
-/* Zinnen (battlements) */
-.bld-top-battlements {
-    display: flex;
-    flex-shrink: 0;
-    width: 100%;
-    overflow: hidden;
-}
-.bld-merlon {
-    background: #6a5a4a;
-    flex-shrink: 0;
-}
-.tower-merlon { background: #4a3a2a; }
-.berg-merlon  { background: #3a2a1a; }
-.bld-crenel   { background: transparent; flex-shrink: 0; }
-
-/* Mauer-Körper */
-.bld-wall-body {
-    width: 100%;
-    background:
-        repeating-linear-gradient(90deg, rgba(0,0,0,0) 0,rgba(0,0,0,0) 14px, rgba(0,0,0,0.08) 14px, rgba(0,0,0,0.08) 15px),
-        repeating-linear-gradient(0deg,  rgba(0,0,0,0) 0,rgba(0,0,0,0) 10px, rgba(0,0,0,0.08) 10px, rgba(0,0,0,0.08) 11px),
-        linear-gradient(180deg, #7a6a58 0%, #5a4a38 100%);
-    position: relative;
-}
-.bld-arrow-slit {
-    position: absolute;
-    top: 18%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0,0,0,0.75);
-    border-radius: 3px 3px 0 0;
-}
-
-/* Turm-Körper */
-.bld-tower-body {
-    width: 100%;
-    background:
-        repeating-linear-gradient(90deg, rgba(0,0,0,0) 0,rgba(0,0,0,0) 11px, rgba(0,0,0,0.07) 11px, rgba(0,0,0,0.07) 12px),
-        repeating-linear-gradient(0deg,  rgba(0,0,0,0) 0,rgba(0,0,0,0) 9px,  rgba(0,0,0,0.07) 9px,  rgba(0,0,0,0.07) 10px),
-        linear-gradient(180deg, #5a4a38 0%, #3a2a1a 100%);
-    position: relative;
-}
-
-/* Bergfried-Körper */
-.bld-bergfried-body {
-    width: 100%;
-    background:
-        repeating-linear-gradient(90deg, rgba(0,0,0,0) 0,rgba(0,0,0,0) 13px, rgba(0,0,0,0.08) 13px, rgba(0,0,0,0.08) 14px),
-        repeating-linear-gradient(0deg,  rgba(0,0,0,0) 0,rgba(0,0,0,0) 11px, rgba(0,0,0,0.08) 11px, rgba(0,0,0,0.08) 12px),
-        linear-gradient(180deg, #3a2a18 0%, #251810 100%);
-    position: relative;
-}
-
-/* Fenster */
-.bld-window {
-    position: absolute;
-    background: rgba(0,0,0,0.8);
-}
-.arch-window { border-radius: 50% 50% 0 0; }
-.rect-win { border-radius: 2px; }
-
-/* Türen */
-.bld-door {
-    position: absolute;
-    background: rgba(0,0,0,0.85);
-}
-.arch-door { border-radius: 50% 50% 0 0; }
-.rect-door { border-radius: 2px; }
-
-/* Kirche */
-.bld-spire {
-    position: relative;
-    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-    background: linear-gradient(180deg, #4a4a6a 0%, #3a3a5a 100%);
-    margin-left: auto;
-    margin-right: auto;
-    flex-shrink: 0;
-}
-.bld-church-body {
-    width: 100%;
-    background:
-        repeating-linear-gradient(90deg, rgba(0,0,0,0) 0,rgba(0,0,0,0) 12px, rgba(0,0,0,0.07) 12px, rgba(0,0,0,0.07) 13px),
-        linear-gradient(180deg, #6a6a82 0%, #4a4a62 100%);
-    position: relative;
-}
-.bld-rose-window {
-    position: absolute;
-    width: 18px; height: 18px;
-    left: 50%; transform: translateX(-50%);
-    background: rgba(180,140,80,0.5);
-    border: 2px solid rgba(220,180,80,0.6);
-    border-radius: 50%;
-}
-.bld-cross {
-    position: absolute;
-    bottom: -4px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 14px;
-    color: rgba(220,200,140,0.9);
-    text-shadow: 0 0 4px #000;
-}
-
-/* Burgtor */
-.bld-gate-body {
-    width: 100%;
-    background:
-        linear-gradient(180deg, #4a3828 0%, #382818 100%);
-    position: relative;
-}
-.bld-gate-arch {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0,0,0,0.92);
-    border-radius: 50% 50% 0 0;
-}
-.bld-chains {
-    position: absolute;
-    bottom: 14px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 12px;
-    color: rgba(180,150,80,0.8);
-}
-
-/* Herrenhaus */
-.bld-roof {
-    flex-shrink: 0;
-    clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
-    background: linear-gradient(180deg, #8a3a2a 0%, #6a2a1a 100%);
-}
-.bld-house-body {
-    width: 100%;
-    background:
-        repeating-linear-gradient(90deg, rgba(0,0,0,0) 0,rgba(0,0,0,0) 14px, rgba(0,0,0,0.06) 14px, rgba(0,0,0,0.06) 15px),
-        linear-gradient(180deg, #8a6a4a 0%, #6a4a2a 100%);
-    position: relative;
-}
-.bld-chimney {
-    position: absolute;
-    width: 8px; height: 18px;
-    background: #6a5a4a;
-    right: 20%;
-    top: -14px;
-}
-
-/* Stall/Backhaus */
-.bld-stall-roof {
-    flex-shrink: 0;
-    clip-path: polygon(0% 100%, 4% 0%, 96% 0%, 100% 100%);
-    background: linear-gradient(180deg, #6a5030 0%, #4a3820 100%);
-}
-.bld-stall-body {
-    width: 100%;
-    background: linear-gradient(180deg, #7a5a38 0%, #5a3a18 100%);
-    position: relative;
-}
-.bld-animal {
-    position: absolute;
-    bottom: 0px;
-    left: 8px;
-    font-size: 12px;
-}
-
-/* Garten */
-.bld-garden {
-    width: 100%;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-}
-.bld-garden-trees {
-    text-align: center;
-    font-size: 15px;
-    line-height: 1;
-    margin-bottom: 2px;
-}
-.bld-garden-wall {
-    width: 100%;
-    height: 14px;
-    background: linear-gradient(180deg, #7a6a58 0%, #5a4a38 100%);
-    border-radius: 3px 3px 0 0;
-}
-.bld-well {
-    position: absolute;
-    bottom: 14px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 12px;
-}
-
-/* Banner am Bergfried */
-.bld-banner {
-    position: absolute;
-    top: -24px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 18px;
-    color: #c9a227;
-    text-shadow: 0 0 4px #000;
-    z-index: 2;
-}
-
-/* ── Info-Panel ── */
-.cb2-info-panel {
+.cb3-side {
     background: rgba(0,0,0,0.3);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-top: none;
-    border-radius: 0 0 10px 10px;
-    padding: 14px 18px;
-    min-height: 72px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 12px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    min-height: 0;
 }
-.cb2-info-empty {
-    color: rgba(255,255,255,0.4);
-    font-size: 0.88em;
+.cb3-side-title {
+    margin: 0 0 10px 0;
+    font-size: 0.95em;
+    font-weight: 600;
+    color: var(--text-gold, #daa520);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,215,0,0.18);
+}
+
+/* Inventar */
+.cb3-inventory {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-right: 4px;
+}
+.cb3-inv-empty {
+    text-align: center;
+    color: rgba(255,255,255,0.45);
+    font-size: 0.82em;
+    padding: 30px 8px;
+    line-height: 1.5;
+}
+.cb3-inv-item {
     display: flex;
     align-items: center;
     gap: 10px;
+    padding: 7px 9px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.15s;
 }
-.cb2-info-arrow { font-size: 1.4em; }
-.cb2-info-content {
+.cb3-inv-item:hover {
+    background: rgba(255,215,0,0.1);
+    border-color: rgba(255,215,0,0.3);
+    transform: translateX(2px);
+}
+.cb3-inv-item.selected {
+    background: rgba(255,215,0,0.18);
+    border-color: var(--text-gold, #daa520);
+    box-shadow: 0 0 12px rgba(255,215,0,0.3);
+}
+.cb3-inv-info { flex: 1; min-width: 0; }
+.cb3-inv-name {
+    font-size: 0.85em;
+    color: #e8e4d9;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.cb3-inv-count {
+    font-size: 0.75em;
+    color: rgba(255,255,255,0.6);
+    margin-top: 1px;
+}
+
+/* Block-Vorschau (sowohl Inventar als auch Shop) */
+.cb3-block-preview {
+    width: 36px; height: 36px;
+    flex-shrink: 0;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.5);
+    background-color: #888;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Shop */
+.cb3-shop {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-right: 4px;
+}
+.cb3-shop-item {
     display: flex;
     align-items: center;
-    gap: 16px;
-    width: 100%;
-    flex-wrap: wrap;
+    gap: 8px;
+    padding: 6px 7px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 7px;
+    transition: background 0.15s;
 }
-.cb2-info-icon { font-size: 2em; flex-shrink: 0; }
-.cb2-info-text { flex: 1; min-width: 160px; }
-.cb2-info-text strong { font-size: 1em; color: var(--text-gold, #daa520); display: block; margin-bottom: 2px; }
-.cb2-info-text p { margin: 0; font-size: 0.82em; color: rgba(255,255,255,0.65); line-height: 1.4; }
-.cb2-info-actions { flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
-.cb2-build-btn { font-size: 0.88em; padding: 8px 18px; white-space: nowrap; }
-.cb2-build-btn.disabled { opacity: 0.4; cursor: not-allowed; }
-.cb2-level-info { font-size: 0.78em; color: var(--text-gold, #daa520); }
-.cb2-maxed { font-size: 0.85em; color: rgba(80,200,80,0.9); font-weight: 600; }
+.cb3-shop-item.unaffordable {
+    opacity: 0.5;
+}
+.cb3-shop-item:hover:not(.unaffordable) {
+    background: rgba(255,255,255,0.07);
+}
+.cb3-shop-info {
+    flex: 1;
+    min-width: 0;
+}
+.cb3-shop-name {
+    font-size: 0.82em;
+    color: #e8e4d9;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.cb3-shop-price {
+    font-size: 0.72em;
+    color: var(--text-gold, #daa520);
+    margin-top: 1px;
+}
+.cb3-buy-btn {
+    background: var(--text-gold, #daa520);
+    color: #1a1a2a;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.75em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+}
+.cb3-buy-btn:hover:not(:disabled) {
+    background: var(--secondary-light, #e8c976);
+    transform: scale(1.05);
+}
+.cb3-buy-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* 3D-Canvas */
+.cb3-canvas-wrap {
+    position: relative;
+    background: linear-gradient(180deg, #3b6ea5, #cce5ff);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
+    min-height: 0;
+}
+#cb3Canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    cursor: crosshair;
+}
+.cb3-status {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.7);
+    color: #e8e4d9;
+    padding: 6px 14px;
+    border-radius: 18px;
+    font-size: 0.82em;
+    pointer-events: none;
+    white-space: nowrap;
+    backdrop-filter: blur(4px);
+    transition: opacity 0.2s;
+}
+.cb3-status:empty { opacity: 0; }
+
+/* Scrollbar (Inventar/Shop) */
+.cb3-inventory::-webkit-scrollbar,
+.cb3-shop::-webkit-scrollbar { width: 6px; }
+.cb3-inventory::-webkit-scrollbar-thumb,
+.cb3-shop::-webkit-scrollbar-thumb {
+    background: rgba(255,215,0,0.25);
+    border-radius: 3px;
+}
+.cb3-inventory::-webkit-scrollbar-track,
+.cb3-shop::-webkit-scrollbar-track { background: transparent; }
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .cb3-main { grid-template-columns: 180px 1fr 200px; }
+}
+@media (max-width: 900px) {
+    .cb3-main { grid-template-columns: 1fr; grid-template-rows: 200px 1fr 200px; }
+    .cb3-wrapper { height: auto; min-height: 800px; }
+}
+

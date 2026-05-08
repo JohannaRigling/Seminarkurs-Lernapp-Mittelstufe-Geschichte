@@ -845,7 +845,7 @@
             <section id="castle" class="content-section">
                 <div class="section-header">
                     <h1>🏰 Meine Burg</h1>
-                    <p>Baue deine Burg Stein für Stein – Vogelperspektive, Doppelklick zum Zoomen!</p>
+                    <p>Baue deine Burg in 3D – Block für Block. Drehbar mit der Maus, Blöcke kaufen & platzieren.</p>
                 </div>
                 <div id="castleBuilderContainer"></div>
             </section>
@@ -1055,6 +1055,16 @@
         </div>
     </div>
 
+    <!-- Three.js (für 3D-Burg) -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+
     <!-- Scripts -->
     <script src="js/config.js"></script>
     <script src="js/data.js"></script>
@@ -1080,7 +1090,7 @@
     <script src="js/timeline.js"></script>
     <script src="js/exercises.js"></script>
     <script src="js/gamification.js"></script>
-    <script src="js/castle-builder.js"></script>
+    <script type="module" src="js/castle-builder.js"></script>
     <script src="js/adaptive-learning.js"></script>
     <script src="js/study-notes.js"></script>
     <script src="js/avatar-editor.js"></script>
