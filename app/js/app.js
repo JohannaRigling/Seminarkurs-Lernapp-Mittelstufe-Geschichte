@@ -56,8 +56,12 @@ function setupEventListeners() {
 // Sektion anzeigen
 const BREAK_BLOCKED_SECTIONS = ['chat', 'exercises', 'library-materials', 'library-glossary', 'adaptive-session'];
 const STUDY_BLOCKED_SECTIONS = ['castle'];
+// Auf diesen Seiten ist kein Scrollen nötig UND auch nicht möglich
+const NO_SCROLL_SECTIONS = ['castle', 'adaptive-session', 'dashboard'];
 
 function showSection(sectionId) {
+    // No-Scroll-Modus: bestimmte Sections fixen die Höhe auf 100vh ohne Body-Scroll
+    document.body.classList.toggle('no-scroll', NO_SCROLL_SECTIONS.includes(sectionId));
     // Während Pause: Lernbereiche sperren
     if (window.isBreakActive && BREAK_BLOCKED_SECTIONS.includes(sectionId)) {
         showToast('⏸️ Du bist in der Pause! Genieße deine Auszeit.', 'info');

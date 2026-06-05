@@ -4426,9 +4426,14 @@ body.timer-open .glossary-header { top: 90px; }
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    height: 100vh;
+    max-height: 100vh;
 }
 #adaptive-session.content-section.active {
     display: flex;
+}
+body.timer-open #adaptive-session.content-section {
+    height: calc(100vh - 0px); /* padding-top fängt die Timer-Höhe ab */
 }
 #adaptive-session > .section-header {
     flex-shrink: 0;
@@ -4444,6 +4449,7 @@ body.timer-open .glossary-header { top: 90px; }
     flex-direction: column;
     gap: 14px;
     min-height: 0;
+    overflow: hidden;
 }
 
 .adaptive-session-info {

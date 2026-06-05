@@ -759,6 +759,15 @@ body::before {
     overflow-x: hidden;
 }
 
+/* Auf bestimmten Seiten KEIN Scrollen erlauben — Inhalt muss in den Viewport passen.
+   Body-Klasse wird in showSection() für diese Sections gesetzt. */
+body.no-scroll,
+body.no-scroll .main-content {
+    overflow: hidden;
+    height: 100vh;
+    max-height: 100vh;
+}
+
 /* ===== TIMER BAR — FIXIERT (immer sichtbar, scrollt nicht weg) ===== */
 .timer-bar {
     background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
