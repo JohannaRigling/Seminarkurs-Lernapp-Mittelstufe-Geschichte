@@ -909,12 +909,14 @@ body.timer-open .main-content > .content-section.active {
 }
 
 .section-header p {
-    /* Schwarz — lesbar auf hellem/sepia Hintergrund (User-Wunsch) */
-    color: #000000;
+    /* Schwarz — lesbar auf hellem/sepia Hintergrund (User-Wunsch), mit !important
+       damit kein Theme- oder Akzent-Override es überschreibt */
+    color: #000000 !important;
     font-size: 1.05em;
     margin: 0;
     font-weight: 500;
     text-shadow: none;
+    opacity: 1;
 }
 
 /* ===== CARDS ===== */
