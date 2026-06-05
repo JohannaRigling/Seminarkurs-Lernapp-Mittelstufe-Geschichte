@@ -373,9 +373,13 @@ const OPERATORS = {
 };
 
 // ===== LERNSTRATEGIEN DATENBANK =====
+// Effektivitäts-Bewertung (1-5) nach Dunlosky et al. (2013) und verwandter Lernforschung:
+//   5 = Sehr effektiv  | 4 = Effektiv  | 3 = Mittel  | 2 = Hilfreich  | 1 = Eher schwach
+// Wird in loadStrategies() für das Schaubild verwendet.
 const LEARNING_STRATEGIES = [
     {
         id: 'pomodoro',
+        effectiveness: 3,
         name: 'Pomodoro-Technik',
         icon: '🍅',
         category: 'Zeitmanagement',
@@ -398,6 +402,7 @@ const LEARNING_STRATEGIES = [
     },
     {
         id: 'spaced-repetition',
+        effectiveness: 5,
         name: 'Verteiltes Lernen',
         icon: '📅',
         category: 'Gedächtnis',
@@ -420,6 +425,7 @@ const LEARNING_STRATEGIES = [
     },
     {
         id: 'active-recall',
+        effectiveness: 5,
         name: 'Aktives Erinnern',
         icon: '🧠',
         category: 'Gedächtnis',
@@ -442,6 +448,7 @@ const LEARNING_STRATEGIES = [
     },
     {
         id: 'mind-mapping',
+        effectiveness: 3,
         name: 'Mind-Mapping',
         icon: '🗺️',
         category: 'Visualisierung',
@@ -464,6 +471,7 @@ const LEARNING_STRATEGIES = [
     },
     {
         id: 'feynman',
+        effectiveness: 4,
         name: 'Feynman-Technik',
         icon: '👨‍🏫',
         category: 'Verständnis',
@@ -486,6 +494,7 @@ const LEARNING_STRATEGIES = [
     },
     {
         id: 'loci',
+        effectiveness: 2,
         name: 'Loci-Methode',
         icon: '🏛️',
         category: 'Mnemotechnik',
@@ -508,6 +517,7 @@ const LEARNING_STRATEGIES = [
     },
     {
         id: 'chunking',
+        effectiveness: 3,
         name: 'Chunking',
         icon: '📦',
         category: 'Organisation',
@@ -530,6 +540,7 @@ const LEARNING_STRATEGIES = [
     },
     {
         id: 'elaboration',
+        effectiveness: 4,
         name: 'Elaboration',
         icon: '🔗',
         category: 'Verständnis',
@@ -552,6 +563,7 @@ const LEARNING_STRATEGIES = [
     },
     {
         id: 'sq3r',
+        effectiveness: 3,
         name: 'SQ3R-Methode',
         icon: '📖',
         category: 'Lesen',
@@ -574,6 +586,7 @@ const LEARNING_STRATEGIES = [
     },
     {
         id: 'dual-coding',
+        effectiveness: 4,
         name: 'Dual Coding',
         icon: '🖼️',
         category: 'Visualisierung',
@@ -596,6 +609,7 @@ const LEARNING_STRATEGIES = [
     },
     {
         id: 'interleaving',
+        effectiveness: 4,
         name: 'Interleaving',
         icon: '🔀',
         category: 'Organisation',

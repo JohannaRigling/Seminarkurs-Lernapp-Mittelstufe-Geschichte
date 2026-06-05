@@ -1333,9 +1333,9 @@
     gap: 20px;
     margin-bottom: 20px;
     flex-wrap: wrap;
+    /* Sticky-Header — bleibt beim Scrollen oben sichtbar */
     position: sticky;
-    /* Bleibt unterhalb der Timer-Leiste sichtbar */
-    top: 110px;
+    top: 0;
     z-index: 50;
     background: var(--bg-secondary);
     padding: 12px 14px;
@@ -1343,6 +1343,8 @@
     border: 1px solid var(--border-color);
     backdrop-filter: blur(8px);
 }
+/* Bei offenem Timer: Topbar unter den fixen Timer schieben */
+body.timer-open .glossary-header { top: 90px; }
 
 .glossary-filters {
     display: flex;
@@ -1427,7 +1429,7 @@
     border-bottom: 2px solid var(--border-gold);
 }
 
-/* Alphabetische Navigationsleiste — komplett sichtbar, unter der Timer-Leiste */
+/* Alphabetische Navigationsleiste — FIXIERT am rechten Bildschirmrand, scrollt nicht weg */
 .glossary-alphabet-bar {
     width: 34px;
     flex-shrink: 0;
@@ -1435,17 +1437,20 @@
     flex-direction: column;
     align-items: center;
     gap: 1px;
-    position: sticky;
-    /* Unter Timer-Leiste + Glossar-Header positionieren, ohne überdeckt zu werden */
-    top: 200px;
-    align-self: flex-start;
+    /* Fixiert: rechts vom Hauptinhalt, vertikal mittig */
+    position: fixed;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 60;
     /* Kein eigenes Scrollen — die 26 Buchstaben passen immer */
     max-height: none;
     overflow: visible;
-    padding: 6px 2px;
+    padding: 8px 4px;
     background: var(--bg-tertiary);
     border-radius: 12px;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-gold);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
 }
 
 .alphabet-letter {
@@ -1539,59 +1544,172 @@
     color: var(--text-secondary);
 }
 
-/* ===== Adaptive Lernsession — Erklär-Karte ===== */
+/* ===== Lernstrategien-Schaubild (Effektivitäts-Achse) ===== */
+.strategies-chart {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-gold);
+    border-radius: 14px;
+    padding: 22px 22px 18px;
+    margin-bottom: 18px;
+}
+.strategies-axis {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+.strategies-axis-label {
+    font-size: 0.85em;
+    font-weight: 700;
+    color: var(--text-gold, #daa520);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.strategies-axis-gradient {
+    flex: 1;
+    height: 10px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #27ae60 0%, #7fc14e 33%, #daa520 66%, #c87f3a 100%);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
+}
+.strategies-columns {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+.strategies-col {
+    background: var(--bg-tertiary);
+    border-top: 4px solid var(--tier-color, var(--secondary));
+    border-radius: 10px;
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.strategies-col-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.strategies-col-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 6px currentColor;
+}
+.strategies-col-title {
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 1em;
+}
+.strategies-col-desc {
+    margin: 0;
+    color: rgba(255,255,255,0.7);
+    font-size: 0.78em;
+    line-height: 1.4;
+}
+.strategies-col-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.strategies-col .strategy-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px 12px 10px;
+    text-align: left;
+}
+.strategies-col .strategy-card h3 {
+    font-size: 1em;
+    margin: 6px 0 4px;
+    color: #ffffff;
+}
+.strategies-col .strategy-card p {
+    margin: 0 0 6px;
+    font-size: 0.82em;
+    color: rgba(255,255,255,0.78);
+    line-height: 1.4;
+}
+.strategies-col .strategy-card .strategy-icon {
+    font-size: 1.6em;
+    margin: 0;
+}
+.strategy-stars {
+    margin-top: 6px;
+    color: var(--tier-color, var(--secondary));
+    letter-spacing: 1px;
+    font-size: 0.9em;
+}
+.strategies-empty {
+    color: rgba(255,255,255,0.3);
+    text-align: center;
+    margin: 6px 0;
+}
+
+@media (max-width: 1100px) {
+    .strategies-columns { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+    .strategies-columns { grid-template-columns: 1fr; }
+}
+
+/* ===== Adaptive Lernsession — Erklär-Karte (kompakt, passt mit offenem Timer in den Viewport) ===== */
 .adaptive-explainer {
     background: var(--bg-secondary);
     border: 1px solid var(--border-gold);
-    border-radius: 16px;
-    padding: 28px 30px;
-    margin: 0 auto 24px;
+    border-radius: 14px;
+    padding: 16px 20px 14px;
+    margin: 0 auto 14px;
     max-width: 1100px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+    box-shadow: 0 4px 18px rgba(0,0,0,0.16);
+    text-align: left;
 }
 .adaptive-explainer-title {
-    margin: 0 0 8px 0;
+    margin: 0 0 4px 0;
     color: var(--text-gold, #daa520);
-    font-size: 1.55em;
+    font-size: 1.25em;
 }
 .adaptive-explainer-lead {
     color: #ffffff;
-    margin: 0 0 20px 0;
-    line-height: 1.55;
-    font-size: 1.02em;
+    margin: 0 0 12px 0;
+    line-height: 1.45;
+    font-size: 0.92em;
 }
 .adaptive-explainer-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
 }
 .adaptive-explainer-card {
     background: var(--bg-tertiary);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
-    padding: 18px 18px 16px;
+    border-radius: 10px;
+    padding: 12px 12px 10px;
     /* Wichtig: keine Hover-Animation, sieht nicht mehr aus wie Button */
     cursor: default;
 }
 .adaptive-explainer-card .info-icon {
-    font-size: 1.8em;
+    font-size: 1.45em;
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 .adaptive-explainer-card h4 {
-    margin: 0 0 6px 0;
+    margin: 0 0 4px 0;
     color: var(--text-gold, #daa520);
-    font-size: 1.05em;
+    font-size: 0.95em;
 }
 .adaptive-explainer-card p {
     margin: 0;
     color: #ffffff;
-    line-height: 1.5;
-    font-size: 0.95em;
+    line-height: 1.4;
+    font-size: 0.85em;
 }
 .adaptive-start-btn {
     display: block;
-    margin: 0 auto;
+    margin: 8px auto 0;
+    padding: 12px 28px;
+    font-size: 1.05em;
 }
 
 /* ===== Lernstrategien-Detailkarte ===== */
@@ -4285,16 +4403,16 @@
 
 /* ===== Adaptive Session Section ===== */
 .adaptive-session-main {
-    max-width: 900px;
+    max-width: 1100px;
     margin: 0 auto;
     text-align: center;
 }
 
 .adaptive-session-info {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin: 40px 0;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 16px 0;
 }
 
 .adaptive-session-info .info-card {

@@ -2653,9 +2653,12 @@ function toggleTimer() {
     if (timerBar.style.display === 'none' || timerBar.style.display === '') {
         timerBar.style.display = 'flex';
         if (toggleBtn) toggleBtn.style.display = 'none';
+        // Body-Klasse für globales Padding-Top, damit Inhalt nicht vom fixen Timer überdeckt wird
+        document.body.classList.add('timer-open');
     } else {
         timerBar.style.display = 'none';
         if (toggleBtn) toggleBtn.style.display = 'block';
+        document.body.classList.remove('timer-open');
     }
 }
 

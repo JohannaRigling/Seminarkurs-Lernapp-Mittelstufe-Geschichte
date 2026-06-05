@@ -2075,3 +2075,55 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 ---
 
 **Letzte Aktualisierung:** 13.05.2026 (Nachmittag) – Huhn-Korrektur, Treppen-Auto-Drehung, Minecraft-Wall-Mauer
+
+## 🎯 Session vom 13.05.2026 (Abend) – Weiter1: Fixierte Leisten, Effektivitäts-Schaubild, Layout-Kompaktierung
+
+### ✅ Timer-Bar fixiert auf jeder Seite
+- `.timer-bar` von `position: sticky` auf `position: fixed` umgestellt — bleibt beim Scrollen IMMER an derselben Stelle
+- Positionierung respektiert Sidebar-Breite (`left: calc(var(--sidebar-width) + 24px)`), bei eingeklappter Sidebar `left: 84px`
+- Neue Body-Klasse `.timer-open` wird in `toggleTimer()` gesetzt → `body.timer-open .main-content > .content-section.active { padding-top: 86px }`
+- Funktioniert section-übergreifend: Glossar, Adaptive Lernsession, Übungen, Burg etc.
+
+### ✅ Glossar-Alphabetleiste fixiert
+- `.glossary-alphabet-bar` von `sticky top: 200px` → `position: fixed; right: 24px; top: 50%; translateY(-50%)` mit z-index 60
+- Schwebt vertikal zentriert am rechten Rand, unabhängig von Scroll-Position
+- `.glossary-header` (Filter+Suche) bleibt sticky; bei offenem Timer top: 90px statt 0
+
+### ✅ Burg-Timer-Start → Auto-Wechsel zum Dashboard
+- In `timer.js / startTimer()`: prüft ob `#castle.active`, ruft dann `window.showSection('dashboard')` auf — passt zu STUDY_BLOCKED_SECTIONS (Burg während Lernzeit gesperrt)
+
+### ✅ Lernstrategien-Schaubild nach Effektivität
+- In `data.js`: jede Strategie hat jetzt `effectiveness: 1-5` basierend auf Dunlosky et al. (2013):
+  - 5: active-recall, spaced-repetition
+  - 4: feynman, elaboration, dual-coding, interleaving
+  - 3: pomodoro, mind-mapping, chunking, sq3r
+  - 2: loci
+- `strategies.js / loadStrategies()` rendert jetzt 4-Spalten-Schaubild mit Achsen-Leiste oben („⬅ Sehr effektiv" links bis „Weniger effektiv ➡" rechts, mit Gradient von Grün→Gelb→Orange)
+- Jede Karte zeigt Sterne (★★★★☆) entsprechend ihrer Effektivität
+- Responsiv: 4 Spalten → 2 (< 1100 px) → 1 (< 600 px)
+
+### ✅ Layout-Kompaktierung — Adaptive Lernsession passt ohne Scrollen
+- `.content-section` Padding: 35px → 18px/28px/24px
+- `.section-header` Margin-bottom: 35px → 16px, h1-Size: 2.2em → 1.7em
+- Section-Wechsel-Animation drastisch verkürzt: 0.6s blur-translate-scale → 0.25s einfache Translation
+- `.adaptive-explainer` deutlich kompakter: Padding 28/30 → 16/20, Schriftgrößen reduziert, Lead-Text kürzer
+- `.adaptive-explainer-card` Padding 18 → 12, Icon 1.8em → 1.45em
+- `.adaptive-start-btn` mit kompaktem Padding, Margin-Top reduziert
+
+### 🗂️ Geänderte Dateien
+- `app/css/main.css` — Timer-Bar fixed, Body-Class `timer-open`, kompakteres `.content-section` + `.section-header`, schnellere Animation
+- `app/css/components.css` — Strategies-Chart, kompakte Adaptive-Explainer, Glossar fixed
+- `app/js/app.js` — `toggleTimer()` setzt/entfernt `body.timer-open`
+- `app/js/timer.js` — `startTimer()` wechselt vom Castle zum Dashboard
+- `app/js/strategies.js` — `loadStrategies()` rendert Effektivitäts-Schaubild mit Spalten + Achse
+- `app/js/data.js` — `effectiveness`-Feld zu allen 11 LEARNING_STRATEGIES
+
+### 📝 User-Präferenz
+- **Timer-Leiste IMMER fixiert** beim Scrollen — auf jeder Seite, nicht nur Dashboard
+- **Glossar-Alphabetleiste fixiert** am rechten Rand — kein Wegscrollen
+- **Effektivitäts-Anzeige** für Lernstrategien — Sterne + Spalten-Layout statt einfaches Grid
+- **Layouts in einem Screen sichtbar** — kein vertikales Scrollen für die Hauptaktion einer Section, auch nicht bei offenem Timer
+
+---
+
+**Letzte Aktualisierung:** 13.05.2026 (Abend) – Fixierte Leisten, Effektivitäts-Schaubild für Strategien, Layout-Kompaktierung

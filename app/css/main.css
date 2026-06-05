@@ -759,23 +759,30 @@ body::before {
     overflow-x: hidden;
 }
 
-/* ===== TIMER BAR ===== */
+/* ===== TIMER BAR — FIXIERT (immer sichtbar, scrollt nicht weg) ===== */
 .timer-bar {
     background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
     border: 2px solid var(--border-gold);
     border-radius: 12px;
     padding: 10px 18px;
-    margin: 12px 24px;
     display: flex;
     align-items: center;
     gap: 16px;
-    box-shadow: var(--shadow-gold);
-    position: sticky;
-    top: 8px;
+    box-shadow: 0 6px 22px rgba(0,0,0,0.35), var(--shadow-gold);
+    /* Fixiert oben rechts neben dem Toggle-Button */
+    position: fixed;
+    top: 12px;
+    left: calc(var(--sidebar-width) + 24px);
+    right: 100px; /* Platz für den runden Toggle-Button rechts */
     z-index: 200;
     flex-wrap: wrap;
-    /* Schmaler — bei Bedarf zusätzlich begrenzen */
-    max-width: calc(100% - 48px);
+}
+body.sidebar-collapsed .timer-bar {
+    left: calc(60px + 24px);
+}
+/* Wenn der Timer geöffnet ist, soll Hauptinhalt entsprechend nach unten geschoben werden */
+body.timer-open .main-content > .content-section.active {
+    padding-top: 86px;
 }
 
 .timer-bar .timer-display { font-size: 1.4em; }
@@ -862,7 +869,8 @@ body::before {
 /* ===== CONTENT SECTIONS ===== */
 .content-section {
     display: none;
-    padding: 35px;
+    /* Knappere Polsterung: passt auch mit offenem Timer in den sichtbaren Bereich */
+    padding: 18px 28px 24px;
     flex: 1;
     animation: none;
 }
@@ -874,42 +882,32 @@ body::before {
 
 .content-section.active {
     display: block;
-    animation: sectionMorph 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: sectionMorph 0.25s ease-out;
 }
 
 @keyframes sectionMorph {
-    0% {
-        opacity: 0;
-        transform: translateX(50px) scale(0.98);
-        filter: blur(10px);
-    }
-    50% {
-        filter: blur(2px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0) scale(1);
-        filter: blur(0);
-    }
+    0%   { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0); }
 }
 
 .section-header {
-    margin-bottom: 35px;
+    margin-bottom: 16px;
     position: relative;
 }
 
 .section-header h1 {
-    font-size: 2.2em;
+    font-size: 1.7em;
     background: linear-gradient(135deg, var(--text-primary), var(--secondary-light));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .section-header p {
     color: var(--text-secondary);
-    font-size: 1.1em;
+    font-size: 0.95em;
+    margin: 0;
 }
 
 /* ===== CARDS ===== */

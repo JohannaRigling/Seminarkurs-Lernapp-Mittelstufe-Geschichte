@@ -2,19 +2,58 @@
 
 let viewedStrategies = new Set();
 
-// Lernstrategien laden
+// Lernstrategien laden — als Schaubild nach Effektivität sortiert
 function loadStrategies() {
     const grid = document.getElementById('strategiesGrid');
     if (!grid) return;
 
-    grid.innerHTML = LEARNING_STRATEGIES.map(strategy => `
+    // Effektivitäts-Spalten — von „Sehr effektiv" links bis „Hilfreich" rechts
+    const tiers = [
+        { level: 5, label: 'Sehr effektiv', color: '#27ae60', desc: 'Wissenschaftlich gut belegt — größter Lerneffekt' },
+        { level: 4, label: 'Effektiv',      color: '#7fc14e', desc: 'Solide Evidenz — empfehlenswert' },
+        { level: 3, label: 'Mittel',        color: '#daa520', desc: 'Hilft beim Lernen, je nach Aufgabe' },
+        { level: 2, label: 'Hilfreich',     color: '#c87f3a', desc: 'Sinnvoll als Ergänzung, kein Selbstläufer' }
+    ];
+
+    const byTier = tiers.map(t => ({
+        ...t,
+        strategies: LEARNING_STRATEGIES.filter(s => (s.effectiveness || 3) === t.level)
+    }));
+
+    const cardHTML = (strategy) => `
         <div class="strategy-card" onclick="showStrategyDetail('${strategy.id}')">
             <div class="strategy-icon">${strategy.icon}</div>
             <h3>${strategy.name}</h3>
             <span class="strategy-category">${strategy.category}</span>
             <p>${strategy.shortDesc}</p>
+            <div class="strategy-stars" aria-label="Effektivität ${strategy.effectiveness || 3} von 5">
+                ${'★'.repeat(strategy.effectiveness || 3)}${'☆'.repeat(5 - (strategy.effectiveness || 3))}
+            </div>
+        </div>`;
+
+    grid.innerHTML = `
+        <div class="strategies-chart">
+            <div class="strategies-axis" aria-hidden="true">
+                <span class="strategies-axis-label strategies-axis-left">⬅ Sehr effektiv</span>
+                <div class="strategies-axis-gradient"></div>
+                <span class="strategies-axis-label strategies-axis-right">Weniger effektiv ➡</span>
+            </div>
+            <div class="strategies-columns">
+                ${byTier.map(tier => `
+                    <div class="strategies-col" style="--tier-color: ${tier.color}">
+                        <div class="strategies-col-header">
+                            <span class="strategies-col-dot" style="background:${tier.color}"></span>
+                            <span class="strategies-col-title">${tier.label}</span>
+                        </div>
+                        <p class="strategies-col-desc">${tier.desc}</p>
+                        <div class="strategies-col-cards">
+                            ${tier.strategies.map(cardHTML).join('') || '<p class="strategies-empty">—</p>'}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
         </div>
-    `).join('');
+    `;
 }
 
 // Strategie-Detail anzeigen

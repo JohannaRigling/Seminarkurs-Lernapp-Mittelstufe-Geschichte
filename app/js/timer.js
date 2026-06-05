@@ -23,6 +23,15 @@ function startTimer() {
     document.getElementById('timerStartBtn').style.display = 'none';
     document.getElementById('timerPauseBtn').style.display = 'inline-block';
 
+    // Wenn der User gerade auf der Burg ist: automatisch zum Dashboard wechseln
+    // (Burg ist während aktiver Lernzeit gesperrt — Wechsel direkt zur Lernumgebung)
+    if (!isBreak) {
+        const castle = document.getElementById('castle');
+        if (castle && castle.classList.contains('active') && typeof window.showSection === 'function') {
+            try { window.showSection('dashboard'); } catch (e) { /* still */ }
+        }
+    }
+
     updateTimerStatus();
 
     timerInterval = setInterval(() => {
