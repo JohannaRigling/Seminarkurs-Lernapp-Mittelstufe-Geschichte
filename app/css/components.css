@@ -5900,8 +5900,8 @@ body.timer-open .glossary-header { top: 90px; }
 
 /* Bei offenem Timer ist mehr Platz oben besetzt → Burg-Bauplatz schrumpft mit, damit nichts überläuft */
 body.timer-open .cb3-wrapper {
-    height: calc(100vh - 240px);
-    max-height: calc(100vh - 240px);
+    height: calc(100vh - 205px);
+    max-height: calc(100vh - 205px);
 }
 
 /* Burg darf nicht scrollbar sein — Inhalt füllt den Bereich exakt aus */
