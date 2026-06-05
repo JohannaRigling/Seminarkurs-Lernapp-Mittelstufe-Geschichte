@@ -765,22 +765,23 @@ body::before {
     border: 2px solid var(--border-gold);
     border-radius: 12px;
     padding: 10px 18px;
+    margin: 0;
     display: flex;
     align-items: center;
     gap: 16px;
     box-shadow: 0 6px 22px rgba(0,0,0,0.35), var(--shadow-gold);
-    /* Fixiert oben rechts neben dem Toggle-Button */
+    /* Fixiert — füllt die volle Hauptbereichs-Breite aus (Toggle-Button ist ausgeblendet) */
     position: fixed;
     top: 12px;
     left: calc(var(--sidebar-width) + 24px);
-    right: 100px; /* Platz für den runden Toggle-Button rechts */
+    right: 24px;
     z-index: 200;
     flex-wrap: wrap;
 }
 body.sidebar-collapsed .timer-bar {
     left: calc(60px + 24px);
 }
-/* Wenn der Timer geöffnet ist, soll Hauptinhalt entsprechend nach unten geschoben werden */
+/* Wenn der Timer geöffnet ist, schiebt sich der Hauptinhalt unterhalb */
 body.timer-open .main-content > .content-section.active {
     padding-top: 86px;
 }
