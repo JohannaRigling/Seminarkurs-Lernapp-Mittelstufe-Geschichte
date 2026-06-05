@@ -8,17 +8,29 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>HistoLearn - Geschichte Lernapp</title>
-    <link rel="stylesheet" href="css/main.css?v=20260513f">
-    <link rel="stylesheet" href="css/components.css?v=20260513f">
-    <link rel="stylesheet" href="css/themes.css?v=20260513f">
+    <link rel="stylesheet" href="css/main.css?v=20260513g">
+    <link rel="stylesheet" href="css/components.css?v=20260513g">
+    <link rel="stylesheet" href="css/themes.css?v=20260513g">
     <!-- Override-Regeln direkt im HTML — schlägt jedes gecachte CSS -->
     <style id="userOverrides">
-        .section-header p { color: #000000 !important; }
-        #adaptive-session .section-header p,
-        section.content-section .section-header p {
+        /* Untertitel der Section-Header — schwarz, gut lesbar */
+        .section-header p {
             color: #000000 !important;
             font-weight: 600 !important;
             opacity: 1 !important;
+        }
+        /* Lead-Text in der Adaptiven Lernsession — auch schwarz */
+        .adaptive-explainer-lead {
+            color: #000000 !important;
+            font-weight: 600 !important;
+            text-shadow: none !important;
+        }
+        /* Section-Header h1 — solide Akzentfarbe (kein versteckter Gradient) */
+        .section-header h1 {
+            color: var(--secondary, #daa520) !important;
+            -webkit-text-fill-color: var(--secondary, #daa520) !important;
+            background: none !important;
+            font-weight: 800 !important;
         }
     </style>
 </head>
