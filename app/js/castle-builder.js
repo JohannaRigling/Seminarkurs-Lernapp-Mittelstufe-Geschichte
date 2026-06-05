@@ -886,28 +886,34 @@ function cb3CreateFlowerMesh() {
 
 function cb3CreateStairMesh(stairBaseTexture, wall) {
     // Treppe: untere volle Hälfte + obere hintere Hälfte (L-Querschnitt)
+    // Konvention: `wall` gibt die Richtung an, in der die OBERE Stufe liegt.
+    //   wall.z = +1 → obere Stufe an +z   (Default: kein Rotate)
+    //   wall.z = -1 → obere Stufe an -z   (Rotate π)
+    //   wall.x = +1 → obere Stufe an +x   (Rotate -π/2)
+    //   wall.x = -1 → obere Stufe an -x   (Rotate +π/2)
     const grp = new THREE.Group();
     grp.userData.isStair = true;
-    // Material vom Basis-Block übernehmen
     const baseDef = CB3_BLOCKS.find(b => b.texture === stairBaseTexture);
     if (!baseDef) return grp;
     const mat = cb3GetMaterial(baseDef);
+
     // Untere Box (volle Breite, halbe Höhe)
     const lower = new THREE.Mesh(new THREE.BoxGeometry(1, 0.5, 1), mat);
     lower.position.y = -0.25;
     lower.castShadow = true; lower.receiveShadow = true;
     grp.add(lower);
-    // Obere Box (volle Breite, halbe Höhe, hintere Hälfte)
+    // Obere Box: voller x, halb in z (Default zeigt nach +z)
     const upper = new THREE.Mesh(new THREE.BoxGeometry(1, 0.5, 0.5), mat);
-    upper.position.set(0, 0.25, -0.25);
+    upper.position.set(0, 0.25, 0.25);
     upper.castShadow = true; upper.receiveShadow = true;
     grp.add(upper);
-    // Drehung: Stufe zeigt VOM angeklickten Block weg (oder default +z)
+
     if (wall) {
-        if (wall.x === 1)       grp.rotation.y = -Math.PI / 2;
-        else if (wall.x === -1) grp.rotation.y = Math.PI / 2;
-        else if (wall.z === -1) grp.rotation.y = Math.PI;
-        grp.userData.wall = { x: wall.x, y: 0, z: wall.z };
+        if (wall.x === 1)       grp.rotation.y = Math.PI / 2;  // obere Stufe nach +x
+        else if (wall.x === -1) grp.rotation.y = -Math.PI / 2; // obere Stufe nach -x
+        else if (wall.z === -1) grp.rotation.y = Math.PI;      // obere Stufe nach -z
+        // wall.z === 1 → 0° (default — obere Stufe nach +z)
+        grp.userData.wall = { x: wall.x || 0, y: 0, z: wall.z || 0 };
     }
     return grp;
 }
@@ -1105,14 +1111,20 @@ function cb3CreateAnimalMesh(type) {
     eyeR.position.set(s.head[0] * 0.3, 0.62, head.position.z + s.head[2] / 2 + 0.001);
     grp.add(eyeR);
 
-    // Alle Tiere haben 4 Beine
+    // Huhn hat 2 Beine (typische Hühner-Anatomie), alle anderen 4
     const legs = [];
     const legHeight = 0.35;
     const legW = type === 'huhn' ? 0.08 : 0.13;
     const legGeo = new THREE.BoxGeometry(legW, legHeight, legW);
     const lx = s.body[0] / 2 - legW / 2;
     const lz = s.body[2] / 2 - legW;
-    const legPositions = [[-lx, lz], [lx, lz], [-lx, -lz], [lx, -lz]];
+    let legPositions;
+    if (type === 'huhn') {
+        // 2 Beine mittig
+        legPositions = [[-lx * 0.5, 0], [lx * 0.5, 0]];
+    } else {
+        legPositions = [[-lx, lz], [lx, lz], [-lx, -lz], [lx, -lz]];
+    }
     legPositions.forEach(([x, z]) => {
         const leg = new THREE.Mesh(legGeo, legMat);
         leg.position.set(x, 0.18, z);
@@ -1308,6 +1320,90 @@ function cb3GetFenceConnections(x, y, z) {
         S: hasNeighbor(0, 1),
         N: hasNeighbor(0, -1)
     };
+}
+
+// ───── Mauer (Minecraft-Wall-Stil): Pfosten + Cap + Verbindungs-Arme ─────
+function cb3CreateWallMesh(connections) {
+    const grp = new THREE.Group();
+    grp.userData.isWall = true;
+    const def = CB3_BLOCKS.find(b => b.id === 'zinne');
+    const mat = cb3GetMaterial(def);
+    const c = connections || { N: false, S: false, E: false, W: false };
+
+    // Zentraler Pfosten: 8×16×8 px = 0.5 × 1 × 0.5
+    const post = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1, 0.5), mat);
+    post.castShadow = true; post.receiveShadow = true;
+    grp.add(post);
+
+    // Wenn vollständig isoliert: Top-Kappe (Pfostenkappe) drauf — 12×3×12 px
+    const isolated = !c.N && !c.S && !c.E && !c.W;
+    if (isolated) {
+        const cap = new THREE.Mesh(new THREE.BoxGeometry(0.75, 3/16, 0.75), mat);
+        cap.position.y = 0.5 - (3/16) / 2; // sitzt oben
+        cap.castShadow = true;
+        grp.add(cap);
+    }
+
+    // Verbindungs-Arme — Pfosten-breit, fast volle Höhe, vom Pfosten bis Block-Rand
+    const armHeight = 15/16;
+    const armY = -0.5 + armHeight / 2; // Unterkante am Boden, Oberkante 1/16 unter Pfosten-Top
+    const addArm = (dir) => {
+        let arm;
+        if (dir === 'N' || dir === 'S') {
+            arm = new THREE.Mesh(new THREE.BoxGeometry(0.5, armHeight, 0.25), mat);
+            arm.position.set(0, armY, dir === 'N' ? -0.375 : 0.375);
+        } else {
+            arm = new THREE.Mesh(new THREE.BoxGeometry(0.25, armHeight, 0.5), mat);
+            arm.position.set(dir === 'E' ? 0.375 : -0.375, armY, 0);
+        }
+        arm.castShadow = true; arm.receiveShadow = true;
+        grp.add(arm);
+    };
+    if (c.N) addArm('N');
+    if (c.S) addArm('S');
+    if (c.E) addArm('E');
+    if (c.W) addArm('W');
+
+    return grp;
+}
+
+function cb3GetWallConnections(x, y, z) {
+    // Mauer verbindet mit anderer Mauer oder mit einem Vollblock auf gleicher Höhe
+    const hasNeighbor = (dx, dz) => !!_blocks.get(`${x + dx},${y},${z + dz}`);
+    return {
+        E: hasNeighbor(1, 0),
+        W: hasNeighbor(-1, 0),
+        S: hasNeighbor(0, 1),
+        N: hasNeighbor(0, -1)
+    };
+}
+
+function cb3RebuildWall(key) {
+    const b = _blocks.get(key);
+    if (!b || b.type !== 'zinne' || !b.mesh) return;
+    const [x, y, z] = key.split(',').map(Number);
+    const oldMesh = b.mesh;
+    _scene.remove(oldMesh);
+    oldMesh.traverse(o => {
+        if (o.geometry) { try { o.geometry.dispose(); } catch (_) {} }
+    });
+    const conn = cb3GetWallConnections(x, y, z);
+    const mesh = cb3CreateWallMesh(conn);
+    mesh.position.set(x + 0.5, y + 0.5, z + 0.5);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    mesh.userData.key = key;
+    mesh.userData.type = 'zinne';
+    _scene.add(mesh);
+    b.mesh = mesh;
+}
+
+function cb3UpdateWallsAround(x, y, z) {
+    cb3RebuildWall(`${x},${y},${z}`);
+    cb3RebuildWall(`${x + 1},${y},${z}`);
+    cb3RebuildWall(`${x - 1},${y},${z}`);
+    cb3RebuildWall(`${x},${y},${z + 1}`);
+    cb3RebuildWall(`${x},${y},${z - 1}`);
 }
 
 function cb3RebuildFence(key) {
@@ -1556,7 +1652,7 @@ function cb3TexBookshelf(ctx) {
 }
 
 function cb3TexAnimalPreview(ctx, def) {
-    // Einfache Pixel-Silhouette: Körper, Kopf, 4 Beine
+    // Einfache Pixel-Silhouette: Körper, Kopf, Beine (Huhn = 2, andere = 4)
     const bodyColor = '#' + def.color.toString(16).padStart(6, '0');
     const dark = '#3a2a1a';
     // Körper (zentral, ovaler Block)
@@ -1574,11 +1670,20 @@ function cb3TexAnimalPreview(ctx, def) {
     // Augen
     px(ctx, 13, 6, dark);
     // Beine
-    for (let y = 11; y < 14; y++) {
-        px(ctx, 4, y, dark);
-        px(ctx, 7, y, dark);
-        px(ctx, 10, y, dark);
-        px(ctx, 12, y, dark);
+    if (def.id === 'huhn') {
+        // 2 orangefarbene Beine mittig (typische Hühner-Anatomie)
+        const legColor = '#ff8800';
+        for (let y = 11; y < 14; y++) {
+            px(ctx, 7, y, legColor);
+            px(ctx, 9, y, legColor);
+        }
+    } else {
+        for (let y = 11; y < 14; y++) {
+            px(ctx, 4, y, dark);
+            px(ctx, 7, y, dark);
+            px(ctx, 10, y, dark);
+            px(ctx, 12, y, dark);
+        }
     }
     // Unterscheidung Huhn vs. andere
     if (def.id === 'huhn') {
@@ -2198,8 +2303,8 @@ function cb3GetPlacementTarget() {
         pos = { x, y: 0, z };
     } else {
         const blockPos = topObj.position;
-        // Bei Spezial-Meshes (Fackel, Banner, Blume, Baum, Zaun, Bett, Treppe, Tier): Block oben drauf platzieren
-        if (topObj.userData.isTorch || topObj.userData.isBanner || topObj.userData.isFlower || topObj.userData.isTree || topObj.userData.isFence || topObj.userData.isBed || topObj.userData.isStair) {
+        // Bei Spezial-Meshes (Fackel, Banner, Blume, Baum, Zaun, Mauer, Bett, Treppe, Tier): Block oben drauf platzieren
+        if (topObj.userData.isTorch || topObj.userData.isBanner || topObj.userData.isFlower || topObj.userData.isTree || topObj.userData.isFence || topObj.userData.isWall || topObj.userData.isBed || topObj.userData.isStair) {
             pos = {
                 x: Math.floor(blockPos.x - 0.5),
                 y: Math.floor(blockPos.y - 0.5) + 1,
@@ -2256,6 +2361,18 @@ function cb3GetPlacementTarget() {
         }
         if (cb3HasBlock(x2, pos.y, z2)) {
             return { pos, valid: false, reason: 'Bett-Kopfteil blockiert' };
+        }
+    }
+    // Auto-Drehung für Treppen: Stufe steigt in die Richtung, in die der Spieler schaut
+    if (def && def.texture === 'stairs' && !wallNormal && _camera) {
+        const dxCam = (pos.x + 0.5) - _camera.position.x;
+        const dzCam = (pos.z + 0.5) - _camera.position.z;
+        // Spieler schaut vom Kamera-Punkt zum Block (in Richtung sign(dCam)).
+        // wallNormal = obere-Stufe-Richtung = Blickrichtung = sign(dCam).
+        if (Math.abs(dxCam) > Math.abs(dzCam)) {
+            wallNormal = { x: Math.sign(dxCam) || 1, y: 0, z: 0 };
+        } else {
+            wallNormal = { x: 0, y: 0, z: Math.sign(dzCam) || 1 };
         }
     }
     return { pos, valid: true, wall: wallNormal };
@@ -2426,9 +2543,8 @@ function cb3PlaceBlock(x, y, z, typeId, wall) {
         // Verbindungen basierend auf bereits existierenden Nachbarn
         mesh = cb3CreateFenceMesh(cb3GetFenceConnections(x, y, z));
     } else if (actualType === 'zinne') {
-        // Mauerzinne als schmalerer Wandblock — wirkt weniger massiv
-        const mat = cb3GetMaterial(def, variant);
-        mesh = new THREE.Mesh(new THREE.BoxGeometry(0.7, 1, 0.7), mat);
+        // Mauer im Minecraft-Wall-Stil — Pfosten, Cap, Verbindungs-Arme zu Nachbarn
+        mesh = cb3CreateWallMesh(cb3GetWallConnections(x, y, z));
     } else {
         const mat = cb3GetMaterial(def, variant);
         mesh = new THREE.Mesh(_blockGeo, mat);
@@ -2449,9 +2565,9 @@ function cb3PlaceBlock(x, y, z, typeId, wall) {
     }
 
     _blocks.set(key, { mesh, type: typeId, light, wall: wall || null });
-    // Zaun-Nachbarn neu verbinden (nicht für Zaun selbst doppelt, der wurde gerade erstellt)
-    if (actualType !== 'zaun') cb3UpdateFencesAround(x, y, z);
-    else cb3UpdateFencesAround(x, y, z); // auch für Zaun, damit Nachbar-Zäune ihre neue Verbindung bekommen
+    // Zaun- und Mauer-Nachbarn neu verbinden
+    cb3UpdateFencesAround(x, y, z);
+    cb3UpdateWallsAround(x, y, z);
 }
 
 function cb3RemoveBlock(key) {
@@ -2461,16 +2577,18 @@ function cb3RemoveBlock(key) {
     if (b.light) _scene.remove(b.light);
     // Geometry geteilt → nicht disposen
     _blocks.delete(key);
-    // Nach Entfernen: Nachbar-Zäune neu verbinden
+    // Nach Entfernen: Nachbar-Zäune & -Mauern neu verbinden
     const [x, y, z] = key.split(',').map(Number);
     cb3UpdateFencesAround(x, y, z);
+    cb3UpdateWallsAround(x, y, z);
 }
 
 function cb3LoadBlocks(list) {
     list.forEach(b => cb3PlaceBlock(b.x, b.y, b.z, b.type, b.wall));
-    // Nach dem Laden: alle Zäune mit aktueller Nachbarschaft neu aufbauen
+    // Nach dem Laden: alle Zäune & Mauern mit aktueller Nachbarschaft neu aufbauen
     _blocks.forEach((b, key) => {
-        if (b.type === 'zaun') cb3RebuildFence(key);
+        if (b.type === 'zaun')  cb3RebuildFence(key);
+        if (b.type === 'zinne') cb3RebuildWall(key);
     });
 }
 

@@ -2045,3 +2045,33 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 
 **Ende Standpunkt-Dokumentation**
 **Letzte Aktualisierung:** 13.05.2026 – Großes Verbesserungspaket: Bau-/Normalmodus, Glossar-KI, Toast-Reduktion, Timer-Fix, Tutorial-Erweiterung
+
+## 🐛 Nachschlag vom 13.05.2026 – Huhn, Treppe, Mauer
+
+### ✅ Huhn auf 2 Beine zurück
+- 3D-Mesh: Huhn wieder mit 2 Beinen mittig (typische Hühner-Anatomie)
+- Shop-/Inventar-Vorschau (`cb3TexAnimalPreview`): zeigt jetzt auch 2 orangefarbene Beine, die anderen Tiere weiterhin 4
+
+### ✅ Treppe — Auto-Drehung wie Bett
+- `cb3CreateStairMesh` Mesh-Default umgedreht: obere Stufe an +z (statt -z)
+- Rotations-Konvention vereinheitlicht: `wall` = Richtung der oberen Stufe
+- Neuer `wall.z === 1`-Case ergänzt
+- In `cb3GetPlacementTarget` Auto-Drehung: wenn keine Wand geklickt, wird `wallNormal = sign(blockPos - cameraPos)` gesetzt → Treppe steigt in Blickrichtung des Spielers, analog zur Bett-Auto-Drehung
+
+### ✅ Mauer im Minecraft-Wall-Stil
+- **Neues Mesh** `cb3CreateWallMesh(connections)`:
+  - Zentraler Pfosten 8×16×8 (0.5×1×0.5)
+  - Top-Kappe 12×3×12 NUR wenn Pfosten komplett isoliert ist (keine Verbindungen)
+  - Verbindungs-Arme zu Nachbarn: 0.5 breit × 15/16 hoch × 0.25 tief, top-aligned 1px unter Pfosten-Top
+- **Verbindungs-Logik** parallel zum Zaun: `cb3GetWallConnections`, `cb3RebuildWall`, `cb3UpdateWallsAround`
+- In `cb3PlaceBlock`/`cb3RemoveBlock`/`cb3LoadBlocks` werden Mauern + Zäune gleichzeitig aktualisiert
+- `topObj.userData.isWall` in der Raycast-Logik ergänzt (Klick auf Mauer-Oberseite platziert Block oben drauf)
+
+### 📝 User-Präferenz
+- **Huhn hat IMMER 2 Beine** — im Mesh und in der Shop-Vorschau (Inkonsistenz war der eigentliche Bug, nicht die Anzahl)
+- **Treppe wie Bett**: Auto-Drehung nach Blickrichtung — kein „nur eine Richtung möglich" mehr
+- **Mauer = Minecraft-Wall**: Pfosten + Arme zu Nachbarn, nicht mehr massive Vollblöcke
+
+---
+
+**Letzte Aktualisierung:** 13.05.2026 (Nachmittag) – Huhn-Korrektur, Treppen-Auto-Drehung, Minecraft-Wall-Mauer
