@@ -2127,3 +2127,63 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 ---
 
 **Letzte Aktualisierung:** 13.05.2026 (Abend) – Fixierte Leisten, Effektivitäts-Schaubild für Strategien, Layout-Kompaktierung
+
+## 🎯 Session vom 13.05.2026 (spät Abend) – UI-Feinschliff: Timer-Bar, Adaptive Lernsession
+
+### ✅ Timer-Bar
+- Lücke rechts geschlossen: `right: 100px → 24px` (Toggle-Button ist bei offenem Timer ausgeblendet, braucht keinen Platz)
+- Bar wieder schmal nach Größentests (`padding: 6/16, gap: 14, timer-display 1.25em, status/btn/stats 0.85em, progress-Höhe 8px, line-height: 1.1`)
+- `body.timer-open`-Padding entsprechend `104px → 70px` und Burg-Wrapper `-240px → -205px`
+
+### ✅ Burg
+- `#castle.content-section { overflow: hidden }` → kein Scrollen mehr auf der Burg-Seite (User-Wunsch: nicht nur nicht müssen, sondern nicht KÖNNEN)
+- `body.timer-open .cb3-wrapper { height: calc(100vh - 205px) }` → der 3D-Bauplatz schrumpft bei offenem Timer mit, kein Überlauf
+- `startTimer()` in `timer.js`: wenn der User auf der Burg ist, wird beim Timer-Start automatisch zum Dashboard gewechselt
+
+### ✅ Adaptive Lernsession — komplettes Layout-Refactor
+- Section nutzt jetzt **Flex-Column** und füllt den verbleibenden Platz unterhalb der Timer-Bar exakt aus:
+  - `#adaptive-session.content-section { display: flex; flex-direction: column; height: 100vh; overflow: hidden }`
+  - `.adaptive-session-main { flex: 1; flex-column; gap: 14px }`
+  - `.adaptive-explainer { flex: 1; flex-column; overflow: hidden }` → wächst mit
+  - `.adaptive-explainer-grid { flex: 1; grid-template-columns: repeat(3, 1fr) }` → 3 Spalten garantiert
+  - Mobile-Fallback bei `< 800px`: 1 Spalte
+- Inhalte proportional: Title 1.45em, Lead 1.05em, Card-Icon 1.85em, Card-Title 1.1em, Card-Body 0.95em — füllen Platz aus ohne zu verzerren
+- Lead-Text („Eine Lernsession, die sich automatisch…") jetzt **schwarz** statt weiß
+- Section-Header h1 wieder klar in der Akzentfarbe — der Gradient-Trick (`background-clip: text`) wurde durch solides `color: var(--secondary); font-weight: 800` ersetzt, weil der Gradient bei manchen Themes/Akzentfarben nur als hellgrau gerendert wurde
+- Section-Untertitel (`<p>` unter h1) **schwarz** mit `!important`
+
+### ✅ Globale Maßnahmen gegen Scrollen wo nicht gewollt
+- Neue Body-Klasse `no-scroll`: wird in `showSection()` für `NO_SCROLL_SECTIONS = ['castle', 'adaptive-session', 'dashboard']` gesetzt
+- CSS: `body.no-scroll, body.no-scroll .main-content { overflow: hidden; height: 100vh; max-height: 100vh }`
+- Verhindert systematisch Scrollen auf diesen Seiten
+
+### ✅ Cache-Control für Live-Entwicklung
+- `server.py` sendet auf JEDEN Datei-Request `Cache-Control: no-store, no-cache, must-revalidate`, `Pragma: no-cache`, `Expires: 0`
+- `index.html` mit Cache-Bust-Querystring (`?v=20260513j`) an allen `<link rel="stylesheet">`
+- `<meta http-equiv>`-Tags `Cache-Control`, `Pragma`, `Expires` in HTML-Head
+- Inline-`<style id="userOverrides">`-Block direkt im HTML, falls alle anderen Cache-Maßnahmen scheitern (überschreibt jedes gecachte CSS)
+
+### ✅ Kontrast-Verbesserungen
+- `.section-header p`: war `var(--text-secondary)` (helles Grau) → **`#000000 !important`** mit `font-weight: 500`
+- `.adaptive-explainer-card`: Hintergrund explizit dunkel (`rgba(10, 14, 32, 0.85)`) statt `var(--bg-tertiary)`, damit der Akzent-Tint keinen schlechten Kontrast erzeugt
+- Texte mit `text-shadow: 0 1px 2px rgba(0,0,0,0.4)` und `font-weight: 500` für bessere Lesbarkeit
+- `body.no-scroll` wird zusätzlich gesetzt um Scrolling endgültig zu unterbinden
+
+### 🗂️ Geänderte Dateien
+- `app/index.html` — Cache-Bust-Versionen, Meta-Cache-Header, `<style id="userOverrides">`-Block
+- `app/css/main.css` — Timer-Bar Position, Section-Header neue Farben, `.main-content` Overflow, `body.no-scroll`
+- `app/css/components.css` — Adaptive-Lernsession-Flex-Layout, Explainer-Cards Kontrast, Burg overflow
+- `app/js/app.js` — `NO_SCROLL_SECTIONS` + `body.no-scroll`-Toggle in `showSection()`
+- `app/js/timer.js` — Burg → Dashboard beim Timer-Start
+- `server.py` — `end_headers()` mit No-Cache-Headers
+
+### 📝 Neue User-Präferenzen
+- **Klar lesbare Texte mit hohem Kontrast** — Texte mit Akzent-Tint oder geringem Kontrast werden sofort moniert
+- **Kein Scrollen auf Hauptseiten** — Inhalt muss in den Viewport passen, Scrollbar darf nicht erscheinen
+- **Layouts müssen den verbleibenden Platz füllen**, keine großen Lücken unten
+- **Aber: nicht verzogen** — proportional, Schriften & Karten dürfen nicht zu groß werden und Text nicht überquellen
+- **Browser-Cache ist eine ständige Stolperfalle** — Cache-Busting (Query-String + Meta-Tags + Inline-Style-Overrides + Server-No-Cache-Header) ist Standard-Praxis bei jeder CSS-Änderung
+
+---
+
+**Letzte Aktualisierung:** 13.05.2026 (spät Abend) – Adaptive-Layout-Refactor, no-scroll-System, Kontrast-Fixes, Cache-Busting
