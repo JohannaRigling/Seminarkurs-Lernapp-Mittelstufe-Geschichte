@@ -63,6 +63,8 @@ let _lastAnimalTime = 0;
 let _atmosphereOceanTex = null;
 let _mouseDownPos = null;
 let _eventCleanup = [];
+let _buildMode = false;       // false = Normalmodus (nur ansehen), true = Baumodus
+let _gridHelper = null;       // Referenz auf das weiße Karoliniengrid
 
 // ─────────────────────── INIT / SAVE ──────────────────────────────
 
@@ -125,20 +127,29 @@ function cb3RenderLayout() {
     const coins = window.currentUser ? window.currentUser.progress.coins : 0;
 
     container.innerHTML = `
-        <div class="cb3-wrapper">
+        <div class="cb3-wrapper" id="cb3Wrapper">
             <div class="cb3-topbar">
                 <div class="cb3-coins-display">
                     <span class="cb3-coin-dot"></span>
                     <span class="cb3-coins-label">Kuh-Münzen:</span>
                     <strong id="cb3CoinsVal">${coins}</strong>
                 </div>
-                <div class="cb3-controls-hint">
+                <button type="button" class="cb3-mode-toggle" id="cb3ModeToggle" onclick="cb3ToggleBuildMode()">
+                    <span class="cb3-mode-icon">🔨</span>
+                    <span class="cb3-mode-label">Baumodus aktivieren</span>
+                </button>
+                <div class="cb3-controls-hint cb3-hint-build">
                     <span><strong>Klick</strong> bauen</span>
                     <span><strong>Rechtsklick</strong> abreißen</span>
                     <span><strong>Maus ziehen</strong> drehen</span>
                     <span><strong>Scrollen</strong> zoomen</span>
                     <span><strong>Pfeiltasten/WASD</strong> bewegen</span>
                     <span><strong>ESC</strong> Block loslassen</span>
+                </div>
+                <div class="cb3-controls-hint cb3-hint-view">
+                    <span><strong>Maus ziehen</strong> drehen</span>
+                    <span><strong>Scrollen</strong> zoomen</span>
+                    <span><strong>Pfeiltasten/WASD</strong> bewegen</span>
                 </div>
             </div>
             <div class="cb3-main">
@@ -157,6 +168,26 @@ function cb3RenderLayout() {
             </div>
         </div>
     `;
+    cb3ApplyModeClass();
+}
+
+function cb3ApplyModeClass() {
+    const wrapper = document.getElementById('cb3Wrapper');
+    if (!wrapper) return;
+    wrapper.classList.toggle('cb3-build-on', _buildMode);
+    const lbl = document.querySelector('#cb3ModeToggle .cb3-mode-label');
+    const icon = document.querySelector('#cb3ModeToggle .cb3-mode-icon');
+    if (lbl) lbl.textContent = _buildMode ? 'Baumodus verlassen' : 'Baumodus aktivieren';
+    if (icon) icon.textContent = _buildMode ? '👁️' : '🔨';
+    if (_gridHelper) _gridHelper.visible = _buildMode;
+    if (_ghostMesh) _ghostMesh.visible = _buildMode && !!_selectedType;
+}
+
+function cb3ToggleBuildMode() {
+    _buildMode = !_buildMode;
+    if (!_buildMode) _selectedType = null;
+    cb3ApplyModeClass();
+    if (typeof cb3UpdateUI === 'function') cb3UpdateUI();
 }
 
 function cb3Cleanup() {
@@ -171,6 +202,8 @@ function cb3Cleanup() {
     _scene = null;
     _camera = null;
     _materials = {};
+    _gridHelper = null;
+    _buildMode = false;
 }
 
 // ─────────────────────── 3D-SZENE ─────────────────────────────────
@@ -291,11 +324,18 @@ function cb3BindEvents(canvas, wrap) {
     _resizeHandler = () => {
         if (!_renderer || !_camera || !wrap) return;
         const w2 = wrap.clientWidth, h2 = wrap.clientHeight;
+        if (w2 < 1 || h2 < 1) return;
         _renderer.setSize(w2, h2);
         _camera.aspect = w2 / h2;
         _camera.updateProjectionMatrix();
     };
     window.addEventListener('resize', _resizeHandler);
+    // Auch bei Sidebar-Toggle / Layout-Wechseln (kein Window-Resize) Canvas-Größe nachziehen
+    if (window.ResizeObserver) {
+        const ro = new ResizeObserver(() => _resizeHandler());
+        ro.observe(wrap);
+        _eventCleanup.push(() => ro.disconnect());
+    }
 }
 
 function cb3CreateSkyTexture() {
@@ -403,6 +443,8 @@ function cb3CreateGrid() {
     grid.position.set(GRID_SIZE / 2, 0.015, GRID_SIZE / 2);
     grid.material.opacity = 0.45;
     grid.material.transparent = true;
+    grid.visible = _buildMode; // nur im Baumodus sichtbar
+    _gridHelper = grid;
     _scene.add(grid);
 }
 
@@ -444,10 +486,10 @@ function cb3CreateSurroundings() {
         _scene.add(cloudGrp);
     }
 
-    // 🌲 WALD (Norden, z < 0)
-    for (let i = 0; i < 60; i++) {
+    // 🌲 WALD (Norden, z < 0) — deutlich dichter besetzt
+    for (let i = 0; i < 130; i++) {
         const x = cx + (Math.random() - 0.5) * GRID_SIZE * 4;
-        const z = -3 - Math.random() * GRID_SIZE * 2.2;
+        const z = -2 - Math.random() * GRID_SIZE * 2.6;
         if (!isLandPosition(x, z)) continue;
         const tree = cb3MakeTree();
         tree.position.set(x, 0, z);
@@ -514,14 +556,16 @@ function cb3CreateSurroundings() {
         _scene.add(s);
     }
 
-    // ⛰️ BERGE (Osten, x > GRID_SIZE)
+    // ⛰️ BERGE (Osten, x deutlich hinter dem Plateau — kein Overlap mit Bauplatz)
     for (let i = 0; i < 6; i++) {
         const mtnH = GRID_SIZE * (0.55 + Math.random() * 0.7);
         const mtnR = GRID_SIZE * (0.4 + Math.random() * 0.3);
         const mtnGeo = new THREE.ConeGeometry(mtnR, mtnH, 6);
         const mtnMat = new THREE.MeshLambertMaterial({ color: 0x6a5a4a });
         const mtn = new THREE.Mesh(mtnGeo, mtnMat);
-        mtn.position.set(GRID_SIZE * 1.6 + Math.random() * GRID_SIZE * 0.6, mtnH / 2 - 0.5, cz + (i - 2.5) * GRID_SIZE * 0.45);
+        // Mindestabstand: Berg-Mittelpunkt mind. mtnR hinter Plateau-Rand (x = GRID_SIZE)
+        const baseX = GRID_SIZE + mtnR + 2 + Math.random() * GRID_SIZE * 0.5;
+        mtn.position.set(baseX, mtnH / 2 - 0.5, cz + (i - 2.5) * GRID_SIZE * 0.45);
         mtn.rotation.y = Math.random() * Math.PI;
         _scene.add(mtn);
         // Schneekuppe oben
@@ -535,12 +579,15 @@ function cb3CreateSurroundings() {
             _scene.add(snow);
         }
     }
-    // Hügel-Vorland Richtung Berge
+    // Hügel-Vorland Richtung Berge — komplett östlich des Plateaus
     for (let i = 0; i < 15; i++) {
-        const hillGeo = new THREE.SphereGeometry(GRID_SIZE * 0.15, 8, 4, 0, Math.PI * 2, 0, Math.PI / 2);
+        const hillR = GRID_SIZE * 0.12;
+        const hillGeo = new THREE.SphereGeometry(hillR, 8, 4, 0, Math.PI * 2, 0, Math.PI / 2);
         const hillMat = new THREE.MeshLambertMaterial({ color: 0x4a7a3e });
         const hill = new THREE.Mesh(hillGeo, hillMat);
-        hill.position.set(GRID_SIZE * 1.05 + Math.random() * GRID_SIZE * 0.4, -0.2, cz + (Math.random() - 0.5) * GRID_SIZE * 2);
+        // Mindestabstand: x mind. GRID_SIZE + Radius + Puffer
+        const hx = GRID_SIZE + hillR + 1.5 + Math.random() * GRID_SIZE * 0.5;
+        hill.position.set(hx, -0.2, cz + (Math.random() - 0.5) * GRID_SIZE * 2);
         hill.scale.y = 0.4 + Math.random() * 0.5;
         _scene.add(hill);
     }
@@ -877,23 +924,23 @@ function cb3CreateBedMesh(half, color) {
     const blanketDarkMat = new THREE.MeshLambertMaterial({ color: darkColor });
     const pillowMat = new THREE.MeshLambertMaterial({ color: 0xf5f5f5 });
 
-    // Solides Holzgestell (deutlich dicker)
-    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.32, 0.95), woodMat);
+    // Solides Holzgestell — volle Block-Tiefe damit Hälften nahtlos zusammenschließen
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.32, 1.0), woodMat);
     frame.position.y = -0.34;
     frame.castShadow = true; frame.receiveShadow = true;
     grp.add(frame);
 
-    // Bettdecke (deutlich dicker, gut sichtbar)
-    const blanket = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.18, 0.95), blanketMat);
+    // Bettdecke — auch volle Block-Tiefe, keine Lücke mehr in der Mitte
+    const blanket = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.18, 1.0), blanketMat);
     blanket.position.y = -0.09;
     grp.add(blanket);
 
-    // Dunklere Decken-Naht am Außenrand
+    // Dunklere Decken-Naht NUR an Außenseite (head: hinten, foot: vorne)
     const blanketEdge = new THREE.Mesh(
         new THREE.BoxGeometry(0.95, 0.2, 0.05),
         blanketDarkMat
     );
-    blanketEdge.position.set(0, -0.08, half === 'head' ? -0.46 : 0.46);
+    blanketEdge.position.set(0, -0.08, half === 'head' ? -0.475 : 0.475);
     grp.add(blanketEdge);
 
     if (half === 'head') {
@@ -1058,20 +1105,14 @@ function cb3CreateAnimalMesh(type) {
     eyeR.position.set(s.head[0] * 0.3, 0.62, head.position.z + s.head[2] / 2 + 0.001);
     grp.add(eyeR);
 
-    // Beine — Huhn hat 2, andere haben 4
+    // Alle Tiere haben 4 Beine
     const legs = [];
     const legHeight = 0.35;
     const legW = type === 'huhn' ? 0.08 : 0.13;
     const legGeo = new THREE.BoxGeometry(legW, legHeight, legW);
     const lx = s.body[0] / 2 - legW / 2;
     const lz = s.body[2] / 2 - legW;
-    let legPositions;
-    if (type === 'huhn') {
-        // 2 Beine mittig — typische Hühner-Anatomie
-        legPositions = [[-lx * 0.5, 0], [lx * 0.5, 0]];
-    } else {
-        legPositions = [[-lx, lz], [lx, lz], [-lx, -lz], [lx, -lz]];
-    }
+    const legPositions = [[-lx, lz], [lx, lz], [-lx, -lz], [lx, -lz]];
     legPositions.forEach(([x, z]) => {
         const leg = new THREE.Mesh(legGeo, legMat);
         leg.position.set(x, 0.18, z);
@@ -1225,31 +1266,77 @@ function cb3RemoveAnimal(animal) {
     if (idx >= 0) _animals.splice(idx, 1);
 }
 
-function cb3CreateFenceMesh() {
-    // Zaunpfosten + Querbalken (immer in alle 4 Richtungen sichtbar)
+function cb3CreateFenceMesh(connections) {
+    // connections: { N:bool, S:bool, E:bool, W:bool } — Querbalken nur zu echten Nachbarn
     const grp = new THREE.Group();
     grp.userData.isFence = true;
     const wood = new THREE.MeshLambertMaterial({ color: 0x8b5a2b });
-    // Pfosten
+    const c = connections || { N: false, S: false, E: false, W: false };
+
+    // Pfosten — immer da
     const post = new THREE.Mesh(new THREE.BoxGeometry(4/16, 1, 4/16), wood);
     post.position.y = 0;
     post.castShadow = true;
     grp.add(post);
-    // Querbalken X-Richtung (oben + unten)
-    const railUpX = new THREE.Mesh(new THREE.BoxGeometry(1, 2/16, 2/16), wood);
-    railUpX.position.set(0, 4/16, 0);
-    grp.add(railUpX);
-    const railLoX = new THREE.Mesh(new THREE.BoxGeometry(1, 2/16, 2/16), wood);
-    railLoX.position.set(0, -2/16, 0);
-    grp.add(railLoX);
-    // Querbalken Z-Richtung
-    const railUpZ = new THREE.Mesh(new THREE.BoxGeometry(2/16, 2/16, 1), wood);
-    railUpZ.position.set(0, 4/16, 0);
-    grp.add(railUpZ);
-    const railLoZ = new THREE.Mesh(new THREE.BoxGeometry(2/16, 2/16, 1), wood);
-    railLoZ.position.set(0, -2/16, 0);
-    grp.add(railLoZ);
+
+    // Querbalken — nur halb so lang, von Pfosten-Mitte bis zur Block-Kante
+    // Länge = 0.5 (vom Zentrum bis zum Block-Rand)
+    const railLen = 0.5;
+    const addRail = (dx, dz, lenX, lenZ) => {
+        // Oberer Balken
+        const railUp = new THREE.Mesh(new THREE.BoxGeometry(lenX, 2/16, lenZ), wood);
+        railUp.position.set(dx, 4/16, dz);
+        grp.add(railUp);
+        // Unterer Balken
+        const railLo = new THREE.Mesh(new THREE.BoxGeometry(lenX, 2/16, lenZ), wood);
+        railLo.position.set(dx, -2/16, dz);
+        grp.add(railLo);
+    };
+    if (c.E) addRail(+railLen / 2, 0, railLen, 2/16); // nach +X
+    if (c.W) addRail(-railLen / 2, 0, railLen, 2/16); // nach -X
+    if (c.S) addRail(0, +railLen / 2, 2/16, railLen); // nach +Z
+    if (c.N) addRail(0, -railLen / 2, 2/16, railLen); // nach -Z
+
     return grp;
+}
+
+function cb3GetFenceConnections(x, y, z) {
+    const hasNeighbor = (dx, dz) => !!_blocks.get(`${x + dx},${y},${z + dz}`);
+    return {
+        E: hasNeighbor(1, 0),
+        W: hasNeighbor(-1, 0),
+        S: hasNeighbor(0, 1),
+        N: hasNeighbor(0, -1)
+    };
+}
+
+function cb3RebuildFence(key) {
+    const b = _blocks.get(key);
+    if (!b || b.type !== 'zaun' || !b.mesh) return;
+    const [x, y, z] = key.split(',').map(Number);
+    const oldMesh = b.mesh;
+    _scene.remove(oldMesh);
+    oldMesh.traverse(o => {
+        if (o.geometry) { try { o.geometry.dispose(); } catch (_) {} }
+    });
+    const conn = cb3GetFenceConnections(x, y, z);
+    const mesh = cb3CreateFenceMesh(conn);
+    mesh.position.set(x + 0.5, y + 0.5, z + 0.5);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    mesh.userData.key = key;
+    mesh.userData.type = 'zaun';
+    _scene.add(mesh);
+    b.mesh = mesh;
+}
+
+function cb3UpdateFencesAround(x, y, z) {
+    // Den eigenen Zaun + 4 horizontale Nachbarn neu aufbauen
+    cb3RebuildFence(`${x},${y},${z}`);
+    cb3RebuildFence(`${x + 1},${y},${z}`);
+    cb3RebuildFence(`${x - 1},${y},${z}`);
+    cb3RebuildFence(`${x},${y},${z + 1}`);
+    cb3RebuildFence(`${x},${y},${z - 1}`);
 }
 
 // ─────────────────────── BLOCK-MATERIALIEN ─────────────────────────
@@ -2045,7 +2132,7 @@ function cb3OnMouseMove(e) {
     _mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     _mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
-    if (!_selectedType) {
+    if (!_buildMode || !_selectedType) {
         cb3HideGhost();
         return;
     }
@@ -2179,6 +2266,7 @@ function cb3HasBlock(x, y, z) {
 }
 
 function cb3OnClick(e) {
+    if (!_buildMode) return;
     if (!_selectedType) return;
     const target = cb3GetPlacementTarget();
     if (!target || !target.valid) return;
@@ -2220,6 +2308,7 @@ function cb3OnClick(e) {
 }
 
 function cb3OnContextMenu(e) {
+    if (!_buildMode) return;
     if (!_camera || !_renderer) return;
     const rect = _renderer.domElement.getBoundingClientRect();
     _mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
@@ -2334,7 +2423,12 @@ function cb3PlaceBlock(x, y, z, typeId, wall) {
     } else if (actualType === 'blume') {
         mesh = cb3CreateFlowerMesh();
     } else if (actualType === 'zaun') {
-        mesh = cb3CreateFenceMesh();
+        // Verbindungen basierend auf bereits existierenden Nachbarn
+        mesh = cb3CreateFenceMesh(cb3GetFenceConnections(x, y, z));
+    } else if (actualType === 'zinne') {
+        // Mauerzinne als schmalerer Wandblock — wirkt weniger massiv
+        const mat = cb3GetMaterial(def, variant);
+        mesh = new THREE.Mesh(new THREE.BoxGeometry(0.7, 1, 0.7), mat);
     } else {
         const mat = cb3GetMaterial(def, variant);
         mesh = new THREE.Mesh(_blockGeo, mat);
@@ -2355,6 +2449,9 @@ function cb3PlaceBlock(x, y, z, typeId, wall) {
     }
 
     _blocks.set(key, { mesh, type: typeId, light, wall: wall || null });
+    // Zaun-Nachbarn neu verbinden (nicht für Zaun selbst doppelt, der wurde gerade erstellt)
+    if (actualType !== 'zaun') cb3UpdateFencesAround(x, y, z);
+    else cb3UpdateFencesAround(x, y, z); // auch für Zaun, damit Nachbar-Zäune ihre neue Verbindung bekommen
 }
 
 function cb3RemoveBlock(key) {
@@ -2364,10 +2461,17 @@ function cb3RemoveBlock(key) {
     if (b.light) _scene.remove(b.light);
     // Geometry geteilt → nicht disposen
     _blocks.delete(key);
+    // Nach Entfernen: Nachbar-Zäune neu verbinden
+    const [x, y, z] = key.split(',').map(Number);
+    cb3UpdateFencesAround(x, y, z);
 }
 
 function cb3LoadBlocks(list) {
     list.forEach(b => cb3PlaceBlock(b.x, b.y, b.z, b.type, b.wall));
+    // Nach dem Laden: alle Zäune mit aktueller Nachbarschaft neu aufbauen
+    _blocks.forEach((b, key) => {
+        if (b.type === 'zaun') cb3RebuildFence(key);
+    });
 }
 
 // ─────────────────────── ANIMATIONS-LOOP ───────────────────────────
@@ -2548,6 +2652,8 @@ function cb3BuyBlock(typeId) {
 window.cbInit = cbInit;
 window.cb3SelectBlock = cb3SelectBlock;
 window.cb3BuyBlock = cb3BuyBlock;
+window.cb3UpdateUI = cb3UpdateUI;
+window.cb3ToggleBuildMode = cb3ToggleBuildMode;
 
 // Auto-Init bei Section-Wechsel
 function cb3SetupObserver() {

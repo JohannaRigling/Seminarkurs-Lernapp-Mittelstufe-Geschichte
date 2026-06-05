@@ -755,24 +755,33 @@ body::before {
     flex-direction: column;
     position: relative;
     z-index: 1;
+    /* Kein horizontales Scrollen — Inhalt passt sich an die Breite an */
+    overflow-x: hidden;
 }
 
 /* ===== TIMER BAR ===== */
 .timer-bar {
     background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
     border: 2px solid var(--border-gold);
-    border-radius: 15px;
-    padding: 20px 30px;
-    margin: 20px 30px;
+    border-radius: 12px;
+    padding: 10px 18px;
+    margin: 12px 24px;
     display: flex;
     align-items: center;
-    gap: 25px;
+    gap: 16px;
     box-shadow: var(--shadow-gold);
     position: sticky;
-    top: 10px;
+    top: 8px;
     z-index: 200;
     flex-wrap: wrap;
+    /* Schmaler — bei Bedarf zusätzlich begrenzen */
+    max-width: calc(100% - 48px);
 }
+
+.timer-bar .timer-display { font-size: 1.4em; }
+.timer-bar .timer-status  { font-size: 0.85em; }
+.timer-bar .timer-btn     { padding: 6px 14px; font-size: 0.85em; }
+.timer-bar .session-stats { font-size: 0.85em; }
 
 .timer-info {
     display: flex;
@@ -1248,7 +1257,13 @@ body::before {
     justify-content: center;
     align-items: center;
     padding: 20px;
+    /* Modal-Inhalt im sichtbaren Hauptbereich zentrieren (Sidebar nicht überdecken) */
+    padding-left: calc(20px + var(--sidebar-width));
     backdrop-filter: blur(5px);
+    transition: padding-left 0.3s ease;
+}
+body.sidebar-collapsed .modal {
+    padding-left: calc(20px + 60px);
 }
 
 .modal.active {

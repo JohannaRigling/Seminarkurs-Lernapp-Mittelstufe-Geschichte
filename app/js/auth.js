@@ -249,15 +249,16 @@ function handleLogin(event) {
     currentUser = user;
     localStorage.setItem('histolearn_currentUser', user.id);
 
-    // Letztes Aktivitätsdatum aktualisieren
-    updateUserProgress({ lastActive: new Date().toISOString() });
-
-    // Prüfen ob neuer Tag
+    // ZUERST das alte lastActive-Datum lesen, dann erst überschreiben —
+    // sonst wird der Tageswechsel-Reset nie ausgelöst (Bug: gestrige Lernminuten blieben heute stehen)
     const today = new Date().toDateString();
     const lastActive = user.progress.lastActive ? new Date(user.progress.lastActive).toDateString() : null;
     if (lastActive !== today) {
         updateUserProgress({ todayMinutes: 0 });
     }
+
+    // Letztes Aktivitätsdatum aktualisieren
+    updateUserProgress({ lastActive: new Date().toISOString() });
 
     // Zur App wechseln
     showMainApp();
@@ -468,6 +469,11 @@ function updateUserUI() {
     coinElements.forEach(el => {
         if (el) el.textContent = currentUser.progress.coins;
     });
+
+    // Burg-UI synchron halten (Anzeige + Shop-Affordability), falls Burg schon initialisiert
+    if (typeof window.cb3UpdateUI === 'function' && document.getElementById('cb3CoinsVal')) {
+        try { window.cb3UpdateUI(); } catch (e) { /* still */ }
+    }
 
     // Rang
     const rank = RANKS[currentUser.progress.rank] || RANKS[0];
@@ -705,6 +711,15 @@ function checkAuth() {
         const user = users.find(u => u.id === userId);
         if (user) {
             currentUser = user;
+            // Auch beim Auto-Login Tageswechsel prüfen
+            const today = new Date().toDateString();
+            const lastActiveDay = user.progress && user.progress.lastActive
+                ? new Date(user.progress.lastActive).toDateString()
+                : null;
+            if (lastActiveDay !== today) {
+                updateUserProgress({ todayMinutes: 0 });
+            }
+            updateUserProgress({ lastActive: new Date().toISOString() });
             showMainApp();
             return true;
         }

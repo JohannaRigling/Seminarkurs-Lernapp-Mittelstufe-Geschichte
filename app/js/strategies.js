@@ -25,43 +25,59 @@ function showStrategyDetail(strategyId) {
     const modal = document.getElementById('strategyModal');
     const content = document.getElementById('strategyDetailContent');
 
+    // Action-Label je nach Strategie
+    const actionLabels = {
+        'pomodoro':         '🍅 Pomodoro-Timer starten',
+        'spaced-repetition':'📅 Adaptive Lernsession öffnen',
+        'active-recall':    '🧠 Übungen öffnen',
+        'mind-mapping':     '🗺️ Übungsmodul öffnen',
+        'feynman':          '👨‍🏫 KI-Tutor öffnen',
+        'loci':             '🏛️ Loci-Übung starten',
+        'chunking':         '📦 Themenübungen öffnen',
+        'elaboration':      '🔗 KI-Tutor für Verknüpfungen',
+        'sq3r':             '📖 Materialien öffnen',
+        'dual-coding':      '🖼️ Bildarchiv öffnen',
+        'interleaving':     '🔀 Adaptive Lernsession'
+    };
+    const actionLabel = actionLabels[strategy.id] || 'Diese Strategie jetzt nutzen';
+
     content.innerHTML = `
-        <div class="strategy-detail" style="color: #e8e4d9;">
+        <div class="strategy-detail">
             <div class="strategy-detail-header">
                 <span class="strategy-icon-large">${strategy.icon}</span>
                 <div>
-                    <h2 style="color: var(--text-gold);">${strategy.name}</h2>
-                    <span class="strategy-category-badge" style="color: var(--text-gold);">${strategy.category}</span>
+                    <h2>${strategy.name}</h2>
+                    <span class="strategy-category-badge">${strategy.category}</span>
                 </div>
             </div>
 
             <div class="strategy-section">
-                <h4 style="color: var(--text-gold);">📖 Was ist das?</h4>
+                <h4>📖 Was ist das?</h4>
                 <p>${strategy.fullDesc}</p>
             </div>
 
             <div class="strategy-section">
-                <h4 style="color: var(--text-gold);">📋 Schritt für Schritt</h4>
+                <h4>📋 Schritt für Schritt</h4>
                 <ol class="strategy-steps">
                     ${strategy.steps.map(step => `<li>${step}</li>`).join('')}
                 </ol>
             </div>
 
             <div class="strategy-section">
-                <h4 style="color: var(--text-gold);">✅ Vorteile</h4>
+                <h4>✅ Vorteile</h4>
                 <ul class="strategy-benefits">
                     ${strategy.benefits.map(benefit => `<li>✓ ${benefit}</li>`).join('')}
                 </ul>
             </div>
 
             <div class="strategy-section history-tip">
-                <h4 style="color: var(--text-gold);">📚 Tipp für Geschichte</h4>
+                <h4>📚 Tipp für Geschichte</h4>
                 <p>${strategy.historyTip}</p>
             </div>
 
             <div class="strategy-actions">
                 <button class="btn btn-primary" onclick="applyStrategy('${strategy.id}')">
-                    Diese Strategie jetzt nutzen
+                    ${actionLabel}
                 </button>
             </div>
         </div>
@@ -88,50 +104,84 @@ function closeStrategyModal() {
     }
 }
 
-// Strategie anwenden
+// Strategie anwenden — startet das jeweils passende Feature direkt
 function applyStrategy(strategyId) {
     const strategy = LEARNING_STRATEGIES.find(s => s.id === strategyId);
     if (!strategy) return;
 
     closeStrategyModal();
 
+    const openTimerBar = () => {
+        const bar = document.getElementById('timerBar');
+        if (bar && (bar.style.display === 'none' || bar.style.display === '')) {
+            if (typeof window.toggleTimer === 'function') window.toggleTimer();
+            else bar.style.display = 'flex';
+        }
+        // Optional: Timer direkt starten, wenn er nicht läuft
+        if (typeof window.startTimer === 'function' && typeof timerRunning !== 'undefined' && !timerRunning) {
+            try { window.startTimer(); } catch (e) { /* still */ }
+        }
+        // Zum oberen Bereich scrollen, damit der Timer sichtbar ist
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     switch (strategyId) {
         case 'pomodoro':
             showSection('dashboard');
-            showToast('🍅 Pomodoro-Timer aktiviert! Starte den Timer oben.', 'success');
+            setTimeout(openTimerBar, 80);
             break;
 
         case 'active-recall':
-        case 'feynman':
-            showSection('chat');
-            showToast(`💡 ${strategy.name} aktiv! Nutze den Chat zum Üben.`, 'success');
+        case 'chunking':
+            showSection('exercises');
             break;
 
         case 'mind-mapping':
+        case 'dual-coding':
             showSection('exercises');
-            showToast('🗺️ Erstelle eine Mind-Map zu deinem aktuellen Thema!', 'info');
+            break;
+
+        case 'feynman':
+        case 'elaboration':
+            showSection('chat');
+            setTimeout(() => {
+                const promptHint = strategyId === 'feynman'
+                    ? 'Erkläre mir ein Konzept aus Geschichte so, als wäre ich 12 Jahre alt — bitte gib mir ein Thema vor und wir üben die Feynman-Technik.'
+                    : 'Hilf mir, ein neues Geschichts-Thema mit etwas zu verknüpfen, das ich schon kenne. Stelle mir dazu ein paar Fragen.';
+                const input = document.getElementById('chatInput');
+                if (input) {
+                    input.value = promptHint;
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                    input.focus();
+                }
+            }, 120);
             break;
 
         case 'spaced-repetition':
-            showSection('library');
-            showToast('📅 Plane deine Wiederholungen in der Bibliothek!', 'info');
+        case 'interleaving':
+            // Adaptive Lernsession öffnen
+            if (typeof window.openAdaptiveLearning === 'function') window.openAdaptiveLearning();
+            else showSection('dashboard');
             break;
 
         case 'loci':
-            showToast('🏛️ Stelle dir deinen Gedächtnispalast vor...', 'info');
             showLociExercise();
             break;
 
+        case 'sq3r':
+            showSection('library-materials');
+            break;
+
         default:
-            showToast(`${strategy.icon} ${strategy.name} gemerkt!`, 'success');
+            // Fallback: zur passenden Übersicht
+            showSection('exercises');
     }
 
-    // Als Präferenz speichern
     if (currentUser) {
         updateUserPreferences({ preferredStrategy: strategyId });
     }
 
-    addActivity('strategy', `Lernstrategie "${strategy.name}" ausgewählt`);
+    addActivity('strategy', `Lernstrategie "${strategy.name}" gestartet`);
 }
 
 // Loci-Übung
@@ -223,7 +273,7 @@ function completeLociExercise() {
     closeExerciseModal();
 }
 
-// CSS für Strategien
+// CSS für Strategien (das ausführliche Styling lebt in components.css)
 const strategyStyles = document.createElement('style');
 strategyStyles.textContent = `
     .strategy-card {
@@ -241,45 +291,6 @@ strategyStyles.textContent = `
         border-radius: 15px;
         font-size: 0.8em;
         margin-bottom: 10px;
-    }
-    .strategy-detail-header {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        margin-bottom: 30px;
-    }
-    .strategy-icon-large {
-        font-size: 4em;
-    }
-    .strategy-category-badge {
-        display: inline-block;
-        padding: 5px 15px;
-        background: var(--bg-tertiary);
-        border-radius: 20px;
-        font-size: 0.9em;
-        margin-top: 5px;
-    }
-    .strategy-section {
-        margin-bottom: 25px;
-    }
-    .strategy-steps {
-        margin-left: 20px;
-    }
-    .strategy-steps li {
-        margin-bottom: 10px;
-        line-height: 1.6;
-    }
-    .strategy-benefits {
-        list-style: none;
-    }
-    .history-tip {
-        padding: 20px;
-        border-radius: 10px;
-        border-left: 4px solid var(--secondary);
-    }
-    .strategy-actions {
-        margin-top: 30px;
-        text-align: center;
     }
 `;
 document.head.appendChild(strategyStyles);

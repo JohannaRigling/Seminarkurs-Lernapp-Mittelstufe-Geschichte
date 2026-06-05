@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (sidebar) sidebar.classList.add('collapsed');
         if (mainContent) mainContent.classList.add('sidebar-collapsed');
         if (toggleBtn) toggleBtn.textContent = '▶';
+        document.body.classList.add('sidebar-collapsed');
     }
 
     // Event Listener
@@ -54,11 +55,17 @@ function setupEventListeners() {
 
 // Sektion anzeigen
 const BREAK_BLOCKED_SECTIONS = ['chat', 'exercises', 'library-materials', 'library-glossary', 'adaptive-session'];
+const STUDY_BLOCKED_SECTIONS = ['castle'];
 
 function showSection(sectionId) {
     // Während Pause: Lernbereiche sperren
     if (window.isBreakActive && BREAK_BLOCKED_SECTIONS.includes(sectionId)) {
         showToast('⏸️ Du bist in der Pause! Genieße deine Auszeit.', 'info');
+        return;
+    }
+    // Während aktiver Lernzeit: Burg ist gesperrt — erst in der Pause oder bei pausiertem Timer
+    if (window.isStudyActive && STUDY_BLOCKED_SECTIONS.includes(sectionId)) {
+        showToast('📚 Die Burg gibt es in der Pause! Bleib jetzt am Stoff dran.', 'info');
         return;
     }
 
@@ -108,7 +115,11 @@ function showSection(sectionId) {
             break;
         case 'castle':
             setTimeout(() => {
-                if (typeof cbInit === 'function' && !document.getElementById('cb3Canvas')) cbInit();
+                if (typeof cbInit === 'function' && !document.getElementById('cb3Canvas')) {
+                    cbInit();
+                } else if (typeof window.cb3UpdateUI === 'function') {
+                    window.cb3UpdateUI();
+                }
             }, 50);
             break;
         case 'library-materials':
@@ -120,8 +131,14 @@ function showSection(sectionId) {
 }
 
 // Toast-Benachrichtigung anzeigen
+// Nutzer-Wunsch: nur wichtige Hinweise zeigen — info/success unterdrücken,
+// damit Standard-Aktionen (z.B. Burg-Kauf) keine Popup-Spam erzeugen.
 function showToast(message, type = 'info') {
+    // Nur kritische Meldungen anzeigen
+    if (type !== 'warning' && type !== 'error') return;
+
     const container = document.getElementById('toastContainer');
+    if (!container) return;
 
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
@@ -140,7 +157,6 @@ function showToast(message, type = 'info') {
 
     container.appendChild(toast);
 
-    // Nach 4 Sekunden entfernen
     setTimeout(() => {
         toast.style.animation = 'slideOutRight 0.3s ease forwards';
         setTimeout(() => toast.remove(), 300);
@@ -311,6 +327,8 @@ function toggleSidebar() {
 
     sidebar.classList.toggle('collapsed');
     mainContent.classList.toggle('sidebar-collapsed');
+    // Body-Klasse für globale Layout-Anpassungen (z.B. zentrierte Modals)
+    document.body.classList.toggle('sidebar-collapsed', sidebar.classList.contains('collapsed'));
 
     if (sidebar.classList.contains('collapsed')) {
         toggleBtn.textContent = '▶';
@@ -2746,6 +2764,26 @@ const TUTORIAL_STEPS = [
         icon: '⏱️',
         title: () => 'Pomodoro-Timer',
         text: 'Konzentriert lernen mit echten Pausen! Nach der Lernzeit wird die App automatisch gesperrt. Danach entscheidest du: weitermachen oder fertig für heute.'
+    },
+    {
+        icon: '🚀',
+        title: () => 'Adaptive Lernsession',
+        text: 'Du gibst Ziel, Thema und Prüfungsdatum an – eine kurze Diagnose findet deinen Stand, und die App stellt dir personalisierten Stoff zusammen. Genau das, was du brauchst, nichts doppelt.'
+    },
+    {
+        icon: '🧠',
+        title: () => 'Lernhilfen & Strategien',
+        text: 'Pomodoro, Loci-Methode, Mind-Mapping, Feynman & Co – elf Lernstrategien zum Ausprobieren. Klick eine an und das passende Tool öffnet sich direkt.'
+    },
+    {
+        icon: '📚',
+        title: () => 'Materialien & Bibliothek',
+        text: 'Deine Lernzettel hochladen, das Glossar nachschlagen, Bilder zu Themen ablegen. Alles, was du für den Geschichtsunterricht brauchst, an einem Ort.'
+    },
+    {
+        icon: '⚙️',
+        title: () => 'Einstellungen',
+        text: 'Hier kannst du deinen Avatar gestalten, dein Passwort ändern, die Akzentfarbe wechseln und den Pomodoro-Timer auf deine Lernzeit einstellen.'
     },
     {
         icon: '🎉',

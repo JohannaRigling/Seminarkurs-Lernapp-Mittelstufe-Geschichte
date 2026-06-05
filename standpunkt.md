@@ -1956,5 +1956,92 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 
 ---
 
+## 🎯 Session vom 13.05.2026 – Umfangreiches Verbesserungspaket aus „Verbesserungen"
+
+### ✅ Burg-Baumeister
+- **Normal- vs. Baumodus** (`castle-builder.js`):
+  - Beim Öffnen ist die Burg im Normalmodus (nur ansehen, keine Karolinien, kein Shop/Inventar)
+  - Button „Baumodus aktivieren" oben rechts schaltet auf Baumodus um (Karolinien, Shop, Inventar erscheinen)
+  - Ghost-Block, Klick zum Platzieren und Rechtsklick zum Abreißen nur im Baumodus aktiv
+  - CSS-Toggle über `.cb3-build-on` auf `.cb3-wrapper`
+- **Huhn:** jetzt 4 Beine (vorher 2) — `cb3CreateAnimalMesh`
+- **Bett:** Frame und Decke auf volle Block-Tiefe (1.0) — keine Lücke mehr zwischen Foot/Head-Hälften, Naht-Stripe nur am Außenrand
+- **Zaun-Connect:** `cb3CreateFenceMesh(connections)` baut nur Querbalken zu echten Nachbarn (Zaun oder Vollblock). Helfer `cb3GetFenceConnections`, `cb3RebuildFence`, `cb3UpdateFencesAround` aktualisieren beim Setzen/Entfernen alle Nachbar-Zäune. Ein einzelner Zaun ist nur noch ein Pfosten.
+- **Mauer schmaler:** Mauerzinne (`zinne`) rendert als 0.7×1.0×0.7 statt voller Würfel — wirkt nicht mehr massiv
+- **Atmosphäre:**
+  - Wald: 60 → 130 Bäume, etwas tiefer hinein
+  - Berge & Hügel: Mindestabstand zum Plateau garantiert (Radius wird einberechnet), kein Overlap mit Bauplatz mehr
+- **Layout-Proportionen:** `ResizeObserver` auf `.cb3-canvas-wrap` — Canvas zieht sich beim Sidebar-Toggle nach (vorher nur `window.resize`)
+- **Burg während Lernzeit gesperrt:** neuer Block `STUDY_BLOCKED_SECTIONS = ['castle']` in `showSection`, gesteuert über `window.isStudyActive` (Timer-Run + nicht in Pause)
+
+### ✅ Glossar
+- **Alphabetleiste komplett sichtbar:** `top: 200px` (unter Timer-Bar + Header), `max-height: none`, eigene Hintergrund-Box. Kein Scrollen mehr auf der Buchstabenleiste.
+- **Topbar sticky:** `glossary-header` ist `position: sticky; top: 110px` — Filter und Suche bleiben beim Scrollen sichtbar
+- **KI-Tutor-Button pro Begriff** (`askTutorAboutTerm`):
+  - Neuer Button „🤖 Frag den KI-Tutor zu …" unter jedem Begriff
+  - Öffnet Modal mit 4 Optionen: „Besser erklären (einfacher)", „Kontext einordnen", „Warum ist das wichtig?", „Prüfungs-Tipp"
+  - Klick → springt zum Chat, befüllt Input mit vorbereitetem Prompt und sendet ab (`sendChatMessage`)
+
+### ✅ Bibliothek
+- `library-filters` `padding-right: 150px → 220px` — Upload-Button überlappt nicht mehr mit dem festen Timer-Toggle-Button rechts oben
+
+### ✅ KI-Chat
+- Anhang-Button (📎): 36×36 → 44×44, in Akzentfarben-Gradient mit Schatten und Hover-Effekt. Deutlich sichtbar.
+
+### ✅ Lernstrategien
+- **Klick auf Strategie öffnet zugehöriges Feature**: `applyStrategy` schaltet jetzt direkt um:
+  - Pomodoro → öffnet Timer-Bar und startet ihn (über `toggleTimer`/`startTimer`)
+  - Active Recall / Chunking → Übungen
+  - Mind-Mapping / Dual Coding → Übungen
+  - Feynman / Elaboration → KI-Chat mit vorbereitetem Prompt
+  - Spaced Repetition / Interleaving → Adaptive Lernsession
+  - Loci → Loci-Übung
+  - SQ3R → Materialien (Bibliothek)
+- Button-Label zeigt jetzt die konkrete Aktion: „🍅 Pomodoro-Timer starten" etc.
+- **Text in Detailkarte**: alle Absätze und Listen explizit `color: #ffffff !important`, Überschriften in `--text-gold`. Goldenes „komisches" Gelb verschwindet.
+
+### ✅ Pomodoro-Leiste & Layout
+- Timer-Bar schmaler: padding 20→10/30→18, margin 20→12/30→24, gap 25→16, font kleiner. `max-width: calc(100% - 48px)`.
+- `.main-content { overflow-x: hidden }` — kein horizontales Scrollen mehr auf irgendeiner Seite
+
+### ✅ Toasts
+- Push-Nachrichten rechts unten massiv reduziert: `showToast()` zeigt nur noch `warning` und `error`. `info`/`success` werden geschluckt → kein Spam bei Burg-Käufen, Strategiewahl, Section-Wechsel etc.
+
+### ✅ Timer-Bug
+- **Falsche Lernzeit beim Tageswechsel** behoben: in `login()` wurde `lastActive` ZUERST auf jetzt gesetzt und DANN auf Tageswechsel geprüft → Reset löste nie aus → gestrige Minuten blieben heute stehen. Reihenfolge umgedreht. Zusätzlich wird der gleiche Check jetzt auch in `checkAuth()` (Auto-Login bei Page-Reload) ausgeführt.
+
+### ✅ Adaptive Lernsession
+- **Drei „Buttons" sahen klickbar aus**: HTML auf `.adaptive-explainer`-Layout umgebaut — Überschrift „Was ist die Adaptive Lernsession?", Lead-Text, dann drei reine Erklär-Karten ohne Hover (cursor: default). Eindeutig als Erklärung erkennbar.
+- **Modal zentriert im Hauptbereich**: `.modal` bekommt `padding-left: calc(20px + var(--sidebar-width))` (bzw. 60px bei eingeklappter Sidebar). Body-Klasse `sidebar-collapsed` wird in `toggleSidebar()` mitgepflegt. Modal überdeckt die Sidebar nicht mehr.
+
+### ✅ Tutorial (Erstanmeldung)
+- Überschrift `.tutorial-title { color: #ffffff }` — fix-weiß, unabhängig vom Theme/Akzentfarbe
+- Text-Lesbarkeit erhöht: rgba(255,255,255,0.72) → 0.88
+- **4 neue Schritte** zwischen „Pomodoro-Timer" und „Du bist startklar!":
+  - 🚀 Adaptive Lernsession (Ziel + Diagnose + personalisierter Plan)
+  - 🧠 Lernhilfen & Strategien (11 Strategien zum direkten Anwenden)
+  - 📚 Materialien & Bibliothek (Lernzettel, Glossar, Bilder)
+  - ⚙️ Einstellungen (Avatar, Passwort, Akzentfarbe, Pomodoro)
+
+### 🗂️ Wichtige geänderte Dateien
+- `app/js/castle-builder.js` — Build-Mode, Zaun-Connect, Bett, Huhn, Mauerzinne, Atmosphäre, ResizeObserver
+- `app/js/timer.js` — `window.isStudyActive` Flag (Lernzeit ≠ Pause)
+- `app/js/auth.js` — Tageswechsel-Reset vor `lastActive`-Update, auch im Auto-Login
+- `app/js/app.js` — `showToast` filtert info/success raus, `STUDY_BLOCKED_SECTIONS`, Sidebar-Body-Klasse, Tutorial-Schritte
+- `app/js/strategies.js` — neue `applyStrategy`-Aktionen, Detail-Modal-HTML ohne inline-Farben
+- `app/js/glossary.js` — `askTutorAboutTerm` + Term-Card-Button
+- `app/css/components.css` — Build-Mode, Glossar-Sticky, Tutor-Modal, Anhang-Button, Strategie-Detail, Adaptive-Explainer
+- `app/css/main.css` — Timer-Bar schmaler, Modal-Padding-Left für Sidebar, `overflow-x: hidden`
+- `app/index.html` — Adaptive-Section neu strukturiert (Erklär-Karte statt Pseudo-Buttons)
+
+### 📝 Bestätigte User-Präferenzen (neu)
+- **Keine Toast-Spam** — nur kritische Hinweise. Burg-Käufe etc. kommentarlos
+- **Burg nur in Pause oder ohne Timer** — während aktiver Lernphase gesperrt
+- **Erklär-Layouts**: drei Karten mit Hover-Effekt sehen wie Buttons aus — wenn es nur Erklärung ist, dann `cursor: default` und gar kein Hover
+- **Modal-Zentrierung respektiert die Sidebar** — Modals zentrieren sich im sichtbaren Hauptbereich, nicht im Viewport
+- **Tutorial-Überschriften immer weiß**, unabhängig von Akzentfarbe
+
+---
+
 **Ende Standpunkt-Dokumentation**
-**Letzte Aktualisierung:** 08.05.2026 – 3D-Voxel-Burg mit Three.js, Atmosphäre, Tiere, Gandalf-Account
+**Letzte Aktualisierung:** 13.05.2026 – Großes Verbesserungspaket: Bau-/Normalmodus, Glossar-KI, Toast-Reduktion, Timer-Fix, Tutorial-Erweiterung

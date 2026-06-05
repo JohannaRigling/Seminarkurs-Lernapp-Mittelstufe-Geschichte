@@ -944,7 +944,9 @@
     gap: 10px;
     margin-bottom: 20px;
     align-items: center;
-    padding-right: 150px;
+    /* Genug Platz für den festen Timer-Toggle-Button rechts oben */
+    padding-right: 220px;
+    flex-wrap: wrap;
 }
 
 .lernzettel-upload-btn {
@@ -1329,8 +1331,17 @@
     justify-content: space-between;
     align-items: center;
     gap: 20px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     flex-wrap: wrap;
+    position: sticky;
+    /* Bleibt unterhalb der Timer-Leiste sichtbar */
+    top: 110px;
+    z-index: 50;
+    background: var(--bg-secondary);
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(8px);
 }
 
 .glossary-filters {
@@ -1416,20 +1427,25 @@
     border-bottom: 2px solid var(--border-gold);
 }
 
-/* Alphabetische Navigationsleiste */
+/* Alphabetische Navigationsleiste — komplett sichtbar, unter der Timer-Leiste */
 .glossary-alphabet-bar {
-    width: 32px;
+    width: 34px;
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: 1px;
     position: sticky;
-    top: 10px;
+    /* Unter Timer-Leiste + Glossar-Header positionieren, ohne überdeckt zu werden */
+    top: 200px;
     align-self: flex-start;
-    max-height: calc(100vh - 300px);
-    overflow-y: auto;
-    padding: 4px 0;
+    /* Kein eigenes Scrollen — die 26 Buchstaben passen immer */
+    max-height: none;
+    overflow: visible;
+    padding: 6px 2px;
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
 }
 
 .alphabet-letter {
@@ -1521,6 +1537,203 @@
 
 .glossary-theme strong {
     color: var(--text-secondary);
+}
+
+/* ===== Adaptive Lernsession — Erklär-Karte ===== */
+.adaptive-explainer {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-gold);
+    border-radius: 16px;
+    padding: 28px 30px;
+    margin: 0 auto 24px;
+    max-width: 1100px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+}
+.adaptive-explainer-title {
+    margin: 0 0 8px 0;
+    color: var(--text-gold, #daa520);
+    font-size: 1.55em;
+}
+.adaptive-explainer-lead {
+    color: #ffffff;
+    margin: 0 0 20px 0;
+    line-height: 1.55;
+    font-size: 1.02em;
+}
+.adaptive-explainer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+.adaptive-explainer-card {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 18px 18px 16px;
+    /* Wichtig: keine Hover-Animation, sieht nicht mehr aus wie Button */
+    cursor: default;
+}
+.adaptive-explainer-card .info-icon {
+    font-size: 1.8em;
+    display: block;
+    margin-bottom: 8px;
+}
+.adaptive-explainer-card h4 {
+    margin: 0 0 6px 0;
+    color: var(--text-gold, #daa520);
+    font-size: 1.05em;
+}
+.adaptive-explainer-card p {
+    margin: 0;
+    color: #ffffff;
+    line-height: 1.5;
+    font-size: 0.95em;
+}
+.adaptive-start-btn {
+    display: block;
+    margin: 0 auto;
+}
+
+/* ===== Lernstrategien-Detailkarte ===== */
+.strategy-detail {
+    color: #ffffff;
+}
+.strategy-detail p,
+.strategy-detail li {
+    color: #ffffff !important;
+    line-height: 1.6;
+}
+.strategy-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+.strategy-detail-header h2 {
+    margin: 0;
+    color: var(--text-gold, #daa520) !important;
+}
+.strategy-icon-large {
+    font-size: 4em;
+}
+.strategy-category-badge {
+    display: inline-block;
+    padding: 5px 15px;
+    background: var(--bg-tertiary);
+    border-radius: 20px;
+    font-size: 0.9em;
+    margin-top: 5px;
+    color: var(--text-gold, #daa520) !important;
+}
+.strategy-section {
+    margin-bottom: 22px;
+}
+.strategy-section h4 {
+    color: var(--text-gold, #daa520) !important;
+    margin: 0 0 10px 0;
+}
+.strategy-steps {
+    margin-left: 20px;
+}
+.strategy-steps li {
+    margin-bottom: 8px;
+}
+.strategy-benefits {
+    list-style: none;
+    padding-left: 0;
+}
+.strategy-benefits li {
+    margin-bottom: 6px;
+}
+.history-tip {
+    padding: 18px;
+    border-radius: 10px;
+    border-left: 4px solid var(--secondary, #daa520);
+    background: rgba(255, 215, 0, 0.06);
+}
+.strategy-actions {
+    margin-top: 26px;
+    text-align: center;
+}
+
+/* KI-Tutor-Button im Glossar */
+.glossary-ai-btn {
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, var(--secondary-dark), var(--secondary));
+    color: #fff;
+    border: 1px solid var(--border-gold);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: var(--transition);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+.glossary-ai-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(218,165,32,0.35);
+    background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+}
+
+/* Modal für KI-Tutor-Optionen zu einem Begriff */
+.tutor-term-modal { z-index: 9999; }
+.tutor-term-content {
+    max-width: 560px;
+    width: 90%;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-gold);
+    border-radius: 14px;
+    padding: 28px 26px 22px;
+    position: relative;
+}
+.tutor-term-title {
+    color: var(--text-gold);
+    margin: 0 0 6px 0;
+    font-size: 1.35em;
+}
+.tutor-term-sub {
+    color: var(--text-secondary);
+    margin: 0 0 18px 0;
+    font-size: 0.95em;
+}
+.tutor-term-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.tutor-term-option {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    text-align: left;
+    padding: 12px 14px;
+    background: var(--bg-tertiary);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    cursor: pointer;
+    color: #ffffff;
+    transition: var(--transition);
+}
+.tutor-term-option:hover {
+    border-color: var(--secondary);
+    background: var(--bg-primary);
+    transform: translateY(-1px);
+}
+.tutor-term-option-label {
+    font-weight: 700;
+    color: var(--secondary-light);
+    font-size: 1em;
+}
+.tutor-term-option-text {
+    color: #e8e4d9;
+    font-size: 0.85em;
+    opacity: 0.9;
+    line-height: 1.4;
 }
 
 @media (max-width: 768px) {
@@ -4187,13 +4400,14 @@
 .tutorial-title {
     font-size: 1.5em;
     font-weight: 700;
-    color: var(--text-primary, #fff);
+    /* Wichtig: immer gut lesbar weiß — unabhängig vom Theme/Akzentfarbe */
+    color: #ffffff;
     margin-bottom: 14px;
     line-height: 1.3;
 }
 
 .tutorial-text {
-    color: rgba(255,255,255,0.72);
+    color: rgba(255, 255, 255, 0.88);
     font-size: 1.05em;
     line-height: 1.65;
     margin-bottom: 32px;
@@ -5291,22 +5505,28 @@
     justify-content: center;
 }
 
-/* Chat: Anhang-Button */
+/* Chat: Anhang-Button (deutlich in Akzentfarbe) */
 .chat-attach-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    font-size: 1.1em;
+    width: 44px;
+    height: 44px;
+    font-size: 1.35em;
     cursor: pointer;
-    border-radius: 8px;
-    border: 1px solid var(--border-color);
-    background: var(--bg-secondary);
+    border-radius: 10px;
+    border: 2px solid var(--secondary, #daa520);
+    background: linear-gradient(135deg, var(--secondary-dark, #b8860b), var(--secondary, #daa520));
+    color: #ffffff;
     flex-shrink: 0;
-    transition: background 0.2s;
+    transition: all 0.18s;
+    box-shadow: 0 2px 8px rgba(218, 165, 32, 0.35);
 }
-.chat-attach-btn:hover { background: var(--bg-hover, rgba(255,255,255,0.08)); }
+.chat-attach-btn:hover {
+    background: linear-gradient(135deg, var(--secondary, #daa520), var(--secondary-light, #f4c970));
+    transform: translateY(-1px) scale(1.04);
+    box-shadow: 0 4px 14px rgba(218, 165, 32, 0.55);
+}
 
 /* Chat: Anhang-Vorschau */
 .chat-attachment-preview {
@@ -5804,4 +6024,45 @@
     .cb3-main { grid-template-columns: 1fr; grid-template-rows: 200px 1fr 200px; }
     .cb3-wrapper { height: auto; min-height: 800px; }
 }
+
+/* ===== Bau-Modus / Normalmodus ===== */
+.cb3-mode-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: 1px solid var(--secondary, #daa520);
+    background: linear-gradient(135deg, rgba(218,165,32,0.18), rgba(218,165,32,0.08));
+    color: var(--text-gold, #daa520);
+    font-weight: 600;
+    font-size: 0.9em;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.18s;
+}
+.cb3-mode-toggle:hover {
+    background: linear-gradient(135deg, rgba(218,165,32,0.32), rgba(218,165,32,0.16));
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(218,165,32,0.25);
+}
+.cb3-wrapper.cb3-build-on .cb3-mode-toggle {
+    background: linear-gradient(135deg, rgba(218,165,32,0.5), rgba(218,165,32,0.3));
+    color: #fff;
+}
+.cb3-mode-icon { font-size: 1.1em; }
+
+/* Hinweise: nur den passenden Hint anzeigen */
+.cb3-hint-build { display: none; }
+.cb3-hint-view  { display: flex; }
+.cb3-wrapper.cb3-build-on .cb3-hint-build { display: flex; }
+.cb3-wrapper.cb3-build-on .cb3-hint-view  { display: none; }
+
+/* Normalmodus: Shop + Inventar AUSBLENDEN, Canvas füllt komplette Breite */
+.cb3-wrapper:not(.cb3-build-on) .cb3-side { display: none; }
+.cb3-wrapper:not(.cb3-build-on) .cb3-main { grid-template-columns: 1fr; }
+
+/* Verhindere, dass sich die Proportionen beim Ein-/Ausklappen der Sidebar verschieben:
+   Canvas-Wrapper fixiert sein 16:9-Verhältnis im View-Modus, Sidebar-Spalten bleiben gleich breit */
+.cb3-main { min-width: 0; }
+.cb3-canvas-wrap { min-width: 0; }
 

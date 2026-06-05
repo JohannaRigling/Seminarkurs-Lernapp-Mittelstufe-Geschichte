@@ -18,6 +18,8 @@ function startTimer() {
     if (timerRunning) return;
 
     timerRunning = true;
+    // Globale Lernzeit-Flagge: nur während aktiver Lernphase TRUE (nicht in der Pause)
+    window.isStudyActive = !isBreak;
     document.getElementById('timerStartBtn').style.display = 'none';
     document.getElementById('timerPauseBtn').style.display = 'inline-block';
 
@@ -45,6 +47,7 @@ function pauseTimer() {
     if (!timerRunning) return;
 
     timerRunning = false;
+    window.isStudyActive = false;
     clearInterval(timerInterval);
 
     document.getElementById('timerStartBtn').style.display = 'inline-block';
@@ -120,6 +123,8 @@ function showBreakOverlay() {
     actionsEl.style.display = 'none';
     overlay.style.display = 'flex';
     window.isBreakActive = true;
+    // Burg darf in der Pause weiter genutzt werden — also keine aktive Lernzeit
+    window.isStudyActive = false;
 
     breakOverlayInterval = setInterval(() => {
         breakSeconds--;

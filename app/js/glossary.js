@@ -395,7 +395,9 @@ function loadGlossaryContent(filter = 'alle') {
     container.innerHTML = presentLetters.map(letter => `
         <div id="glossary-letter-${letter}" class="glossary-letter-group">
             <div class="glossary-letter-header">${letter}</div>
-            ${grouped[letter].map(term => `
+            ${grouped[letter].map(term => {
+                const safe = (term.begriff || '').replace(/'/g, "\\'");
+                return `
                 <div class="glossary-item" data-klasse="${term.klasse}">
                     <div class="glossary-term">
                         <span class="term-name">${term.begriff}</span>
@@ -404,8 +406,11 @@ function loadGlossaryContent(filter = 'alle') {
                     <div class="glossary-definition">${term.definition}</div>
                     ${term.beispiel ? `<div class="glossary-example"><strong>Beispiel:</strong> ${term.beispiel}</div>` : ''}
                     <div class="glossary-theme"><strong>Thema:</strong> ${term.thema}</div>
+                    <button class="glossary-ai-btn" onclick="askTutorAboutTerm('${safe}')">
+                        <span>🤖</span> Frag den KI-Tutor zu „${term.begriff}"
+                    </button>
                 </div>
-            `).join('')}
+            `;}).join('')}
         </div>
     `).join('');
 
@@ -466,3 +471,81 @@ function lookupTerm(term) {
     const found = allTerms.find(t => t.begriff.toLowerCase() === term.toLowerCase());
     return found;
 }
+
+// KI-Tutor-Optionen für einen Glossar-Begriff anzeigen
+function askTutorAboutTerm(begriff) {
+    // Lese den Begriff aus dem Glossar
+    const term = lookupTerm(begriff);
+    if (!term) {
+        if (typeof window.showToast === 'function') window.showToast('Begriff nicht gefunden.', 'warning');
+        return;
+    }
+
+    // Frage-Optionen für den Tutor
+    const prompts = [
+        { label: '📖 Besser erklären (einfacher)',  text: `Erkläre mir den Begriff „${term.begriff}" noch einmal so einfach wie möglich, am besten mit einem Beispiel aus dem Alltag.` },
+        { label: '🧭 Kontext einordnen',            text: `Ordne den Begriff „${term.begriff}" historisch ein: Wann kommt er vor, in welchem Zusammenhang steht er, und wie hängt er mit dem Thema „${term.thema}" zusammen?` },
+        { label: '⚖️ Warum ist das wichtig?',       text: `Warum ist der Begriff „${term.begriff}" historisch und für mich heute wichtig? Welche Bedeutung hat er für das Verständnis von „${term.thema}"?` },
+        { label: '🎯 Prüfungs-Tipp',                text: `Wie könnte eine typische Klausur-Aufgabe zu „${term.begriff}" aussehen — und was wäre eine gute Musterantwort?` }
+    ];
+
+    // Bestehendes Modal verwenden, falls vorhanden, sonst eigenes
+    const existing = document.getElementById('tutorTermModal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'tutorTermModal';
+    modal.className = 'modal tutor-term-modal';
+    modal.style.display = 'flex';
+    modal.innerHTML = `
+        <div class="modal-content tutor-term-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="document.getElementById('tutorTermModal').remove()">&times;</button>
+            <h2 class="tutor-term-title">🤖 KI-Tutor zu „${term.begriff}"</h2>
+            <p class="tutor-term-sub">Was soll der Tutor für dich tun?</p>
+            <div class="tutor-term-options">
+                ${prompts.map((p, i) => `
+                    <button class="tutor-term-option" data-idx="${i}">
+                        <span class="tutor-term-option-label">${p.label}</span>
+                        <span class="tutor-term-option-text">${p.text}</span>
+                    </button>
+                `).join('')}
+            </div>
+        </div>
+    `;
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+    document.body.appendChild(modal);
+
+    // Click-Handler — Tutor öffnen und Prompt einsetzen
+    modal.querySelectorAll('.tutor-term-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const idx = parseInt(btn.dataset.idx, 10);
+            const promptText = prompts[idx].text;
+            modal.remove();
+            sendTutorPrompt(promptText);
+        });
+    });
+}
+
+// Hilfsfunktion: Tutor öffnen + Prompt vorbefüllen und absenden
+function sendTutorPrompt(text) {
+    if (typeof window.showSection === 'function') window.showSection('chat');
+    // Input setzen
+    setTimeout(() => {
+        const input = document.getElementById('chatInput') || document.querySelector('textarea[id*="chat"]') || document.querySelector('input[id*="chat"]');
+        if (input) {
+            input.value = text;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        // Auto-Send über die echte Chat-Funktion
+        if (typeof window.sendChatMessage === 'function') {
+            try { window.sendChatMessage(); } catch (e) { /* still */ }
+        } else if (typeof sendChatMessage === 'function') {
+            try { sendChatMessage(); } catch (e) { /* still */ }
+        }
+    }, 120);
+}
+
+window.askTutorAboutTerm = askTutorAboutTerm;
+window.sendTutorPrompt = sendTutorPrompt;
