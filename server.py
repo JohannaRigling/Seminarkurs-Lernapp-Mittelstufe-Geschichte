@@ -83,6 +83,14 @@ class HistoLearnHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
 
+    def end_headers(self):
+        # Verhindert, dass Browser veraltete CSS/JS aus dem Cache anzeigt.
+        # Während aktiver Entwicklung sehen Änderungen sofort beim Reload.
+        self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        self.send_header('Pragma', 'no-cache')
+        self.send_header('Expires', '0')
+        super().end_headers()
+
     def log_message(self, format, *args):
         # Nur API-Anfragen loggen, nicht jeden Datei-Request
         if '/api/' in (args[0] if args else ''):
