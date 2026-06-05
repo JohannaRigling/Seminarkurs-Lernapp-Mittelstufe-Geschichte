@@ -1659,7 +1659,7 @@ body.timer-open .glossary-header { top: 90px; }
     background: var(--bg-secondary);
     border: 1px solid var(--border-gold);
     border-radius: 14px;
-    padding: 22px 26px 20px;
+    padding: 16px 22px 14px;
     margin: 0 auto;
     width: 100%;
     box-shadow: 0 4px 18px rgba(0,0,0,0.16);
@@ -1669,26 +1669,30 @@ body.timer-open .glossary-header { top: 90px; }
     display: flex;
     flex-direction: column;
     min-height: 0;
+    overflow: hidden;
 }
 .adaptive-explainer-title {
-    margin: 0 0 8px 0;
+    margin: 0 0 6px 0;
     color: var(--text-gold, #daa520);
-    font-size: 1.7em;
+    font-size: 1.45em;
     font-weight: 700;
+    flex-shrink: 0;
 }
 .adaptive-explainer-lead {
     /* Schwarz auf hellem Explainer-Hintergrund — User-Wunsch */
     color: #000000 !important;
-    margin: 0 0 18px 0;
-    line-height: 1.5;
-    font-size: 1.15em;
+    margin: 0 0 14px 0;
+    line-height: 1.45;
+    font-size: 1.05em;
     font-weight: 600;
     text-shadow: none;
+    flex-shrink: 0;
 }
 .adaptive-explainer-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
+    /* Immer 3 Spalten — die 3 Punkte gehören visuell zusammen, kein Umbruch */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
     /* Füllt den restlichen Platz innerhalb des Explainers */
     flex: 1;
     min-height: 0;
@@ -1697,38 +1701,48 @@ body.timer-open .glossary-header { top: 90px; }
     background: rgba(10, 14, 32, 0.85);
     border: 1px solid rgba(255, 215, 0, 0.25);
     border-radius: 12px;
-    padding: 20px 18px 18px;
+    padding: 14px 14px 12px;
     cursor: default;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
+    overflow: hidden;
 }
 .adaptive-explainer-card .info-icon {
-    font-size: 2.2em;
+    font-size: 1.85em;
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
+    flex-shrink: 0;
 }
 .adaptive-explainer-card h4 {
-    margin: 0 0 8px 0;
+    margin: 0 0 6px 0;
     color: var(--text-gold, #daa520) !important;
-    font-size: 1.25em;
+    font-size: 1.1em;
     font-weight: 700;
+    flex-shrink: 0;
 }
 .adaptive-explainer-card p {
     margin: 0;
     color: #ffffff !important;
-    line-height: 1.55;
-    font-size: 1.05em;
+    line-height: 1.45;
+    font-size: 0.95em;
     font-weight: 500;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 .adaptive-start-btn {
     display: block;
-    margin: 0 auto;
-    padding: 14px 36px;
-    font-size: 1.15em;
+    margin: 12px auto 0;
+    padding: 12px 30px;
+    font-size: 1.05em;
     flex-shrink: 0;
     align-self: center;
+}
+
+/* Bei sehr schmaler Viewport-Breite Spalten reduzieren, damit nichts verzerrt wird */
+@media (max-width: 800px) {
+    .adaptive-explainer-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* ===== Lernstrategien-Detailkarte ===== */
