@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HistoLearn - Geschichte Lernapp</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/castle-3d.css">
+    <link rel="stylesheet" href="css/themes.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="castle-icon">🏰</div>
+                <h1>HistoLearn</h1>
+                <p>Dein Weg durch die Geschichte</p>
+            </div>
+
+            <div class="login-box">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="showLoginTab('login')">Anmelden</button>
+                    <button class="tab-btn" onclick="showLoginTab('register')">Registrieren</button>
+                </div>
+
+                <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+                    <div class="input-group">
+                        <label>Benutzername</label>
+                        <input type="text" id="loginUsername" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Passwort</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Anmelden</button>
+                </form>
+
+                <form id="registerForm" class="auth-form" onsubmit="handleRegister(event)">
+                    <div class="input-group">
+                        <label>Benutzername</label>
+                        <input type="text" id="regUsername" required>
+                    </div>
+                    <div class="input-group">
+                        <label>E-Mail</label>
+                        <input type="email" id="regEmail" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Passwort</label>
+                        <input type="password" id="regPassword" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Klasse/Jahrgangsstufe</label>
+                        <select id="regClass">
+                            <option value="7">7. Klasse</option>
+                            <option value="8">8. Klasse</option>
+                            <option value="9">9. Klasse</option>
+                            <option value="10">10. Klasse</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Registrieren</button>
+                </form>
+            </div>
+
+            <div class="fun-fact" id="funFact">
+                <span class="fun-fact-label">💡 Wusstest du?</span>
+                <p id="funFactText">Die Pyramiden von Gizeh waren über 3.800 Jahre lang die höchsten Bauwerke der Welt!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="screen">
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">👤</div>
+                    <div class="user-details">
+                        <span class="username" id="displayUsername">Benutzer</span>
+                        <span class="user-rank" id="displayRank">🌾 Tagelöhner</span>
+                    </div>
+                </div>
+                <div class="user-stats">
+                    <div class="stat">
+                        <span class="coin-icon">🐄</span>
+                        <span id="coinCount">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-menu">
+                <button class="nav-item active" data-section="dashboard" onclick="showSection('dashboard')">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-text">Dashboard</span>
+                </button>
+                <button class="nav-item" data-section="chat" onclick="showSection('chat')">
+                    <span class="nav-icon">💬</span>
+                    <span class="nav-text">KI-Tutor</span>
+                </button>
+                <button class="nav-item" data-section="operators" onclick="showSection('operators')">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-text">Operatoren</span>
+                </button>
+                <button class="nav-item" data-section="strategies" onclick="showSection('strategies')">
+                    <span class="nav-icon">🧠</span>
+                    <span class="nav-text">Lernstrategien</span>
+                </button>
+                <button class="nav-item" data-section="timeline" onclick="showSection('timeline')">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-text">Zeitstrahl</span>
+                </button>
+                <button class="nav-item" data-section="exercises" onclick="showSection('exercises')">
+                    <span class="nav-icon">🎯</span>
+                    <span class="nav-text">Übungen</span>
+                </button>
+                <button class="nav-item" data-section="library" onclick="showSection('library')">
+                    <span class="nav-icon">📚</span>
+                    <span class="nav-text">Bibliothek</span>
+                </button>
+                <button class="nav-item" data-section="glossary" onclick="showSection('glossary')">
+                    <span class="nav-icon">📖</span>
+                    <span class="nav-text">Glossar</span>
+                </button>
+                <button class="nav-item" data-section="castle" onclick="showSection('castle')">
+                    <span class="nav-icon">🏰</span>
+                    <span class="nav-text">Meine Burg</span>
+                </button>
+                <button class="nav-item" data-section="settings" onclick="showSection('settings')">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-text">Einstellungen</span>
+                </button>
+            </div>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary btn-full" onclick="logout()">Abmelden</button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Pomodoro Timer Bar -->
+            <div class="timer-bar" id="timerBar">
+                <div class="timer-info">
+                    <span class="timer-status" id="timerStatus">⏸️ Timer pausiert</span>
+                    <span class="timer-display" id="timerDisplay">20:00</span>
+                </div>
+                <div class="timer-controls">
+                    <button class="timer-btn" onclick="startTimer()" id="timerStartBtn">▶️ Start</button>
+                    <button class="timer-btn" onclick="pauseTimer()" id="timerPauseBtn" style="display:none;">⏸️ Pause</button>
+                    <button class="timer-btn" onclick="resetTimer()">🔄 Reset</button>
+                    <button class="timer-btn" onclick="skipBreak()" id="skipBreakBtn" style="display:none;">⏭️ Pause überspringen</button>
+                </div>
+                <div class="timer-progress">
+                    <div class="timer-progress-bar" id="timerProgressBar"></div>
+                </div>
+                <div class="session-stats">
+                    <span>📖 Heute gelernt: <strong id="todayLearned">0</strong> Min</span>
+                </div>
+            </div>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section active">
+                <div class="section-header">
+                    <h1>Willkommen zurück, <span id="welcomeName">Benutzer</span>!</h1>
+                    <p>Setze deine Lernreise fort</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Progress Card -->
+                    <div class="card progress-card">
+                        <h3>📊 Dein Fortschritt</h3>
+                        <div class="progress-ring-container">
+                            <div class="progress-ring" id="progressRing">
+                                <span class="progress-value" id="progressValue">0%</span>
+                            </div>
+                        </div>
+                        <div class="progress-details">
+                            <div class="progress-item">
+                                <span>Themen abgeschlossen</span>
+                                <strong id="topicsCompleted">0/12</strong>
+                            </div>
+                            <div class="progress-item">
+                                <span>Übungen gemacht</span>
+                                <strong id="exercisesDone">0</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rank Card -->
+                    <div class="card rank-card">
+                        <h3>⚔️ Dein Rang</h3>
+                        <div class="rank-display">
+                            <div class="rank-icon" id="rankIcon">🌾</div>
+                            <div class="rank-name" id="rankName">Tagelöhner</div>
+                        </div>
+                        <div class="rank-progress">
+                            <div class="rank-bar">
+                                <div class="rank-bar-fill" id="rankBarFill" style="width: 0%"></div>
+                            </div>
+                            <span class="rank-next">Nächster Rang: <span id="nextRank">Bauer</span></span>
+                        </div>
+                        <div class="coins-display">
+                            <span class="coin-big">🐄</span>
+                            <span class="coin-amount" id="coinsAmount">0</span>
+                            <span class="coin-label">Kuh-Münzen</span>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card quick-actions-card">
+                        <h3>🚀 Schnellstart</h3>
+                        <div class="quick-actions">
+                            <button class="quick-btn" onclick="showSection('chat')">
+                                <span class="quick-icon">💬</span>
+                                <span>KI-Tutor fragen</span>
+                            </button>
+                            <button class="quick-btn" onclick="showSection('exercises')">
+                                <span class="quick-icon">🎯</span>
+                                <span>Übung starten</span>
+                            </button>
+                            <button class="quick-btn" onclick="showSection('operators')">
+                                <span class="quick-icon">📝</span>
+                                <span>Operatoren üben</span>
+                            </button>
+                            <button class="quick-btn" onclick="showSection('timeline')">
+                                <span class="quick-icon">📅</span>
+                                <span>Zeitstrahl erkunden</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="card activity-card">
+                        <h3>📜 Letzte Aktivitäten</h3>
+                        <div class="activity-list" id="activityList">
+                            <div class="activity-item">
+                                <span class="activity-icon">🎯</span>
+                                <span class="activity-text">Starte deine erste Übung!</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Achievements -->
+                    <div class="card achievements-card">
+                        <h3>🏆 Auszeichnungen</h3>
+                        <div class="achievements-grid" id="achievementsGrid">
+                            <div class="achievement locked">
+                                <span class="achievement-icon">🔒</span>
+                                <span class="achievement-name">Erste Schritte</span>
+                            </div>
+                            <div class="achievement locked">
+                                <span class="achievement-icon">🔒</span>
+                                <span class="achievement-name">Quiz-Meister</span>
+                            </div>
+                            <div class="achievement locked">
+                                <span class="achievement-icon">🔒</span>
+                                <span class="achievement-name">Zeitreisender</span>
+                            </div>
+                            <div class="achievement locked">
+                                <span class="achievement-icon">🔒</span>
+                                <span class="achievement-name">Operator-Pro</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chat Section -->
+            <section id="chat" class="content-section">
+                <div class="chat-layout">
+                    <div class="chat-main">
+                        <div class="chat-header">
+                            <h2>💬 KI-Geschichtstutor</h2>
+                            <div class="chat-timer">
+                                <span>Chat-Zeit: </span>
+                                <span id="chatTime">00:00</span>
+                            </div>
+                        </div>
+
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message ai">
+                                <div class="message-avatar">🤖</div>
+                                <div class="message-content">
+                                    <p>Hallo! Ich bin dein KI-Geschichtstutor. Ich helfe dir beim Lernen für Geschichte. Du kannst mich alles fragen oder die Schnell-Buttons unten nutzen!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chat-quick-buttons">
+                            <button class="quick-prompt-btn" onclick="sendQuickPrompt('eselsbruecke')">🐴 Eselsbrücke erstellen</button>
+                            <button class="quick-prompt-btn" onclick="sendQuickPrompt('zusammenfassung')">📋 Zusammenfassung</button>
+                            <button class="quick-prompt-btn" onclick="sendQuickPrompt('quiz')">❓ Quiz zu Thema</button>
+                            <button class="quick-prompt-btn" onclick="sendQuickPrompt('erklaerung')">💡 Einfach erklären</button>
+                            <button class="quick-prompt-btn" onclick="sendQuickPrompt('zeitstrahl')">📅 Zeitliche Einordnung</button>
+                            <button class="quick-prompt-btn" onclick="sendQuickPrompt('vergleich')">⚖️ Vergleich erstellen</button>
+                            <button class="quick-prompt-btn" onclick="sendQuickPrompt('pruefung')">📝 Prüfungsmodus</button>
+                        </div>
+
+                        <div class="chat-input-area">
+                            <input type="text" id="chatInput" placeholder="Stelle eine Frage zur Geschichte..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+                            <button class="btn btn-primary" onclick="sendChatMessage()">Senden</button>
+                        </div>
+                    </div>
+
+                    <div class="chat-sidebar">
+                        <div class="chat-sidebar-section">
+                            <h4>💾 Gespeicherte Chats</h4>
+                            <div class="saved-chats" id="savedChats">
+                                <p class="no-chats">Noch keine Chats gespeichert</p>
+                            </div>
+                            <button class="btn btn-secondary btn-full" onclick="saveCurrentChat()">Chat speichern</button>
+                        </div>
+                        <div class="chat-sidebar-section">
+                            <h4>⚙️ KI-Modus</h4>
+                            <select id="aiMode" onchange="changeAIMode()">
+                                <option value="tutor">📚 Tutor (hilfsbereit)</option>
+                                <option value="critic">🔍 Kritiker (streng)</option>
+                                <option value="discussion">💬 Diskussionspartner</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Operators Section -->
+            <section id="operators" class="content-section">
+                <div class="section-header">
+                    <h1>📝 Operatoren lernen & üben</h1>
+                    <p>Verstehe und übe alle Operatoren für den Geschichtsunterricht</p>
+                </div>
+
+                <div class="operators-layout">
+                    <div class="operators-sidebar">
+                        <h3>Anforderungsbereiche</h3>
+                        <div class="afb-tabs">
+                            <button class="afb-tab active" onclick="showAFB(1)">
+                                <span class="afb-badge afb1">AFB I</span>
+                                <span>Reproduktion</span>
+                            </button>
+                            <button class="afb-tab" onclick="showAFB(2)">
+                                <span class="afb-badge afb2">AFB II</span>
+                                <span>Reorganisation</span>
+                            </button>
+                            <button class="afb-tab" onclick="showAFB(3)">
+                                <span class="afb-badge afb3">AFB III</span>
+                                <span>Transfer & Reflexion</span>
+                            </button>
+                        </div>
+
+                        <div class="operators-list" id="operatorsList">
+                            <!-- Filled by JavaScript -->
+                        </div>
+                    </div>
+
+                    <div class="operators-main">
+                        <div class="operator-detail" id="operatorDetail">
+                            <div class="operator-header">
+                                <h2 id="operatorName">Wähle einen Operator</h2>
+                                <span class="afb-badge" id="operatorAFB">AFB</span>
+                            </div>
+                            <div class="operator-content">
+                                <div class="operator-section">
+                                    <h4>📖 Definition</h4>
+                                    <p id="operatorDefinition">Klicke links auf einen Operator, um mehr zu erfahren.</p>
+                                </div>
+                                <div class="operator-section">
+                                    <h4>🎯 Was wird erwartet?</h4>
+                                    <p id="operatorExpectation"></p>
+                                </div>
+                                <div class="operator-section">
+                                    <h4>📝 Beispiel-Aufgabe</h4>
+                                    <p id="operatorExample"></p>
+                                </div>
+                                <div class="operator-section">
+                                    <h4>💡 Tipps</h4>
+                                    <ul id="operatorTips"></ul>
+                                </div>
+                                <div class="operator-section">
+                                    <h4>⚠️ Häufige Fehler</h4>
+                                    <ul id="operatorMistakes"></ul>
+                                </div>
+                            </div>
+                            <div class="operator-actions">
+                                <button class="btn btn-primary" onclick="startOperatorExercise()">🎯 Übung starten</button>
+                                <button class="btn btn-secondary" onclick="showOperatorQuiz()">❓ Quiz zum Operator</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Learning Strategies Section -->
+            <section id="strategies" class="content-section">
+                <div class="section-header">
+                    <h1>🧠 Lernstrategien</h1>
+                    <p>Entdecke effektive Methoden zum Lernen</p>
+                </div>
+
+                <div class="strategies-grid" id="strategiesGrid">
+                    <!-- Filled by JavaScript -->
+                </div>
+
+                <div class="strategy-detail-modal" id="strategyModal">
+                    <div class="modal-content">
+                        <button class="modal-close" onclick="closeStrategyModal()">×</button>
+                        <div id="strategyDetailContent"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Timeline Section -->
+            <section id="timeline" class="content-section">
+                <div class="section-header">
+                    <h1>📅 Interaktiver Zeitstrahl</h1>
+                    <p>Erkunde die Geschichte durch die Zeit - basierend auf BW-Lehrplan Klasse 8-10</p>
+                </div>
+
+                <div class="timeline-controls">
+                    <div class="timeline-zoom">
+                        <button onclick="zoomTimeline('out')" title="Herauszoomen (-)">➖</button>
+                        <span id="zoomLevel">10% (0 Events)</span>
+                        <button onclick="zoomTimeline('in')" title="Hineinzoomen (+)">➕</button>
+                    </div>
+                    <div class="timeline-info">
+                        <span style="color: var(--text-secondary); font-size: 0.9em;">
+                            💡 <strong>Tipp:</strong> <kbd>Ctrl</kbd> + <strong>Scroll</strong> zum Zoomen | Ziehen zum Scrollen | Klick auf <span style="background: var(--primary); color: white; padding: 2px 7px; border-radius: 50%; font-weight: bold;">+</span> für Details
+                        </span>
+                    </div>
+                </div>
+
+                <div class="timeline-container" id="timelineContainer">
+                    <div class="timeline-track" id="timelineTrack">
+                        <!-- Filled by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="timeline-legend">
+                    <h4>🎯 Stufenloser Zoom:</h4>
+                    <ul>
+                        <li><strong>Weit herausgezoomt:</strong> Nur die allerwichtigsten Ereignisse der Geschichte</li>
+                        <li><strong>Mittel:</strong> Wichtige Ereignisse erscheinen nach und nach</li>
+                        <li><strong>Nah herangezoomt:</strong> Hunderte Details und Hintergründe sichtbar</li>
+                    </ul>
+                    <p style="margin-top: 10px; font-size: 0.9em; color: var(--text-secondary);">
+                        🖱️ <strong>Zoom:</strong> <kbd>Ctrl</kbd> + Scroll (Touchpad/Maus) oder <kbd>+</kbd>/<kbd>-</kbd> Tasten<br>
+                        👆 <strong>Scrollen:</strong> Ziehen mit Maus oder Mausrad | <kbd>←</kbd><kbd>→</kbd> Pfeiltasten<br>
+                        ✨ <strong>Event-Details:</strong> Klicke auf grünes <span style="background: var(--primary); color: white; padding: 2px 7px; border-radius: 50%; font-weight: bold;">+</span> | <kbd>ESC</kbd> schließt Karte
+                    </p>
+                </div>
+            </section>
+
+            <!-- Exercises Section -->
+            <section id="exercises" class="content-section">
+                <div class="section-header">
+                    <h1>🎯 Übungen</h1>
+                    <p>Teste dein Wissen und verbessere deine Fähigkeiten</p>
+                </div>
+
+                <div class="exercises-tabs">
+                    <button class="exercise-tab active" onclick="showExerciseType('quiz')">❓ Quiz</button>
+                    <button class="exercise-tab" onclick="showExerciseType('operator')">📝 Operator-Übungen</button>
+                    <button class="exercise-tab" onclick="showExerciseType('cognitive')">🧩 Kognitive Übungen</button>
+                </div>
+
+                <div class="exercises-content" id="exercisesContent">
+                    <!-- Quiz Selection -->
+                    <div class="exercise-type active" id="exerciseQuiz">
+                        <h3>Wähle ein Thema für das Quiz</h3>
+                        <div class="topic-grid" id="quizTopics">
+                            <!-- Filled by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Operator Exercises -->
+                    <div class="exercise-type" id="exerciseOperator">
+                        <h3>Operator-Übungen</h3>
+                        <div class="operator-exercise-select">
+                            <select id="operatorExerciseSelect">
+                                <option value="">Wähle einen Operator...</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="startOperatorPractice()">Übung starten</button>
+                        </div>
+                    </div>
+
+                    <!-- Cognitive Exercises -->
+                    <div class="exercise-type" id="exerciseCognitive">
+                        <h3>Kognitive Übungen</h3>
+                        <p>Trainiere dein Gehirn zwischen den Lerneinheiten</p>
+                        <div class="cognitive-games">
+                            <button class="cognitive-btn" onclick="startCognitiveGame('memory')">
+                                <span class="game-icon">🃏</span>
+                                <span class="game-name">Memory</span>
+                                <span class="game-desc">Trainiere dein Gedächtnis</span>
+                            </button>
+                            <button class="cognitive-btn" onclick="startCognitiveGame('sequence')">
+                                <span class="game-icon">🔢</span>
+                                <span class="game-name">Reihenfolge</span>
+                                <span class="game-desc">Bringe Ereignisse in Ordnung</span>
+                            </button>
+                            <button class="cognitive-btn" onclick="startCognitiveGame('matching')">
+                                <span class="game-icon">🔗</span>
+                                <span class="game-name">Zuordnung</span>
+                                <span class="game-desc">Verbinde Zusammenhänge</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exercise Area -->
+                <div class="exercise-area" id="exerciseArea" style="display: none;">
+                    <!-- Dynamic exercise content -->
+                </div>
+            </section>
+
+            <!-- Library Section -->
+            <section id="library" class="content-section">
+                <div class="section-header">
+                    <h1>📚 Bibliothek</h1>
+                    <p>Deine Lernmaterialien und Fortschritte</p>
+                </div>
+
+                <div class="library-layout">
+                    <div class="library-sidebar">
+                        <h3>📁 Ordner</h3>
+                        <div class="folder-list" id="folderList">
+                            <div class="folder-item" onclick="openFolder('alle')">
+                                <span>📂</span> Alle Materialien
+                            </div>
+                            <div class="folder-item" onclick="openFolder('favoriten')">
+                                <span>⭐</span> Favoriten
+                            </div>
+                            <div class="folder-item" onclick="openFolder('gelernt')">
+                                <span>✅</span> Gelernt
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary btn-full" onclick="createFolder()">+ Neuer Ordner</button>
+                    </div>
+
+                    <div class="library-main">
+                        <div class="library-filters">
+                            <input type="text" placeholder="Suchen..." id="librarySearch" onkeyup="searchLibrary()">
+                            <select id="libraryFilter" onchange="filterLibrary()">
+                                <option value="all">Alle Inhalte</option>
+                                <option value="topics">Themen</option>
+                                <option value="notes">Notizen</option>
+                                <option value="chats">Gespeicherte Chats</option>
+                            </select>
+                        </div>
+
+                        <div class="library-content" id="libraryContent">
+                            <!-- Filled by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Glossary Section -->
+            <section id="glossary" class="content-section">
+                <div class="section-header">
+                    <h1>📖 Glossar</h1>
+                    <p>Wichtige Fachbegriffe aus den Klassen 8, 9 und 10</p>
+                </div>
+
+                <div class="glossary-layout">
+                    <div class="glossary-header">
+                        <div class="glossary-filters">
+                            <button class="glossary-filter-btn active" data-filter="alle">Alle Begriffe</button>
+                            <button class="glossary-filter-btn" data-filter="klasse8">Klasse 8</button>
+                            <button class="glossary-filter-btn" data-filter="klasse9">Klasse 9</button>
+                            <button class="glossary-filter-btn" data-filter="klasse10">Klasse 10</button>
+                        </div>
+                        <div class="glossary-search">
+                            <input type="text" id="glossarySearch" placeholder="Begriff suchen..." onkeyup="searchGlossary(this.value)">
+                        </div>
+                    </div>
+
+                    <div class="glossary-content">
+                        <div class="glossary-list" id="glossaryList">
+                            <!-- Filled by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Castle Section (Gamification) -->
+            <section id="castle" class="content-section">
+                <div class="section-header">
+                    <h1>🏰 Meine Burg</h1>
+                    <p>Baue deine Burg mit deinem Lernfortschritt aus!</p>
+                </div>
+
+                <div class="castle-layout">
+                    <div class="castle-view">
+                        <!-- Control Buttons -->
+                        <div style="position: absolute; top: 10px; right: 10px; z-index: 1000; display: flex; gap: 10px;">
+                            <button class="btn btn-small" onclick="Castle3D.toggleGrid()" title="Raster ein-/ausblenden">
+                                📐 Raster
+                            </button>
+                        </div>
+
+                        <!-- 3D Castle Display (wird dynamisch gefüllt) -->
+                        <div class="castle-display" id="castleDisplay">
+                            <!-- 3D-Szene wird hier durch JavaScript generiert -->
+                        </div>
+
+                        <!-- Info Text -->
+                        <div style="text-align: center; margin-top: 10px; color: var(--text-secondary); font-size: 0.9em;">
+                            🏗️ Baue deine Burg auf dem Hügel! Ziehe Gebäude mit der Maus, um sie zu platzieren.
+                        </div>
+                    </div>
+
+                    <div class="castle-info">
+                        <div class="castle-stats">
+                            <h3>Burg-Status</h3>
+                            <div class="castle-stat">
+                                <span>Ausbaustufe:</span>
+                                <strong id="castleLevel">1/7</strong>
+                            </div>
+                            <div class="castle-stat">
+                                <span>Nächster Ausbau:</span>
+                                <strong id="nextUpgradeCost">100 🐄</strong>
+                            </div>
+                        </div>
+
+                        <div class="castle-shop">
+                            <h3>🛒 Burg-Shop</h3>
+                            <div class="shop-items" id="shopItems">
+                                <div class="shop-item">
+                                    <span class="shop-icon">🧱</span>
+                                    <span class="shop-name">Mauer</span>
+                                    <span class="shop-price">50 🐄</span>
+                                    <button class="btn btn-small" onclick="buyUpgrade('wall')">Kaufen</button>
+                                </div>
+                                <div class="shop-item">
+                                    <span class="shop-icon">🗼</span>
+                                    <span class="shop-name">Turm</span>
+                                    <span class="shop-price">100 🐄</span>
+                                    <button class="btn btn-small" onclick="buyUpgrade('tower')">Kaufen</button>
+                                </div>
+                                <div class="shop-item">
+                                    <span class="shop-icon">🏰</span>
+                                    <span class="shop-name">Bergfried</span>
+                                    <span class="shop-price">200 🐄</span>
+                                    <button class="btn btn-small" onclick="buyUpgrade('keep')">Kaufen</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rank-info">
+                            <h3>⚔️ Rang-Übersicht</h3>
+                            <div class="ranks-list">
+                                <div class="rank-item current">🌾 Tagelöhner</div>
+                                <div class="rank-item">🌾 Bauer</div>
+                                <div class="rank-item">🔨 Handwerker</div>
+                                <div class="rank-item">⚔️ Ritter</div>
+                                <div class="rank-item">👑 Adel</div>
+                                <div class="rank-item">⚡ Legende</div>
+                            </div>
+                        </div>
+
+                        <div class="castle-actions">
+                            <h3>🛠️ Burg-Verwaltung</h3>
+                            <button class="btn btn-secondary btn-full" onclick="Castle3D.resetLayout()">
+                                🔄 Layout zurücksetzen
+                            </button>
+                            <p style="margin-top: 10px; font-size: 0.85em; color: var(--text-secondary);">
+                                Kaufe Gebäude im Shop und platziere sie auf dem Hügel. Ziehe sie mit der Maus, um sie neu anzuordnen!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="content-section">
+                <div class="section-header">
+                    <h1>⚙️ Einstellungen</h1>
+                    <p>Passe die App an deine Bedürfnisse an</p>
+                </div>
+
+                <div class="settings-grid">
+                    <div class="settings-card">
+                        <h3>🎨 Erscheinungsbild</h3>
+                        <div class="setting-item">
+                            <label>Design</label>
+                            <select id="themeSelect" onchange="changeTheme()">
+                                <option value="light">☀️ Hell</option>
+                                <option value="dark">🌙 Dunkel</option>
+                                <option value="sepia">📜 Sepia</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label>Akzentfarbe</label>
+                            <div class="color-options">
+                                <button class="color-btn active" style="background: #667eea" onclick="setAccentColor('#667eea')"></button>
+                                <button class="color-btn" style="background: #e74c3c" onclick="setAccentColor('#e74c3c')"></button>
+                                <button class="color-btn" style="background: #27ae60" onclick="setAccentColor('#27ae60')"></button>
+                                <button class="color-btn" style="background: #f39c12" onclick="setAccentColor('#f39c12')"></button>
+                                <button class="color-btn" style="background: #9b59b6" onclick="setAccentColor('#9b59b6')"></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>🤖 KI-Einstellungen</h3>
+                        <div class="setting-item">
+                            <label>Standard KI-Modus</label>
+                            <select id="defaultAIMode">
+                                <option value="tutor">📚 Tutor (hilfsbereit)</option>
+                                <option value="critic">🔍 Kritiker (streng)</option>
+                                <option value="discussion">💬 Diskussionspartner</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label>API-Key</label>
+                            <input type="password" id="apiKeyInput" placeholder="Dein API-Key">
+                            <button class="btn btn-secondary" onclick="saveApiKey()">Speichern</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>⏱️ Pomodoro-Timer</h3>
+                        <div class="setting-item">
+                            <label>Lernzeit (Minuten)</label>
+                            <input type="number" id="pomodoroWork" value="20" min="5" max="60">
+                        </div>
+                        <div class="setting-item">
+                            <label>Pausenzeit (Minuten)</label>
+                            <input type="number" id="pomodoroBreak" value="5" min="1" max="30">
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="pomodoroSound" checked>
+                                Ton bei Timer-Ende
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>📊 Lernpräferenzen</h3>
+                        <div class="setting-item">
+                            <label>Bevorzugte Lernstrategie</label>
+                            <select id="prefStrategy">
+                                <option value="">Keine Präferenz</option>
+                                <option value="visual">Visuell</option>
+                                <option value="auditory">Auditiv</option>
+                                <option value="kinesthetic">Praktisch</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label>Schwierige Operatoren</label>
+                            <div id="difficultOperators" class="tag-list">
+                                <!-- Filled by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>💾 Daten</h3>
+                        <button class="btn btn-secondary btn-full" onclick="exportData()">📤 Daten exportieren</button>
+                        <button class="btn btn-secondary btn-full" onclick="importData()">📥 Daten importieren</button>
+                        <button class="btn btn-danger btn-full" onclick="resetProgress()">🗑️ Fortschritt zurücksetzen</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal for Exercises/Quizzes -->
+    <div class="modal" id="exerciseModal">
+        <div class="modal-content modal-large">
+            <button class="modal-close" onclick="closeExerciseModal()">×</button>
+            <div id="exerciseModalContent"></div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/timeline-v2-data.js?t=1778800000"></script>
+    <script src="js/gamification.js"></script>
+    <script src="js/castle-3d-builder.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/timer.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/glossary.js"></script>
+    <script src="js/operators.js"></script>
+    <script src="js/strategies.js"></script>
+    <script src="js/timeline-v3.js?t=1778800000"></script>
+    <script src="js/exercises.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

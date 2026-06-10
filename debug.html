@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug - Script Loading Test</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1e1e1e; color: #fff; }
+        .success { color: #0f0; }
+        .error { color: #f00; }
+        pre { background: #000; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Script Loading Debug</h1>
+    <div id="output"></div>
+
+    <script>
+        const output = document.getElementById('output');
+
+        function log(msg, isError = false) {
+            const div = document.createElement('div');
+            div.className = isError ? 'error' : 'success';
+            div.textContent = msg;
+            output.appendChild(div);
+        }
+
+        // Test 1: Load data.js
+        const script1 = document.createElement('script');
+        script1.src = 'js/data.js';
+        script1.onload = () => {
+            log('✓ data.js geladen');
+
+            // Check if RANKS exists
+            if (typeof RANKS !== 'undefined') {
+                log('✓ RANKS definiert: ' + RANKS.length + ' Ränge');
+            } else {
+                log('✗ RANKS nicht definiert', true);
+            }
+
+            // Check if ACHIEVEMENTS exists
+            if (typeof ACHIEVEMENTS !== 'undefined') {
+                log('✓ ACHIEVEMENTS definiert: ' + ACHIEVEMENTS.length + ' Achievements');
+            } else {
+                log('✗ ACHIEVEMENTS nicht definiert', true);
+            }
+
+            // Test 2: Load gamification.js
+            const script2 = document.createElement('script');
+            script2.src = 'js/gamification.js';
+            script2.onload = () => {
+                log('✓ gamification.js geladen');
+
+                if (typeof CASTLE_UPGRADES !== 'undefined') {
+                    log('✓ CASTLE_UPGRADES definiert: ' + Object.keys(CASTLE_UPGRADES).length + ' Teile');
+                    log('  Teile: ' + Object.keys(CASTLE_UPGRADES).join(', '));
+                } else {
+                    log('✗ CASTLE_UPGRADES nicht definiert', true);
+                }
+
+                // Test 3: Load auth.js
+                const script3 = document.createElement('script');
+                script3.src = 'js/auth.js';
+                script3.onload = () => {
+                    log('✓ auth.js geladen');
+
+                    if (typeof handleLogin !== 'undefined') {
+                        log('✓ handleLogin Funktion existiert');
+                    } else {
+                        log('✗ handleLogin nicht definiert', true);
+                    }
+
+                    if (typeof currentUser !== 'undefined') {
+                        log('✓ currentUser Variable existiert (null = ' + (currentUser === null) + ')');
+                    } else {
+                        log('✗ currentUser nicht definiert', true);
+                    }
+
+                    // Test 4: Load app.js
+                    const script4 = document.createElement('script');
+                    script4.src = 'js/app.js';
+                    script4.onload = () => {
+                        log('✓ app.js geladen');
+
+                        if (typeof updateCastleDisplay !== 'undefined') {
+                            log('✓ updateCastleDisplay Funktion existiert');
+                        } else {
+                            log('✗ updateCastleDisplay nicht definiert', true);
+                        }
+
+                        log('\n=== Alle Hauptscripts erfolgreich geladen! ===');
+                        log('\nJetzt zur Hauptseite gehen und testen:');
+                        log('→ http://localhost:8000/');
+                    };
+                    script4.onerror = () => log('✗ Fehler beim Laden von app.js', true);
+                    document.body.appendChild(script4);
+                };
+                script3.onerror = () => log('✗ Fehler beim Laden von auth.js', true);
+                document.body.appendChild(script3);
+            };
+            script2.onerror = () => log('✗ Fehler beim Laden von gamification.js', true);
+            document.body.appendChild(script2);
+        };
+        script1.onerror = () => log('✗ Fehler beim Laden von data.js', true);
+        document.body.appendChild(script1);
+    </script>
+</body>
+</html>
