@@ -558,7 +558,7 @@
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    z-index: 10010;
     justify-content: center;
     align-items: center;
     padding: 20px;
@@ -1823,7 +1823,7 @@ body.timer-open .glossary-header { top: 90px; }
 }
 
 /* Modal für KI-Tutor-Optionen zu einem Begriff */
-.tutor-term-modal { z-index: 9999; }
+.tutor-term-modal { z-index: 10010; }
 .tutor-term-content {
     max-width: 560px;
     width: 90%;
@@ -3842,7 +3842,7 @@ body.timer-open .glossary-header { top: 90px; }
     display: none;
     position: fixed;
     inset: 0;
-    z-index: 9998;
+    z-index: 10011;
 }
 
 .info-popup-overlay.active {
@@ -3855,7 +3855,7 @@ body.timer-open .glossary-header { top: 90px; }
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.9);
-    z-index: 9999;
+    z-index: 10012;
     background: var(--bg-card);
     border: 1px solid var(--border-gold);
     border-radius: var(--border-radius);

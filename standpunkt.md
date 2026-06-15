@@ -2311,6 +2311,25 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 - **Lösung**: Änderung des Selektors `.section-header p` auf `color: var(--text-secondary) !important;` in `app/css/main.css`. Der Text passt sich nun dynamisch dem gewählten Theme an (hellbrauner Text im Sepia-Modus, hellgrauer Text im Dark-Modus).
 
 ### 🗂️ Geänderte Dateien in Phase 2.5
-- `app/index.html` – Umstrukturierung der Dashboard-Kacheln in 3 Spalten-Divs.
+- `app/index.html` – Umstrukturierung der Dashboard-Kacheln in 3 Spalten-Divs und Wiederherstellung des "Adaptive Lernsession"-Buttons in der Sidebar unter dem Dashboard.
 - `app/css/main.css` – CSS-Implementierung der Flex-Spalten (`.dashboard-columns` & `.dashboard-column`), responsive Media-Queries und Kontrast-Variable für Kachel-Untertitel.
+- `standpunkt.md` – Diese Dokumentation.
+
+---
+
+## 🎯 Session vom 15.06.2026 (Später Abend) – Phase 2.6: Modal Z-Index Overlay Fix
+
+### 🛠️ Modals & Popups über Sidebar zeichnen (Z-Index Fix)
+- **Problem**: Das Einrichtungsfenster für die adaptive Lernsession (und andere Modals) wurden auf der linken Seite von der Menüleiste (Sidebar) verdeckt.
+- **Ursache**: Die Sidebar hatte einen z-index von `100001`, während Modals auf `10000` lagen. Dadurch wurden Modalfenster hinter der Sidebar gerendert.
+- **Lösung**: Anpassung der Stapelungsreihenfolge (z-index Stack):
+  - In `app/css/main.css` wurde der z-index von `.sidebar` auf `10000` verringert.
+  - Der z-index von `.modal` wurde auf `10010` angehoben, damit alle Modalfenster und der dunkle Hintergrundschleier über der Sidebar liegen.
+  - Der z-index von `.toast-container` wurde auf `10020` angehoben, damit Erfolgs- oder Fehlermeldungen weiterhin über den Modals gezeichnet werden.
+  - In `app/css/components.css` wurden auch die spezifischen z-indices von `.strategy-detail-modal.active` und `.tutor-term-modal` auf `10010`, `.info-popup-overlay` auf `10011` und `.info-popup` auf `10012` angehoben.
+- **Resultat**: Alle Popups legen sich nun einwandfrei und ohne abgeschnitten zu werden über die gesamte App (inklusive Menüleiste).
+
+### 🗂️ Geänderte Dateien in Phase 2.6
+- `app/css/main.css` – Absenken des z-index der Sidebar, Erhöhen des z-index von Modals und Toasts.
+- `app/css/components.css` – Erhöhen des z-index für strategie-bezogene Modals und Informations-Popups.
 - `standpunkt.md` – Diese Dokumentation.
