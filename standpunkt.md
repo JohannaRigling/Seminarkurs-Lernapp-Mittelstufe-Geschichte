@@ -2279,10 +2279,10 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 - **Dunkelmodus (Dark Mode)**: Die bläulichen Theme-Overrides für `body.dark` wurden am Dateianfang von `themes.css` entfernt, sodass der Dunkelmodus nun das standardmäßige, kontraststarke Schwarz/Gold-Design der App lädt.
 
 ### 🗂️ Geänderte Dateien
-- `app/index.html` – Einklappbare Kachel-Header im Dashboard, Entfernung des Export-Buttons und der 7. Klasse, Entfernung der Adaptive-Session aus der Sidebar.
+- `app/index.html` – Einklappbare Kachel-Header im Dashboard, Entfernung des Export-Buttons und der 7. Klasse (Hinweis: Die Sidebar verlinkt die "Adaptive Lernsession" weiterhin).
 - `app/css/main.css` – Kachel-Styles für Header/Inhalt, einklappbare Zustände, kompakte Paddings, Masonry-Spalten-Layout und Kontrast-Fix für Kachel-Untertitel.
 - `app/css/components.css` – Schrift- und Padding-Verkleinerungen bei Quizzes, Themen-Checklisten-Styles, Ersetzung harter weißer Farbcodes bei Lernstrategien durch CSS-Variablen.
-- `app/js/app.js` – Globale Funktion `toggleCard(header)`, Anpassungen für Checkbox-Verarbeitung in `showLearningSessionStart()` and `readSessionSetup()`.
+- `app/js/app.js` – Globale Funktion `toggleCard(header)`, Anpassungen für Checkbox-Verarbeitung in `showLearningSessionStart()` und `readSessionSetup()`.
 - `app/js/adaptive-learning.js` – Parsing-Logik für mehrfache Themen-IDs in `getAllExercisesForTopic()` und `getTopicName()`.
 - `app/js/source-analysis.js` – Austausch der Karikatur-Bildbeschreibung durch Recherche-Hinweis.
 - `app/js/strategies.js` – Entfernung der Buttons für Dual Coding, Mind-Mapping und Cornell; Anpassung der Routings für spaced-repetition, interleaving und pomodoro.
@@ -2304,6 +2304,7 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
     - **Desktop (>1024px)**: 3 gleichmäßige Spalten.
     - **Tablet (768px - 1024px)**: 2 Spalten nebeneinander, die 3. Spalte bricht sauber in die nächste Zeile um und nimmt die volle Breite ein.
     - **Smartphone (<768px)**: 1 Spalte (alle Spalten stacken vertikal).
+  - **Sidebar-Anpassung**: Der Button "Adaptive Session" wurde wieder auf der linken Sidebar unter dem "Dashboard" verlinkt, um schnellen Zugriff von überall aus zu ermöglichen.
 
 ### 🎨 Kontrast-Korrektur des Dashboard-Untertitels
 - **Problem**: Der Text *„Setze deine Lernreise fort“* unter der Willkommensnachricht war durch `color: #000000 !important;` im Dark Mode vollkommen unleserlich (schwarzer Text auf tiefblauem/schwarzem Grund).
