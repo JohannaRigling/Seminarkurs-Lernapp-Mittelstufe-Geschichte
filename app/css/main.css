@@ -771,9 +771,9 @@ body.sidebar-collapsed .top-header-bar {
 }
 
 .top-timer-btn {
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    color: white;
     padding: 6px 14px;
     border-radius: 8px;
     font-size: 0.85rem;
@@ -786,9 +786,9 @@ body.sidebar-collapsed .top-header-bar {
 }
 
 .top-timer-btn:hover {
-    background: var(--primary);
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
     color: white;
-    border-color: var(--primary);
 }
 
 /* ===== MAIN CONTENT ===== */
@@ -818,40 +818,88 @@ body.no-scroll .main-content {
     max-height: 100vh;
 }
 
-/* ===== TIMER BAR — FIXIERT (immer sichtbar, scrollt nicht weg) ===== */
-.timer-bar {
-    background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
-    border: 2px solid var(--border-gold);
-    border-radius: 12px;
-    padding: 10px 18px;
-    margin: 0;
-    display: flex;
+/* ===== INTEGRATED HEADER TIMER BAR ===== */
+.header-timer-container {
+    display: none; /* toggled to flex via JS */
     align-items: center;
     gap: 16px;
-    box-shadow: 0 6px 22px rgba(0,0,0,0.35), var(--shadow-gold);
-    /* Fixiert — füllt die volle Hauptbereichs-Breite aus (Toggle-Button ist ausgeblendet) */
-    position: fixed;
-    top: 60px; /* Shifted down to accommodate the top header bar */
-    left: calc(var(--sidebar-width) + 24px);
-    right: 24px;
-    z-index: 200;
-    flex-wrap: wrap;
-}
-body.sidebar-collapsed .timer-bar {
-    left: calc(60px + 24px);
-}
-/* Wenn der Timer geöffnet ist, schiebt sich der Hauptinhalt unterhalb */
-body.timer-open .main-content > .content-section.active {
-    padding-top: 76px;
+    flex: 1;
+    margin-right: 20px;
+    height: 100%;
 }
 
-/* Schmale Bar: nur die Schriften haben eigene Akzente, die Höhe bleibt minimal */
-.timer-bar { padding: 6px 16px; gap: 14px; }
-.timer-bar .timer-display { font-size: 1.25em; font-weight: 700; line-height: 1.1; }
-.timer-bar .timer-status  { font-size: 0.85em; font-weight: 600; color: #ffffff; line-height: 1.1; }
-.timer-bar .timer-btn     { padding: 5px 12px; font-size: 0.85em; font-weight: 600; }
-.timer-bar .session-stats { font-size: 0.85em; font-weight: 600; color: #ffffff; line-height: 1.1; }
-.timer-bar .timer-progress { height: 8px; }
+.header-timer-container .timer-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-timer-container .timer-status {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.header-timer-container .timer-display {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: monospace;
+}
+
+.header-timer-container .timer-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-timer-container .timer-btn {
+    padding: 4px 10px;
+    font-size: 0.8em;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.header-timer-container .timer-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.header-timer-container .timer-progress {
+    flex: 1;
+    min-width: 100px;
+    max-width: 250px;
+    height: 6px;
+    background: var(--bg-tertiary);
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.header-timer-container .timer-progress-bar {
+    height: 100%;
+    background: var(--primary);
+    width: 0%;
+    transition: width 1s linear;
+}
+
+.header-timer-container .session-stats {
+    font-size: 0.8em;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: 4px 10px;
+    background: var(--bg-tertiary);
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    white-space: nowrap;
+}
 
 .timer-info {
     display: flex;
@@ -1552,11 +1600,6 @@ body.timer-open .main-content > .content-section.active {
         left: 0 !important;
     }
 
-    .timer-bar {
-        left: 24px !important;
-        right: 24px !important;
-    }
-
     .dashboard-column {
         flex: 1 1 calc(50% - 14px);
     }
@@ -1571,17 +1614,6 @@ body.timer-open .main-content > .content-section.active {
         flex: 1 1 100%;
     }
 
-    .timer-bar {
-        flex-wrap: wrap;
-        gap: 15px;
-        padding: 15px 20px;
-    }
-
-    .timer-progress {
-        width: 100%;
-        order: 10;
-    }
-
     .content-section {
         padding: 20px;
     }
@@ -1592,5 +1624,17 @@ body.timer-open .main-content > .content-section.active {
 
     .castle-icon {
         font-size: 3.5em;
+    }
+}
+
+@media (max-width: 600px) {
+    .header-timer-container .session-stats {
+        display: none !important;
+    }
+    .header-timer-container .timer-progress {
+        display: none !important;
+    }
+    .header-timer-container .timer-status {
+        display: none !important;
     }
 }

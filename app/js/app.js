@@ -2705,13 +2705,21 @@ function toggleNavCategory(button) {
 // Toggle Timer Visibility
 function toggleTimer() {
     const timerBar = document.getElementById('timerBar');
+    const headerTitle = document.getElementById('headerTitle');
+    const topHeader = document.getElementById('topHeaderBar') || document.querySelector('.top-header-bar');
+    const toggleBtn = document.querySelector('.top-timer-btn');
 
     if (timerBar.style.display === 'none' || timerBar.style.display === '') {
         timerBar.style.display = 'flex';
-        // Body-Klasse für globales Padding-Top, damit Inhalt nicht vom fixen Timer überdeckt wird
+        if (headerTitle) headerTitle.style.display = 'none';
+        if (topHeader) topHeader.classList.add('timer-active');
+        if (toggleBtn) toggleBtn.classList.add('active');
         document.body.classList.add('timer-open');
     } else {
         timerBar.style.display = 'none';
+        if (headerTitle) headerTitle.style.display = '';
+        if (topHeader) topHeader.classList.remove('timer-active');
+        if (toggleBtn) toggleBtn.classList.remove('active');
         document.body.classList.remove('timer-open');
     }
 }

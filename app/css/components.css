@@ -1344,8 +1344,6 @@
     border: 1px solid var(--border-color);
     backdrop-filter: blur(8px);
 }
-/* Bei offenem Timer: Topbar unter den fixen Timer schieben */
-body.timer-open .glossary-header { top: 90px; }
 
 .glossary-filters {
     display: flex;
@@ -4466,9 +4464,6 @@ body.timer-open .glossary-header { top: 90px; }
 #adaptive-session.content-section.active {
     display: flex;
 }
-body.timer-open #adaptive-session.content-section {
-    height: calc(100vh - 0px); /* padding-top fängt die Timer-Höhe ab */
-}
 #adaptive-session > .section-header {
     flex-shrink: 0;
 }
@@ -5970,12 +5965,6 @@ body.timer-open #adaptive-session.content-section {
     border-radius: 14px;
     padding: 12px 16px 14px;
     overflow: hidden;
-}
-
-/* Bei offenem Timer ist mehr Platz oben besetzt → Burg-Bauplatz schrumpft mit, damit nichts überläuft */
-body.timer-open .cb3-wrapper {
-    height: calc(100vh - 205px);
-    max-height: calc(100vh - 205px);
 }
 
 /* Burg darf nicht scrollbar sein — Inhalt füllt den Bereich exakt aus */

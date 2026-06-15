@@ -219,34 +219,32 @@
         <!-- Main Content -->
         <main class="main-content">
             <!-- Sleek Top Header Bar -->
-            <div class="top-header-bar">
-                <div class="top-header-title">HistoLearn - Dein Geschichtsbegleiter</div>
+            <div class="top-header-bar" id="topHeaderBar">
+                <div class="top-header-title" id="headerTitle">HistoLearn - Dein Geschichtsbegleiter</div>
+                
+                <!-- Pomodoro Timer Bar (Now integrated into the header) -->
+                <div class="header-timer-container" id="timerBar" style="display: none;">
+                    <div class="timer-info">
+                        <span class="timer-status" id="timerStatus">⏸️ Timer pausiert</span>
+                        <span class="timer-display" id="timerDisplay">20:00</span>
+                    </div>
+                    <div class="timer-controls">
+                        <button class="timer-btn" onclick="startTimer()" id="timerStartBtn">▶️ Start</button>
+                        <button class="timer-btn" onclick="pauseTimer()" id="timerPauseBtn" style="display:none;">⏸️ Pause</button>
+                        <button class="timer-btn" onclick="resetTimer()">🔄 Reset</button>
+                        <button class="timer-btn" onclick="skipBreak()" id="skipBreakBtn" style="display:none;">⏭️ Pause überspringen</button>
+                    </div>
+                    <div class="timer-progress">
+                        <div class="timer-progress-bar" id="timerProgressBar"></div>
+                    </div>
+                    <div class="session-stats">
+                        <span>📖 Heute gelernt: <strong id="todayLearned">0</strong> Min</span>
+                    </div>
+                </div>
+
                 <button class="top-timer-btn" onclick="toggleTimer()" title="Pomodoro-Timer umschalten">
                     ⏱️ Pomodoro-Timer
                 </button>
-            </div>
-
-            <!-- Pomodoro Timer Bar -->
-            <div class="timer-bar" id="timerBar" style="display: none;">
-                <button class="timer-close-btn" onclick="toggleTimer()" title="Timer schließen">
-                    ×
-                </button>
-                <div class="timer-info">
-                    <span class="timer-status" id="timerStatus">⏸️ Timer pausiert</span>
-                    <span class="timer-display" id="timerDisplay">20:00</span>
-                </div>
-                <div class="timer-controls">
-                    <button class="timer-btn" onclick="startTimer()" id="timerStartBtn">▶️ Start</button>
-                    <button class="timer-btn" onclick="pauseTimer()" id="timerPauseBtn" style="display:none;">⏸️ Pause</button>
-                    <button class="timer-btn" onclick="resetTimer()">🔄 Reset</button>
-                    <button class="timer-btn" onclick="skipBreak()" id="skipBreakBtn" style="display:none;">⏭️ Pause überspringen</button>
-                </div>
-                <div class="timer-progress">
-                    <div class="timer-progress-bar" id="timerProgressBar"></div>
-                </div>
-                <div class="session-stats">
-                    <span>📖 Heute gelernt: <strong id="todayLearned">0</strong> Min</span>
-                </div>
             </div>
 
 
@@ -1030,7 +1028,6 @@
 
                     <div class="settings-card">
                         <h3>💾 Daten</h3>
-                        <button class="btn btn-secondary btn-full" onclick="importData()">📥 Daten importieren</button>
                         <button class="btn btn-danger btn-full" onclick="resetProgress()">🗑️ Fortschritt zurücksetzen</button>
                     </div>
                 </div>
