@@ -172,10 +172,6 @@
                             <span class="nav-icon">🧠</span>
                             <span class="nav-text">Lernstrategien</span>
                         </button>
-                        <button class="nav-item" onclick="toggleTimer()">
-                            <span class="nav-icon">⏱️</span>
-                            <span class="nav-text">Pomodoro-Timer</span>
-                        </button>
                     </div>
                 </div>
 
@@ -222,6 +218,14 @@
 
         <!-- Main Content -->
         <main class="main-content">
+            <!-- Sleek Top Header Bar -->
+            <div class="top-header-bar">
+                <div class="top-header-title">HistoLearn - Dein Geschichtsbegleiter</div>
+                <button class="top-timer-btn" onclick="toggleTimer()" title="Pomodoro-Timer umschalten">
+                    ⏱️ Pomodoro-Timer
+                </button>
+            </div>
+
             <!-- Pomodoro Timer Bar -->
             <div class="timer-bar" id="timerBar" style="display: none;">
                 <button class="timer-close-btn" onclick="toggleTimer()" title="Timer schließen">

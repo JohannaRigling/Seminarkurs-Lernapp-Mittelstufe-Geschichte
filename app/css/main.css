@@ -742,6 +742,55 @@ body::before {
     border-top: 1px solid var(--border-color);
 }
 
+/* ===== SLEEK TOP HEADER BAR ===== */
+.top-header-bar {
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-width);
+    right: 0;
+    height: 48px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 150;
+    transition: left 0.3s ease;
+}
+
+body.sidebar-collapsed .top-header-bar {
+    left: 60px;
+}
+
+.top-header-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-gold);
+    letter-spacing: 0.5px;
+}
+
+.top-timer-btn {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.top-timer-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
 /* ===== MAIN CONTENT ===== */
 .main-content {
     flex: 1;
@@ -757,6 +806,7 @@ body::before {
     z-index: 1;
     /* Kein horizontales Scrollen — Inhalt passt sich an die Breite an */
     overflow-x: clip;
+    padding-top: 48px; /* Room for fixed top header bar */
 }
 
 /* Auf bestimmten Seiten KEIN Scrollen erlauben — Inhalt muss in den Viewport passen.
@@ -781,7 +831,7 @@ body.no-scroll .main-content {
     box-shadow: 0 6px 22px rgba(0,0,0,0.35), var(--shadow-gold);
     /* Fixiert — füllt die volle Hauptbereichs-Breite aus (Toggle-Button ist ausgeblendet) */
     position: fixed;
-    top: 12px;
+    top: 60px; /* Shifted down to accommodate the top header bar */
     left: calc(var(--sidebar-width) + 24px);
     right: 24px;
     z-index: 200;
@@ -792,7 +842,7 @@ body.sidebar-collapsed .timer-bar {
 }
 /* Wenn der Timer geöffnet ist, schiebt sich der Hauptinhalt unterhalb */
 body.timer-open .main-content > .content-section.active {
-    padding-top: 70px;
+    padding-top: 76px;
 }
 
 /* Schmale Bar: nur die Schriften haben eigene Akzente, die Höhe bleibt minimal */
@@ -1482,7 +1532,6 @@ body.timer-open .main-content > .content-section.active {
     max-width: calc(100vw - 60px);
 }
 
-/* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
     .sidebar {
         transform: translateX(-100%);
@@ -1495,6 +1544,17 @@ body.timer-open .main-content > .content-section.active {
 
     .main-content {
         margin-left: 0;
+        width: 100vw;
+        max-width: 100vw;
+    }
+
+    .top-header-bar {
+        left: 0 !important;
+    }
+
+    .timer-bar {
+        left: 24px !important;
+        right: 24px !important;
     }
 
     .dashboard-column {

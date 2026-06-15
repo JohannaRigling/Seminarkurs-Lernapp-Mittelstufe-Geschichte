@@ -2374,3 +2374,26 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 - `app/js/app.js` – Automatisches Hinzufügen der Klasse `.fullscreen` bei Session-Start, Bereinigen des geschlossenen modalen Toggles.
 - `standpunkt.md` – Diese Dokumentation.
 
+---
+
+## 🎯 Session vom 15.06.2026 (Später Abend) – Phase 2.9: Pomodoro-Timer in Top-Bar verschoben (Aktuell)
+
+### ⏱️ Top-Header-Bar & Sidebar-Bereinigung
+- **Ziel**: Den Pomodoro-Timer aus der Navigation-Sidebar entfernen und stattdessen über eine allgegenwärtige, am oberen Rand fixierte Utility-Leiste erreichbar machen.
+- **Entfernung aus der Sidebar**: Der Button `Pomodoro-Timer` wurde aus der Menükategorie `LERNHILFEN` in `app/index.html` gelöscht. Der Timer wird stattdessen über die Tabelle der Lernstrategien sowie über die neue obere Leiste aufgerufen.
+- **Implementierung der `.top-header-bar`**:
+  - Im Hauptinhaltsbereich wurde ganz oben eine schmale, fixierte Kopfleiste (`height: 48px`) integriert.
+  - Diese Leiste enthält links den App-Titel *HistoLearn - Dein Geschichtsbegleiter* und rechts eine elegante Schnellstart-Schaltfläche `⏱️ Pomodoro-Timer`, die `toggleTimer()` aufruft.
+- **Layout-Offset-Anpassung**:
+  - `.main-content` erhält nun standardmäßig `padding-top: 48px`, um Platz für die Leiste zu schaffen und zu verhindern, dass Section-Header verdeckt werden.
+  - Die `.timer-bar` (wenn ausgeklappt) wurde von `top: 12px` auf `top: 60px` verschoben, sodass sie exakt 12px unter der oberen Leiste schwebt.
+  - Bei geöffnetem Timer wird die aktive Section über `padding-top: 76px` weiter nach unten verschoben, um Überlappungen vollständig zu verhindern.
+- **Responsive Anpassungen**:
+  - Bei Ansichten <= 1024px (wo die Sidebar ausgeblendet ist) dehnt sich die `.top-header-bar` vollständig von `left: 0` aus und `.timer-bar` passt sich an die veränderte Inhaltsbreite an.
+
+### 🗂️ Geänderte Dateien in Phase 2.9
+- `app/index.html` – Löschen des Sidebar-Timer-Buttons, Hinzufügen der `.top-header-bar`.
+- `app/css/main.css` – CSS-Regeln für `.top-header-bar`, `.top-header-title`, `.top-timer-btn` und Neupositionierung der `.timer-bar`.
+- `standpunkt.md` – Diese Dokumentation.
+
+
