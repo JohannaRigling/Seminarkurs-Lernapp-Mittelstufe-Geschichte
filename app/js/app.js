@@ -61,6 +61,24 @@ function toggleCard(header) {
     }
 }
 
+// Modal Vollbild umschalten
+function toggleModalFullscreen(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.toggle('fullscreen');
+        const btn = modal.querySelector('.modal-fullscreen-toggle');
+        if (btn) {
+            if (modal.classList.contains('fullscreen')) {
+                btn.innerHTML = '🗗'; // Wiederherstellen-Symbol
+                btn.title = 'Vollbild beenden';
+            } else {
+                btn.innerHTML = '⛶'; // Vollbild-Symbol
+                btn.title = 'Vollbild umschalten';
+            }
+        }
+    }
+}
+
 // Sektion anzeigen
 const BREAK_BLOCKED_SECTIONS = ['chat', 'exercises', 'library-materials', 'library-glossary', 'adaptive-session'];
 const STUDY_BLOCKED_SECTIONS = ['castle'];
@@ -2584,6 +2602,12 @@ function closeAdaptiveLearningModal() {
     const modal = document.getElementById('adaptiveLearningModal');
     if (modal) {
         modal.style.display = 'none';
+        modal.classList.remove('fullscreen');
+        const btn = modal.querySelector('.modal-fullscreen-toggle');
+        if (btn) {
+            btn.innerHTML = '⛶';
+            btn.title = 'Vollbild umschalten';
+        }
     }
 }
 

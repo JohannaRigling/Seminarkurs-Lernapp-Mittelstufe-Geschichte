@@ -2333,3 +2333,22 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 - `app/css/main.css` – Absenken des z-index der Sidebar, Erhöhen des z-index von Modals und Toasts.
 - `app/css/components.css` – Erhöhen des z-index für strategie-bezogene Modals und Informations-Popups.
 - `standpunkt.md` – Diese Dokumentation.
+
+---
+
+## 🎯 Session vom 15.06.2026 (Später Abend) – Phase 2.7: Modal Vollbild-Umschalter
+
+### ⛶ Vollbildmodus für Adaptive-Lernsession-Modalfenster
+- **Problem**: Der Einrichtungsdialog der adaptiven Lernsession benötigt viel Platz für das Auswählen mehrerer Themen, Eingeben des Fokus und Hochladen von Dokumenten. Ein Vollbildmodus wurde gewünscht, um ablenkungsfrei arbeiten zu können.
+- **Lösung**: Einbau eines Vollbildumschalters:
+  - In `app/index.html` wurde im Header des `#adaptiveLearningModal` ein neuer Button `<button class="modal-fullscreen-toggle">⛶</button>` direkt links neben dem Schließen-Kreuz eingefügt.
+  - Im Stylesheet `app/css/main.css` wurde dieser Button über sticky/float so positioniert, dass er bündig neben dem Schließen-Kreuz sitzt.
+  - Für den Zustand `.modal.fullscreen` wurden CSS-Regeln hinzugefügt: das Modal-Padding wird entfernt und der `.modal-content` dehnt sich vollständig auf `100vw` Breite und `100vh` Höhe aus (ohne abgerundete Ecken).
+  - In `app/js/app.js` wurde die Funktion `toggleModalFullscreen(modalId)` hinzugefügt. Sie toggelt die Klasse `.fullscreen` auf dem Modal und ändert das Symbol zu `🗗` (Verkleinern) bzw. `⛶` (Vollbild) sowie den Tooltip-Titel.
+  - Beim Schließen des Modals in `closeAdaptiveLearningModal()` wird die Klasse `.fullscreen` automatisch entfernt und das Symbol zurückgesetzt.
+
+### 🗂️ Geänderte Dateien in Phase 2.7
+- `app/index.html` – Einfügen des Vollbild-Toggle-Buttons im Header des Modalfensters.
+- `app/css/main.css` – CSS-Regeln für die Button-Ausrichtung und den `.fullscreen`-Stretched-Zustand des Modals.
+- `app/js/app.js` – Logik `toggleModalFullscreen()` zum dynamischen Umschalten der Klassen und Icons; Reset beim Schließen.
+- `standpunkt.md` – Diese Dokumentation.

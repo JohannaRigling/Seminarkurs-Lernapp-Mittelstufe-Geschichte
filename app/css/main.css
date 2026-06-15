@@ -1389,6 +1389,49 @@ body.timer-open .main-content > .content-section.active {
     transform: rotate(90deg);
 }
 
+.modal-fullscreen-toggle {
+    position: sticky;
+    top: 10px;
+    float: right;
+    margin: 10px 60px -50px 0;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: var(--bg-primary);
+    border-radius: 50%;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-fullscreen-toggle:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: scale(1.1);
+}
+
+/* Vollbild-Modus für Modals */
+.modal.fullscreen {
+    padding: 0;
+}
+
+.modal.fullscreen .modal-content {
+    max-width: 100vw;
+    width: 100vw;
+    max-height: 100vh;
+    height: 100vh;
+    border-radius: 0;
+    border: none;
+}
+
 .main-content.sidebar-collapsed {
     margin-left: 60px;
     width: calc(100vw - 60px);
