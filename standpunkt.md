@@ -2344,11 +2344,12 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
   - In `app/index.html` wurde im Header des `#adaptiveLearningModal` ein neuer Button `<button class="modal-fullscreen-toggle">⛶</button>` direkt links neben dem Schließen-Kreuz eingefügt.
   - Im Stylesheet `app/css/main.css` wurde dieser Button über sticky/float so positioniert, dass er bündig neben dem Schließen-Kreuz sitzt.
   - Für den Zustand `.modal.fullscreen` wurden CSS-Regeln hinzugefügt: das Modal-Padding wird entfernt und der `.modal-content` dehnt sich vollständig auf `100vw` Breite und `100vh` Höhe aus (ohne abgerundete Ecken).
+  - **Spezifitäts-Fix**: Da in `app/css/components.css` die ID-Regel `#adaptiveLearningModal .modal-content` mit `max-width: 800px` und `max-height: 90vh` höher gewichtet war, wurde die CSS-Regel im Vollbildmodus auf `#adaptiveLearningModal.fullscreen .modal-content` erweitert und mit `!important` abgesichert. Dadurch zieht sich das Fenster nun zuverlässig über die gesamte Breite und Höhe.
   - In `app/js/app.js` wurde die Funktion `toggleModalFullscreen(modalId)` hinzugefügt. Sie toggelt die Klasse `.fullscreen` auf dem Modal und ändert das Symbol zu `🗗` (Verkleinern) bzw. `⛶` (Vollbild) sowie den Tooltip-Titel.
   - Beim Schließen des Modals in `closeAdaptiveLearningModal()` wird die Klasse `.fullscreen` automatisch entfernt und das Symbol zurückgesetzt.
 
 ### 🗂️ Geänderte Dateien in Phase 2.7
 - `app/index.html` – Einfügen des Vollbild-Toggle-Buttons im Header des Modalfensters.
-- `app/css/main.css` – CSS-Regeln für die Button-Ausrichtung und den `.fullscreen`-Stretched-Zustand des Modals.
+- `app/css/main.css` – CSS-Regeln für die Button-Ausrichtung und den `.fullscreen`-Stretched-Zustand des Modals (inklusive Spezifitäts-Fixes mit `!important`).
 - `app/js/app.js` – Logik `toggleModalFullscreen()` zum dynamischen Umschalten der Klassen und Icons; Reset beim Schließen.
 - `standpunkt.md` – Diese Dokumentation.
