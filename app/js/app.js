@@ -1705,42 +1705,46 @@ function showLearningSessionStart() {
         <div class="learning-session-start">
             <h2>🎯 Lernsession einrichten</h2>
 
-            <div class="setup-row">
-                <div class="setup-field">
-                    <label>📅 Prüfungsdatum *</label>
-                    <input type="date" id="examDate" min="${today}" required>
+            <div class="learning-session-grid">
+                <div class="learning-session-col">
+                    <div class="setup-field">
+                        <label>📅 Prüfungsdatum *</label>
+                        <input type="date" id="examDate" min="${today}" required>
+                    </div>
+
+                    <div class="setup-field" style="flex: 1; display: flex; flex-direction: column; min-height: 0; margin-bottom: 0;">
+                        <label>📚 Thema/Themen *</label>
+                        <div class="topics-checkbox-list" style="flex: 1; max-height: none;">
+                            ${getAvailableTopics().map(t =>
+                                `<label class="topic-checkbox-label">
+                                    <input type="checkbox" name="sessionTopic" value="${t.id}">
+                                    <span>${t.name}</span>
+                                </label>`
+                            ).join('')}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="learning-session-col">
+                    <div class="setup-field">
+                        <label>🎯 Fokus <span class="optional-hint">(optional)</span></label>
+                        <input type="text" id="sessionFocus"
+                            placeholder="z.B. Ursachen, Folgen, wichtige Personen, Daten">
+                    </div>
+
+                    <div class="setup-field" style="flex: 1; display: flex; flex-direction: column; min-height: 0; margin-bottom: 0;">
+                        <label>📋 Kann-Liste <span class="optional-hint">(optional)</span></label>
+                        <textarea id="kannListe" style="flex: 1; resize: none;"
+                            placeholder="Füge hier ein, was du können musst – z.B. aus dem Aufgabenblatt deiner Lehrkraft:&#10;• Ursachen der Französischen Revolution nennen&#10;• Verlauf der Revolution erläutern&#10;• Bedeutung für Europa beurteilen"></textarea>
+                        <button class="btn btn-secondary btn-small" onclick="document.getElementById('kannListeFile').click()" style="margin-top:6px; align-self: flex-start; flex-shrink: 0;">
+                            📁 Textdatei hochladen
+                        </button>
+                        <input type="file" id="kannListeFile" accept=".txt,.md" style="display:none" onchange="loadKannListeFile(event)">
+                    </div>
                 </div>
             </div>
 
-            <div class="setup-field">
-                <label>📚 Thema/Themen *</label>
-                <div class="topics-checkbox-list">
-                    ${getAvailableTopics().map(t =>
-                        `<label class="topic-checkbox-label">
-                            <input type="checkbox" name="sessionTopic" value="${t.id}">
-                            <span>${t.name}</span>
-                        </label>`
-                    ).join('')}
-                </div>
-            </div>
-
-            <div class="setup-field">
-                <label>🎯 Fokus <span class="optional-hint">(optional)</span></label>
-                <input type="text" id="sessionFocus"
-                    placeholder="z.B. Ursachen, Folgen, wichtige Personen, Daten">
-            </div>
-
-            <div class="setup-field">
-                <label>📋 Kann-Liste <span class="optional-hint">(optional)</span></label>
-                <textarea id="kannListe" rows="4"
-                    placeholder="Füge hier ein, was du können musst – z.B. aus dem Aufgabenblatt deiner Lehrkraft:&#10;• Ursachen der Französischen Revolution nennen&#10;• Verlauf der Revolution erläutern&#10;• Bedeutung für Europa beurteilen"></textarea>
-                <button class="btn btn-secondary btn-small" onclick="document.getElementById('kannListeFile').click()" style="margin-top:6px">
-                    📁 Textdatei hochladen
-                </button>
-                <input type="file" id="kannListeFile" accept=".txt,.md" style="display:none" onchange="loadKannListeFile(event)">
-            </div>
-
-            <div class="session-paths">
+            <div class="session-paths" style="margin-top: 20px; flex-shrink: 0;">
                 <div class="path-card" onclick="startDirectLernplan()">
                     <div class="path-icon">📋</div>
                     <h3>Lernplan erstellen</h3>
@@ -1755,6 +1759,7 @@ function showLearningSessionStart() {
         </div>
     `;
 
+    modal.classList.add('fullscreen');
     modal.style.display = 'block';
 }
 
@@ -2603,11 +2608,6 @@ function closeAdaptiveLearningModal() {
     if (modal) {
         modal.style.display = 'none';
         modal.classList.remove('fullscreen');
-        const btn = modal.querySelector('.modal-fullscreen-toggle');
-        if (btn) {
-            btn.innerHTML = '⛶';
-            btn.title = 'Vollbild umschalten';
-        }
     }
 }
 

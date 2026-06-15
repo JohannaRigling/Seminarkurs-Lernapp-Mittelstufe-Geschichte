@@ -2350,6 +2350,27 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 
 ### 🗂️ Geänderte Dateien in Phase 2.7
 - `app/index.html` – Einfügen des Vollbild-Toggle-Buttons im Header des Modalfensters.
-- `app/css/main.css` – CSS-Regeln für die Button-Ausrichtung und den `.fullscreen`-Stretched-Zustand des Modals (inklusive Spezifitäts-Fixes mit `!important`).
 - `app/js/app.js` – Logik `toggleModalFullscreen()` zum dynamischen Umschalten der Klassen und Icons; Reset beim Schließen.
 - `standpunkt.md` – Diese Dokumentation.
+
+---
+
+## 🎯 Session vom 15.06.2026 (Später Abend) – Phase 2.8: Standard-Vollbild & scrollfreies Layout (Aktuell)
+
+### ⛶ Vollbild standardmäßig & scrollfreie Spalten
+- **Ziel**: Das Einrichtungsfenster der adaptiven Lernsession öffnet sich direkt im Vollbildmodus und benötigt keine Scrollbalken auf Desktop-Monitoren.
+- **Entfernung des Toggle-Buttons**: Der Button für den Vollbild-Umschalter (`modal-fullscreen-toggle`) wurde in `index.html` gelöscht, da die Lernsession nun immer im Vollbild geöffnet wird. Reste in `closeAdaptiveLearningModal` wurden entfernt.
+- **Zwei-Spalten-Widescreen-Layout**:
+  - Auf Desktop-Monitoren (>768px) wird das Modal über `.learning-session-grid` in zwei Spalten geteilt.
+  - Links: Prüfungsdatum und eine wachsende, intern scrollbare Themen-Checkliste (`.topics-checkbox-list`).
+  - Rechts: Fokus-Eingabefeld und das wachsende, nicht-skalierbare Kann-Liste Textarea (`#kannListe`) samt Upload-Button.
+- **Overflow- & Scrollbar-Fix**:
+  - `.modal.fullscreen .modal-content` erhält nun `overflow: hidden !important` auf Desktop, was ein horizontales oder vertikales Scrollen des gesamten Modalfensters verhindert. Die Höhe der Spalten wird über Flexbox so begrenzt, dass alle Steuerelemente exakt in den Viewport passen.
+  - Nur bei Bildschirmen <= 768px (Mobile) bricht das Layout in eine Spalte um und das Modal wird normal scrollbar.
+
+### 🗂️ Geänderte Dateien in Phase 2.8
+- `app/index.html` – Entfernen des Vollbild-Umschalter-Buttons.
+- `app/css/main.css` – Deaktivierung des globalen Modalschleiers-Scrollens (`overflow: hidden !important`) auf Desktop, Definition der spaltenbasierten Layout-Klassen.
+- `app/js/app.js` – Automatisches Hinzufügen der Klasse `.fullscreen` bei Session-Start, Bereinigen des geschlossenen modalen Toggles.
+- `standpunkt.md` – Diese Dokumentation.
+

@@ -1433,6 +1433,47 @@ body.timer-open .main-content > .content-section.active {
     border-radius: 0 !important;
     border: none !important;
     margin: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Layout für das spaltenbasierte adaptive Lernsession Modal (Vollbild, scroll-frei) */
+.learning-session-start {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 70px); /* 100vh minus Modal-Padding (2 * 35px) */
+    box-sizing: border-box;
+}
+
+.learning-session-grid {
+    display: flex;
+    gap: 30px;
+    flex: 1;
+    min-height: 0;
+    margin-top: 10px;
+}
+
+.learning-session-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-height: 0;
+}
+
+@media (max-width: 768px) {
+    .learning-session-start {
+        height: auto;
+    }
+    .learning-session-grid {
+        flex-direction: column;
+        height: auto;
+        flex: none;
+    }
+    .modal.fullscreen .modal-content,
+    #adaptiveLearningModal.fullscreen .modal-content,
+    #studyNotesModal.fullscreen .modal-content {
+        overflow-y: auto !important;
+    }
 }
 
 .main-content.sidebar-collapsed {
