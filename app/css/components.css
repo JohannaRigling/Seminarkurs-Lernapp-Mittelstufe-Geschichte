@@ -1591,12 +1591,12 @@ body.timer-open .glossary-header { top: 90px; }
 }
 .strategies-col-title {
     font-weight: 700;
-    color: #ffffff;
+    color: var(--text-primary);
     font-size: 1em;
 }
 .strategies-col-desc {
     margin: 0;
-    color: rgba(255,255,255,0.7);
+    color: var(--text-secondary);
     font-size: 0.78em;
     line-height: 1.4;
 }
@@ -1615,12 +1615,12 @@ body.timer-open .glossary-header { top: 90px; }
 .strategies-col .strategy-card h3 {
     font-size: 1em;
     margin: 6px 0 4px;
-    color: #ffffff;
+    color: var(--text-primary);
 }
 .strategies-col .strategy-card p {
     margin: 0 0 6px;
     font-size: 0.82em;
-    color: rgba(255,255,255,0.78);
+    color: var(--text-secondary);
     line-height: 1.4;
 }
 .strategies-col .strategy-card .strategy-icon {
@@ -1690,8 +1690,8 @@ body.timer-open .glossary-header { top: 90px; }
     min-height: 0;
 }
 .adaptive-explainer-card {
-    background: rgba(10, 14, 32, 0.85);
-    border: 1px solid rgba(255, 215, 0, 0.25);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 14px 14px 12px;
     cursor: default;
@@ -1715,11 +1715,11 @@ body.timer-open .glossary-header { top: 90px; }
 }
 .adaptive-explainer-card p {
     margin: 0;
-    color: #ffffff !important;
+    color: var(--text-primary) !important;
     line-height: 1.45;
     font-size: 0.95em;
     font-weight: 500;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    text-shadow: none;
 }
 .adaptive-start-btn {
     display: block;
@@ -1859,7 +1859,7 @@ body.timer-open .glossary-header { top: 90px; }
     border: 2px solid var(--border-color);
     border-radius: 10px;
     cursor: pointer;
-    color: #ffffff;
+    color: var(--text-primary);
     transition: var(--transition);
 }
 .tutor-term-option:hover {
@@ -1873,7 +1873,7 @@ body.timer-open .glossary-header { top: 90px; }
     font-size: 1em;
 }
 .tutor-term-option-text {
-    color: #e8e4d9;
+    color: var(--text-secondary);
     font-size: 0.85em;
     opacity: 0.9;
     line-height: 1.4;
@@ -4546,8 +4546,8 @@ body.timer-open #adaptive-session.content-section {
 }
 
 .tutorial-card {
-    background: var(--card-bg, #1e1e2e);
-    border: 1px solid var(--border-color, rgba(255,255,255,0.1));
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
     border-radius: 20px;
     padding: 40px 44px;
     max-width: 480px;
@@ -4573,7 +4573,8 @@ body.timer-open #adaptive-session.content-section {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.2);
+    background: var(--border-color);
+    opacity: 0.5;
     transition: background 0.25s, transform 0.25s;
 }
 
@@ -4591,14 +4592,13 @@ body.timer-open #adaptive-session.content-section {
 .tutorial-title {
     font-size: 1.5em;
     font-weight: 700;
-    /* Wichtig: immer gut lesbar weiß — unabhängig vom Theme/Akzentfarbe */
-    color: #ffffff;
+    color: var(--text-primary);
     margin-bottom: 14px;
     line-height: 1.3;
 }
 
 .tutorial-text {
-    color: rgba(255, 255, 255, 0.88);
+    color: var(--text-secondary);
     font-size: 1.05em;
     line-height: 1.65;
     margin-bottom: 32px;

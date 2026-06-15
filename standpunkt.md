@@ -2396,4 +2396,31 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 - `app/css/main.css` – CSS-Regeln für `.top-header-bar`, `.top-header-title`, `.top-timer-btn` und Neupositionierung der `.timer-bar`.
 - `standpunkt.md` – Diese Dokumentation.
 
+---
+
+## 🎯 Session vom 15.06.2026 (Später Abend) – Phase 3: Theme-Farbanpassungen & Kontrast-Korrekturen (Aktuell)
+
+### 🎨 Farb- und Kontrastoptimierung für alle Modi
+- **Ziel**: Das Farbschema verbessern, Augenbelastung im Dunkelmodus verringern, Sepia klar von Hell abgrenzen und sicherstellen, dass alle Texte in jedem Thema lesbar sind.
+- **Warmer Dunkelmodus (Warm Charcoal)**:
+  - Die bisherigen bläulichen Hintergrundfarben in `:root` (`main.css`) und `body.dark` (`themes.css`) wurden durch einen warmen Anthrazit/Dunkelgrau-Ton ersetzt (Hintergrund `#121110`, Cards `#1a1817`, Borders `#383532`). Das ist augenschonender und harmoniert besser mit den Gold-Akzenten der App.
+- **Klare Trennung Hell & Sepia**:
+  - **Hellmodus (`body.light`)**: Ein klares, modernes, kühles Thema (Hintergrund `#f8fafc`, Cards `#ffffff`, Text `#0f172a` / `#475569`, blaue Primärakzente).
+  - **Sepiamodus (`body.sepia`)**: Ein warmes, gemütliches Buchseiten-Design (Hintergrund `#f2ebd9`, Cards `#fbf8ef`, warmer brauner Text `#433422` / `#705c44`, braungoldene Akzente).
+- **Behebung von Kontrast-Fehlern**:
+  - **HTML Overrides**: Der `.section-header p`-Untertitel und `.adaptive-explainer-lead` hatten hartkodiertes Schwarz (`#000000 !important`) im HTML, was im Dark Mode unlesbar war. Dies wurde auf CSS-Themevariablen (`var(--text-secondary)` / `var(--text-primary)`) umgestellt.
+  - **Lernstrategien-Tabelle**: Spalten-Titel, Spalten-Beschreibung und Card-Überschriften/Texte wurden von hartkodierten Weißwerten (`#ffffff` / `rgba(...)`) auf Theme-Variablen (`var(--text-primary)` / `var(--text-secondary)`) umgestellt, sodass sie im Hellmodus nicht mehr unsichtbar sind.
+  - **AI-Tutor & Onboarding**: Die Term-Auswahlblöcke und das Onboarding-Karten-Design wurden an die Themevariablen angepasst, um korrekte Textkontraste in allen Modi zu garantieren.
+- **Dropdown-Einstellungs-Sync**:
+  - In `loadProfileSettings()` (`app.js`) wird nun beim Öffnen der Einstellungen der Auswahleintrag im Theme-Dropdown korrekt auf das aktive Benutzer-Theme gesetzt.
+
+### 🗂️ Geänderte Dateien in Phase 3
+- `app/index.html` – Entfernen harter schwarzer Farbcodes im `<style>`-Block.
+- `app/css/main.css` – Umstellung der Standard-Hintergrundfarben auf warmes Kohle-Design.
+- `app/css/themes.css` – Spezifizierung von getrennten Light- und Sepia-Variablen, Überschreiben von Dark-Hintergründen mit warmem Charcoal, Anpassung von Castle-View-Gradients.
+- `app/css/components.css` – Umstellung von hardcoded Textfarben auf Themevariablen bei Lernstrategien, AI Tutor Begriffsauswahl und Onboarding-Tutorial.
+- `app/js/app.js` – Synchronisation des Einstellungs-Dropdowns bei Profil-Ladevorgang.
+- `standpunkt.md` – Diese Dokumentation.
+
+
 

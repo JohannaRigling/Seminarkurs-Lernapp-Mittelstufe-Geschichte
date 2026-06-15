@@ -26,23 +26,23 @@
     --info: #4169e1;
 
     /* Hintergründe */
-    --bg-primary: #0a0a14;
-    --bg-secondary: #12121f;
-    --bg-tertiary: #1a1a2e;
-    --bg-card: rgba(26, 26, 46, 0.95);
+    --bg-primary: #121110;
+    --bg-secondary: #1a1817;
+    --bg-tertiary: #23211f;
+    --bg-card: rgba(26, 24, 23, 0.95);
 
     /* Text */
     --text-primary: #e8e4d9;
-    --text-secondary: #a09080;
+    --text-secondary: #a89f91;
     --text-gold: #2ecc71;
-    --text-light: #6b5b4f;
+    --text-light: #70685c;
 
     /* Borders & Shadows */
-    --border-color: #3d3d5c;
+    --border-color: #383532;
     --border-gold: #27ae60;
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.7);
-    --shadow-gold: 0 0 20px rgba(39, 174, 96, 0.3);
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.8);
+    --shadow-gold: 0 0 20px rgba(39, 174, 96, 0.25);
 
     /* Layout */
     --sidebar-width: 280px;

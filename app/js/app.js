@@ -2676,6 +2676,13 @@ function loadProfileSettings() {
     if (soundCheckbox && currentUser.preferences?.pomodoroSound !== undefined) {
         soundCheckbox.checked = currentUser.preferences.pomodoroSound;
     }
+
+    // Theme-Einstellung im Dropdown synchronisieren
+    const themeSelect = document.getElementById('themeSelect');
+    if (themeSelect && currentUser.preferences?.theme) {
+        themeSelect.value = currentUser.preferences.theme;
+    }
+
     if (typeof updateBreakTimeDisplay === 'function') updateBreakTimeDisplay();
 }
 

@@ -1,33 +1,60 @@
-/* ===== Sepia / Light Theme ===== */
-body.sepia, body.light {
-    --bg-primary: #f4ecd8;
-    --bg-secondary: #faf8f0;
-    --bg-tertiary: #e8e0cc;
-    --bg-card: rgba(250, 248, 240, 0.95);
+/* ===== Light Theme ===== */
+body.light {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --bg-tertiary: #f1f5f9;
+    --bg-card: rgba(255, 255, 255, 0.95);
 
-    --text-primary: #5c4a32;
-    --text-secondary: #8b7355;
-    --text-light: #b8a88a;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-light: #64748b;
 
-    --border-color: #d4c9b0;
-    --primary: #8b6914;
-    --primary-dark: #725610;
-    --secondary: #a67c00;
-    --secondary-light: #cfa11d;
-    --secondary-dark: #7a5c00;
-    --text-gold: #8b6914;
-    --border-gold: #8b6914;
-    --shadow: 0 2px 10px rgba(92, 74, 50, 0.15);
-    --shadow-lg: 0 10px 30px rgba(92, 74, 50, 0.25);
-    --shadow-gold: 0 0 20px rgba(139, 105, 20, 0.2);
+    --border-color: #cbd5e1;
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #3b82f6;
+    --secondary-light: #3b82f6;
+    --secondary-dark: #1d4ed8;
+    --text-gold: #2563eb;
+    --border-gold: #2563eb;
+    --shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
+    --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.12);
+    --shadow-gold: 0 0 20px rgba(37, 99, 235, 0.1);
+}
+
+/* ===== Sepia Theme ===== */
+body.sepia {
+    --bg-primary: #f2ebd9;
+    --bg-secondary: #fbf8ef;
+    --bg-tertiary: #e6ddc5;
+    --bg-card: rgba(251, 248, 239, 0.95);
+
+    --text-primary: #433422;
+    --text-secondary: #705c44;
+    --text-light: #9a846b;
+
+    --border-color: #dbd0b4;
+    --primary: #8c6a1e;
+    --primary-dark: #6e5215;
+    --secondary: #ab812b;
+    --secondary-light: #ab812b;
+    --secondary-dark: #825f1c;
+    --text-gold: #8c6a1e;
+    --border-gold: #8c6a1e;
+    --shadow: 0 2px 10px rgba(67, 52, 34, 0.1);
+    --shadow-lg: 0 10px 30px rgba(67, 52, 34, 0.18);
+    --shadow-gold: 0 0 20px rgba(140, 106, 30, 0.15);
 }
 
 body.sepia .login-box, body.light .login-box {
     background: var(--bg-secondary);
 }
 
-body.sepia .castle-view, body.light .castle-view {
+body.sepia .castle-view {
     background: linear-gradient(180deg, #d4c9b0 0%, #c9b896 100%);
+}
+body.light .castle-view {
+    background: linear-gradient(180deg, #bbd2c5 0%, #b3c5cd 100%);
 }
 
 /* ===== Accent Color Overrides ===== */
@@ -104,8 +131,25 @@ button {
     }
 }
 
-/* ===== Medieval Theme (Default Dark) ===== */
+/* ===== Medieval Theme (Default Dark Override) ===== */
 body.dark {
+    /* Warm Charcoal Palette instead of Bluish */
+    --bg-primary: #121110;
+    --bg-secondary: #1a1817;
+    --bg-tertiary: #23211f;
+    --bg-card: rgba(26, 24, 23, 0.95);
+
+    --text-primary: #e8e4d9;
+    --text-secondary: #a89f91;
+    --text-light: #70685c;
+
+    --border-color: #383532;
+    --border-gold: #27ae60;
+
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.8);
+    --shadow-gold: 0 0 20px rgba(39, 174, 96, 0.2);
+
     /* Medieval Color Palette */
     --medieval-parchment: #2a2520;
     --medieval-gold: #27ae60;
@@ -118,7 +162,7 @@ body.dark {
 
     /* Override primary colors with gold */
     --primary: #27ae60;
-    --primary-dark: #8b6914;
+    --primary-dark: #1e8449;
     --secondary: #d4a84b;
 }
 
