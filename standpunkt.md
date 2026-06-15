@@ -2280,12 +2280,36 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 
 ### 🗂️ Geänderte Dateien
 - `app/index.html` – Einklappbare Kachel-Header im Dashboard, Entfernung des Export-Buttons und der 7. Klasse, Entfernung der Adaptive-Session aus der Sidebar.
-- `app/css/main.css` – Kachel-Styles für Header/Inhalt, einklappbare Zustände und kompakte Paddings.
+- `app/css/main.css` – Kachel-Styles für Header/Inhalt, einklappbare Zustände, kompakte Paddings, Masonry-Spalten-Layout und Kontrast-Fix für Kachel-Untertitel.
 - `app/css/components.css` – Schrift- und Padding-Verkleinerungen bei Quizzes, Themen-Checklisten-Styles, Ersetzung harter weißer Farbcodes bei Lernstrategien durch CSS-Variablen.
-- `app/js/app.js` – Globale Funktion `toggleCard(header)`, Anpassungen für Checkbox-Verarbeitung in `showLearningSessionStart()` und `readSessionSetup()`.
+- `app/js/app.js` – Globale Funktion `toggleCard(header)`, Anpassungen für Checkbox-Verarbeitung in `showLearningSessionStart()` and `readSessionSetup()`.
 - `app/js/adaptive-learning.js` – Parsing-Logik für mehrfache Themen-IDs in `getAllExercisesForTopic()` und `getTopicName()`.
 - `app/js/source-analysis.js` – Austausch der Karikatur-Bildbeschreibung durch Recherche-Hinweis.
 - `app/js/strategies.js` – Entfernung der Buttons für Dual Coding, Mind-Mapping und Cornell; Anpassung der Routings für spaced-repetition, interleaving und pomodoro.
 - `app/js/glossary.js` – Erweiterte Suchlogik für ausblendbare Buchstaben-Gruppen und dynamische Alphabet-Bar.
 - `app/css/themes.css` – Light-Theme auf Sepia gemappt, Dark-Theme-Overrides bereinigt für Standard-Schwarz/Gold.
+- `standpunkt.md` – Diese Dokumentation.
+
+---
+
+## 🎯 Session vom 15.06.2026 (Später Abend) – Phase 2.5: Dashboard Spalten-Layout (Masonry) & Kontrast-Fix
+
+### 🏠 Dashboard: Spalten-Layout gegen leere Lücken (Masonry)
+- **Problem**: Bei eingeklappten Kacheln bildeten sich im CSS Grid riesige leere schwarze Löcher unter den Kacheln, da die Zeilenhöhe starr an der höchsten Kachel der jeweiligen Zeile ausgerichtet war (auch mit `align-self: start`).
+- **Lösung**: Umstellung des Dashboards auf ein **3-Spalten Flexbox-Masonry-Layout**:
+  - In `app/index.html` wurden die 6 Kacheln in drei vertikal ausgerichtete `.dashboard-column`-Container gruppiert (Spalte 1: *Lernsession* & *Schnellstart*, Spalte 2: *Dein Fortschritt* & *Letzte Aktivitäten*, Spalte 3: *Dein Rang* & *Auszeichnungen*).
+  - Im Stylesheet `app/css/main.css` wurde die Klasse `.dashboard-grid` durch `.dashboard-columns` (Flex-Container, `flex-wrap: wrap`, `gap: 28px`) und `.dashboard-column` (Flex-Spalte, `flex-direction: column`, `gap: 28px`) ersetzt.
+  - Wenn Kacheln nun eingeklappt werden, schrumpft ihre Höhe und die darunterliegenden Kacheln rutschen **sofort und lückenlos nach oben**, wodurch alle leeren Löcher verschwinden.
+  - Das Layout ist komplett responsiv aufgebaut:
+    - **Desktop (>1024px)**: 3 gleichmäßige Spalten.
+    - **Tablet (768px - 1024px)**: 2 Spalten nebeneinander, die 3. Spalte bricht sauber in die nächste Zeile um und nimmt die volle Breite ein.
+    - **Smartphone (<768px)**: 1 Spalte (alle Spalten stacken vertikal).
+
+### 🎨 Kontrast-Korrektur des Dashboard-Untertitels
+- **Problem**: Der Text *„Setze deine Lernreise fort“* unter der Willkommensnachricht war durch `color: #000000 !important;` im Dark Mode vollkommen unleserlich (schwarzer Text auf tiefblauem/schwarzem Grund).
+- **Lösung**: Änderung des Selektors `.section-header p` auf `color: var(--text-secondary) !important;` in `app/css/main.css`. Der Text passt sich nun dynamisch dem gewählten Theme an (hellbrauner Text im Sepia-Modus, hellgrauer Text im Dark-Modus).
+
+### 🗂️ Geänderte Dateien in Phase 2.5
+- `app/index.html` – Umstrukturierung der Dashboard-Kacheln in 3 Spalten-Divs.
+- `app/css/main.css` – CSS-Implementierung der Flex-Spalten (`.dashboard-columns` & `.dashboard-column`), responsive Media-Queries und Kontrast-Variable für Kachel-Untertitel.
 - `standpunkt.md` – Diese Dokumentation.

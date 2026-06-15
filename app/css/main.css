@@ -920,9 +920,8 @@ body.timer-open .main-content > .content-section.active {
 }
 
 .section-header p {
-    /* Schwarz — lesbar auf hellem/sepia Hintergrund (User-Wunsch), mit !important
-       damit kein Theme- oder Akzent-Override es überschreibt */
-    color: #000000 !important;
+    /* Angepasst an das aktive Theme über var(--text-secondary) */
+    color: var(--text-secondary) !important;
     font-size: 1.05em;
     margin: 0;
     font-weight: 500;
@@ -973,11 +972,11 @@ body.timer-open .main-content > .content-section.active {
 }
 
 /* Dashboard specific cards - smaller padding */
-.dashboard-grid .card {
+.dashboard-columns .card {
     padding: 16px 20px;
 }
 
-.dashboard-grid .card-header {
+.dashboard-columns .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -985,40 +984,46 @@ body.timer-open .main-content > .content-section.active {
     user-select: none;
 }
 
-.dashboard-grid .card h3 {
+.dashboard-columns .card h3 {
     margin-bottom: 0 !important;
     flex-grow: 1;
 }
 
-.dashboard-grid .toggle-icon {
+.dashboard-columns .toggle-icon {
     font-size: 0.85em;
     color: var(--text-secondary);
     transition: transform 0.3s ease;
 }
 
-.dashboard-grid .card-content {
+.dashboard-columns .card-content {
     margin-top: 15px;
     transition: max-height 0.3s ease, opacity 0.3s ease;
 }
 
 /* Collapsed state */
-.dashboard-grid .card.collapsed {
-    align-self: start;
-}
-
-.dashboard-grid .card.collapsed .card-content {
+.dashboard-columns .card.collapsed .card-content {
     display: none;
 }
 
-.dashboard-grid .card.collapsed .toggle-icon {
+.dashboard-columns .card.collapsed .toggle-icon {
     transform: rotate(-90deg);
 }
 
-/* ===== DASHBOARD GRID ===== */
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+/* ===== DASHBOARD MASONRY COLUMNS ===== */
+.dashboard-columns {
+    display: flex;
+    flex-wrap: wrap;
     gap: 28px;
+    align-items: flex-start; /* Prevent columns from stretching vertically to match tallest column */
+    width: 100%;
+}
+
+.dashboard-column {
+    flex: 1 1 calc(33.333% - 19px);
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    min-width: 0;
 }
 
 /* Progress Card */
@@ -1404,11 +1409,19 @@ body.timer-open .main-content > .content-section.active {
     .main-content {
         margin-left: 0;
     }
+
+    .dashboard-column {
+        flex: 1 1 calc(50% - 14px);
+    }
 }
 
 @media (max-width: 768px) {
-    .dashboard-grid {
-        grid-template-columns: 1fr;
+    .dashboard-columns {
+        flex-direction: column;
+    }
+
+    .dashboard-column {
+        flex: 1 1 100%;
     }
 
     .timer-bar {

@@ -246,149 +246,156 @@
                     <p>Setze deine Lernreise fort</p>
                 </div>
 
-                <div class="dashboard-grid">
-                    <!-- Adaptive Session Card (NEU) -->
-                    <div class="card adaptive-session-card">
-                        <div class="card-header" onclick="toggleCard(this)">
-                            <h3>🚀 Adaptive Lernsession</h3>
-                            <span class="toggle-icon">▼</span>
-                        </div>
-                        <div class="card-content">
-                            <p>Starte eine personalisierte Lernsession, die sich an dein Niveau anpasst</p>
-                            <div class="adaptive-info">
-                                <div class="info-badge">
-                                    <span>🎯</span>
-                                    <span>Maßgeschneidert</span>
-                                </div>
-                                <div class="info-badge">
-                                    <span>📊</span>
-                                    <span>Fortschritt tracken</span>
-                                </div>
-                                <div class="info-badge">
-                                    <span>🧠</span>
-                                    <span>Effektiv lernen</span>
-                                </div>
+                <div class="dashboard-columns">
+                    <div class="dashboard-column">
+                        <!-- Adaptive Session Card (NEU) -->
+                        <div class="card adaptive-session-card">
+                            <div class="card-header" onclick="toggleCard(this)">
+                                <h3>🚀 Adaptive Lernsession</h3>
+                                <span class="toggle-icon">▼</span>
                             </div>
-                            <button class="btn btn-primary" style="margin-top: 15px;" onclick="showSection('adaptive-session')">Session starten</button>
-                        </div>
-                    </div>
-                    <!-- Progress Card -->
-                    <div class="card progress-card">
-                        <div class="card-header" onclick="toggleCard(this)">
-                            <h3>📊 Dein Fortschritt</h3>
-                            <span class="toggle-icon">▼</span>
-                        </div>
-                        <div class="card-content">
-                            <div class="progress-ring-container">
-                                <div class="progress-ring" id="progressRing">
-                                    <span class="progress-value" id="progressValue">0%</span>
+                            <div class="card-content">
+                                <p>Starte eine personalisierte Lernsession, die sich an dein Niveau anpasst</p>
+                                <div class="adaptive-info">
+                                    <div class="info-badge">
+                                        <span>🎯</span>
+                                        <span>Maßgeschneidert</span>
+                                    </div>
+                                    <div class="info-badge">
+                                        <span>📊</span>
+                                        <span>Fortschritt tracken</span>
+                                    </div>
+                                    <div class="info-badge">
+                                        <span>🧠</span>
+                                        <span>Effektiv lernen</span>
+                                    </div>
                                 </div>
+                                <button class="btn btn-primary" style="margin-top: 15px;" onclick="showSection('adaptive-session')">Session starten</button>
                             </div>
-                            <div class="progress-details">
-                                <div class="progress-item">
-                                    <span>Themen abgeschlossen</span>
-                                    <strong id="topicsCompleted">0/12</strong>
-                                </div>
-                                <div class="progress-item">
-                                    <span>Übungen gemacht</span>
-                                    <strong id="exercisesDone">0</strong>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="card quick-actions-card">
+                            <div class="card-header" onclick="toggleCard(this)">
+                                <h3>🚀 Schnellstart</h3>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="quick-actions">
+                                    <button class="quick-btn" onclick="showSection('chat')">
+                                        <span class="quick-icon">💬</span>
+                                        <span>KI-Tutor fragen</span>
+                                    </button>
+                                    <button class="quick-btn" onclick="showSection('exercises')">
+                                        <span class="quick-icon">🎯</span>
+                                        <span>Übung starten</span>
+                                    </button>
+                                    <button class="quick-btn" onclick="showSection('operators')">
+                                        <span class="quick-icon">📝</span>
+                                        <span>Operatoren üben</span>
+                                    </button>
+                                    <button class="quick-btn" onclick="showSection('timeline')">
+                                        <span class="quick-icon">📅</span>
+                                        <span>Zeitstrahl erkunden</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Rank Card -->
-                    <div class="card rank-card">
-                        <div class="card-header" onclick="toggleCard(this)">
-                            <h3>⚔️ Dein Rang <button class="info-btn" onclick="showRankInfo(); event.stopPropagation();" title="Rang-Anforderungen">ⓘ</button></h3>
-                            <span class="toggle-icon">▼</span>
-                        </div>
-                        <div class="card-content">
-                            <div class="rank-display">
-                                <div class="rank-icon" id="rankIcon">🌾</div>
-                                <div class="rank-name" id="rankName">Tagelöhner</div>
+                    <div class="dashboard-column">
+                        <!-- Progress Card -->
+                        <div class="card progress-card">
+                            <div class="card-header" onclick="toggleCard(this)">
+                                <h3>📊 Dein Fortschritt</h3>
+                                <span class="toggle-icon">▼</span>
                             </div>
-                            <div class="rank-progress">
-                                <div class="rank-bar">
-                                    <div class="rank-bar-fill" id="rankBarFill" style="width: 0%"></div>
+                            <div class="card-content">
+                                <div class="progress-ring-container">
+                                    <div class="progress-ring" id="progressRing">
+                                        <span class="progress-value" id="progressValue">0%</span>
+                                    </div>
                                 </div>
-                                <span class="rank-next">Nächster Rang: <span id="nextRank">Bauer</span></span>
-                            </div>
-                            <div class="coins-display">
-                                <span class="coin-big">🐄</span>
-                                <span class="coin-amount" id="coinsAmount">0</span>
-                                <span class="coin-label">Kuh-Münzen</span>
+                                <div class="progress-details">
+                                    <div class="progress-item">
+                                        <span>Themen abgeschlossen</span>
+                                        <strong id="topicsCompleted">0/12</strong>
+                                    </div>
+                                    <div class="progress-item">
+                                        <span>Übungen gemacht</span>
+                                        <strong id="exercisesDone">0</strong>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Quick Actions -->
-                    <div class="card quick-actions-card">
-                        <div class="card-header" onclick="toggleCard(this)">
-                            <h3>🚀 Schnellstart</h3>
-                            <span class="toggle-icon">▼</span>
-                        </div>
-                        <div class="card-content">
-                            <div class="quick-actions">
-                                <button class="quick-btn" onclick="showSection('chat')">
-                                    <span class="quick-icon">💬</span>
-                                    <span>KI-Tutor fragen</span>
-                                </button>
-                                <button class="quick-btn" onclick="showSection('exercises')">
-                                    <span class="quick-icon">🎯</span>
-                                    <span>Übung starten</span>
-                                </button>
-                                <button class="quick-btn" onclick="showSection('operators')">
-                                    <span class="quick-icon">📝</span>
-                                    <span>Operatoren üben</span>
-                                </button>
-                                <button class="quick-btn" onclick="showSection('timeline')">
-                                    <span class="quick-icon">📅</span>
-                                    <span>Zeitstrahl erkunden</span>
-                                </button>
+                        <!-- Recent Activity -->
+                        <div class="card activity-card">
+                            <div class="card-header" onclick="toggleCard(this)">
+                                <h3>📜 Letzte Aktivitäten</h3>
+                                <span class="toggle-icon">▼</span>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Activity -->
-                    <div class="card activity-card">
-                        <div class="card-header" onclick="toggleCard(this)">
-                            <h3>📜 Letzte Aktivitäten</h3>
-                            <span class="toggle-icon">▼</span>
-                        </div>
-                        <div class="card-content">
-                            <div class="activity-list" id="activityList">
-                                <div class="activity-item">
-                                    <span class="activity-icon">🎯</span>
-                                    <span class="activity-text">Starte deine erste Übung!</span>
+                            <div class="card-content">
+                                <div class="activity-list" id="activityList">
+                                    <div class="activity-item">
+                                        <span class="activity-icon">🎯</span>
+                                        <span class="activity-text">Starte deine erste Übung!</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Achievements -->
-                    <div class="card achievements-card">
-                        <div class="card-header" onclick="toggleCard(this)">
-                            <h3>🏆 Auszeichnungen <button class="info-btn" onclick="showAchievementsInfo(); event.stopPropagation();" title="Alle Auszeichnungen anzeigen">ⓘ</button></h3>
-                            <span class="toggle-icon">▼</span>
+                    <div class="dashboard-column">
+                        <!-- Rank Card -->
+                        <div class="card rank-card">
+                            <div class="card-header" onclick="toggleCard(this)">
+                                <h3>⚔️ Dein Rang <button class="info-btn" onclick="showRankInfo(); event.stopPropagation();" title="Rang-Anforderungen">ⓘ</button></h3>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="rank-display">
+                                    <div class="rank-icon" id="rankIcon">🌾</div>
+                                    <div class="rank-name" id="rankName">Tagelöhner</div>
+                                </div>
+                                <div class="rank-progress">
+                                    <div class="rank-bar">
+                                        <div class="rank-bar-fill" id="rankBarFill" style="width: 0%"></div>
+                                    </div>
+                                    <span class="rank-next">Nächster Rang: <span id="nextRank">Bauer</span></span>
+                                </div>
+                                <div class="coins-display">
+                                    <span class="coin-big">🐄</span>
+                                    <span class="coin-amount" id="coinsAmount">0</span>
+                                    <span class="coin-label">Kuh-Münzen</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-content">
-                            <div class="achievements-grid" id="achievementsGrid">
-                                <div class="achievement locked">
-                                    <span class="achievement-icon">🔒</span>
-                                    <span class="achievement-name">Erste Schritte</span>
-                                </div>
-                                <div class="achievement locked">
-                                    <span class="achievement-icon">🔒</span>
-                                    <span class="achievement-name">Quiz-Meister</span>
-                                </div>
-                                <div class="achievement locked">
-                                    <span class="achievement-icon">🔒</span>
-                                    <span class="achievement-name">Zeitreisender</span>
-                                </div>
-                                <div class="achievement locked">
-                                    <span class="achievement-icon">🔒</span>
-                                    <span class="achievement-name">Operator-Pro</span>
+
+                        <!-- Achievements -->
+                        <div class="card achievements-card">
+                            <div class="card-header" onclick="toggleCard(this)">
+                                <h3>🏆 Auszeichnungen <button class="info-btn" onclick="showAchievementsInfo(); event.stopPropagation();" title="Alle Auszeichnungen anzeigen">ⓘ</button></h3>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="achievements-grid" id="achievementsGrid">
+                                    <div class="achievement locked">
+                                        <span class="achievement-icon">🔒</span>
+                                        <span class="achievement-name">Erste Schritte</span>
+                                    </div>
+                                    <div class="achievement locked">
+                                        <span class="achievement-icon">🔒</span>
+                                        <span class="achievement-name">Quiz-Meister</span>
+                                    </div>
+                                    <div class="achievement locked">
+                                        <span class="achievement-icon">🔒</span>
+                                        <span class="achievement-name">Zeitreisender</span>
+                                    </div>
+                                    <div class="achievement locked">
+                                        <span class="achievement-icon">🔒</span>
+                                        <span class="achievement-name">Operator-Pro</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
