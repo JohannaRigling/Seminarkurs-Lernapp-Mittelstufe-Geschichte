@@ -1002,6 +1002,10 @@ body.timer-open .main-content > .content-section.active {
 }
 
 /* Collapsed state */
+.dashboard-grid .card.collapsed {
+    align-self: start;
+}
+
 .dashboard-grid .card.collapsed .card-content {
     display: none;
 }

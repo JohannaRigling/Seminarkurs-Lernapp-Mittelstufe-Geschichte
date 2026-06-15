@@ -2244,6 +2244,7 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 - **Toggle-Icon**: In den Kachel-Headern wird nun ein dynamisches Icon (`▼`) angezeigt. Durch Klicken auf den Header klappt sich der Inhalt der Kachel ein oder aus.
 - **Kompakteres Padding**: Das Standard-Padding für Dashboard-Kacheln wurde in `main.css` auf `16px 20px` verringert, um mehr Übersicht zu bieten.
 - **Click-Routing**: Das Klick-Event der Kachel für adaptive Sessions wurde von der Karte selbst auf die Kachel-Schaltfläche verlegt, um das Einklappen ohne ungewollte Navigation zu ermöglichen. Info-Buttons (`ⓘ`) verhindern nun die Event-Ausbreitung (Propagation), sodass sie nicht ungewollt die Kacheln einklappen.
+- **Stretching-Fix**: Collapsed-Karten erhalten nun `align-self: start;` in `main.css`. Dies verhindert, dass einklappte Kacheln sich im Grid-Layout auf die volle Höhe von noch ausgeklappten Kacheln in derselben Zeile dehnen und als leere Kästen angezeigt werden. Sie schrumpfen nun sauber auf die Höhe ihres Headers zusammen.
 
 ### 🚀 Adaptive Lernsession: Mehrfachauswahl & Upload
 - **Auswahl mehrerer Themen**: In der Startansicht der adaptiven Lernsession wurde die Themenauswahl von einem einfachen `<select>`-Dropdown auf eine scrollbare Checkbox-Liste (`.topics-checkbox-list`) umgestellt. Benutzer können jetzt beliebig viele Themen gleichzeitig ankreuzen.
