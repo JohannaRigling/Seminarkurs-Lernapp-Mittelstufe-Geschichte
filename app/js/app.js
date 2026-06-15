@@ -99,6 +99,15 @@ function showSection(sectionId) {
         return;
     }
 
+    // Scroll to the very top of the page when switching sections
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) {
+        mainContent.scrollTop = 0;
+    }
+
     // Alle Sektionen ausblenden
     document.querySelectorAll('.content-section').forEach(section => {
         section.classList.remove('active');

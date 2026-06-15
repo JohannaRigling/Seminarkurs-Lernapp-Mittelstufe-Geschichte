@@ -24,16 +24,16 @@ body.light {
 
 /* ===== Sepia Theme ===== */
 body.sepia {
-    --bg-primary: #f2ebd9;
-    --bg-secondary: #fbf8ef;
-    --bg-tertiary: #e6ddc5;
-    --bg-card: rgba(251, 248, 239, 0.95);
+    --bg-primary: #ebdcb9;
+    --bg-secondary: #f6eedb;
+    --bg-tertiary: #dfd2ae;
+    --bg-card: rgba(246, 238, 219, 0.95);
 
-    --text-primary: #433422;
-    --text-secondary: #705c44;
-    --text-light: #9a846b;
+    --text-primary: #3a2d1a;
+    --text-secondary: #66533c;
+    --text-light: #8c785f;
 
-    --border-color: #dbd0b4;
+    --border-color: #cbbba0;
     --primary: #8c6a1e;
     --primary-dark: #6e5215;
     --secondary: #ab812b;
