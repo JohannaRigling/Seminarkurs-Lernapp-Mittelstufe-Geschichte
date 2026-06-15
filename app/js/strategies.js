@@ -79,6 +79,8 @@ function showStrategyDetail(strategyId) {
         'interleaving':     '🔀 Adaptive Lernsession'
     };
     const actionLabel = actionLabels[strategy.id] || 'Diese Strategie jetzt nutzen';
+    const noActionButtonIds = ['dual-coding', 'mind-mapping', 'cornell'];
+    const showActionButton = !noActionButtonIds.includes(strategy.id);
 
     content.innerHTML = `
         <div class="strategy-detail">
@@ -114,11 +116,13 @@ function showStrategyDetail(strategyId) {
                 <p>${strategy.historyTip}</p>
             </div>
 
+            ${showActionButton ? `
             <div class="strategy-actions">
                 <button class="btn btn-primary" onclick="applyStrategy('${strategy.id}')">
                     ${actionLabel}
                 </button>
             </div>
+            ` : ''}
         </div>
     `;
 
@@ -166,8 +170,7 @@ function applyStrategy(strategyId) {
 
     switch (strategyId) {
         case 'pomodoro':
-            showSection('dashboard');
-            setTimeout(openTimerBar, 80);
+            openTimerBar();
             break;
 
         case 'active-recall':
@@ -199,8 +202,7 @@ function applyStrategy(strategyId) {
         case 'spaced-repetition':
         case 'interleaving':
             // Adaptive Lernsession öffnen
-            if (typeof window.openAdaptiveLearning === 'function') window.openAdaptiveLearning();
-            else showSection('dashboard');
+            showSection('adaptive-session');
             break;
 
         case 'loci':

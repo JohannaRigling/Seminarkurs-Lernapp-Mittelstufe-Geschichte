@@ -2233,3 +2233,58 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 ---
 
 **Letzte Aktualisierung:** 15.06.2026 – Großes Reorganisations- und UI/UX-Polishing-Paket (Castle Builder 3D, Pomodoro Break Widget, Sticky-Glossar-Header, Section Visibility Fixes)
+
+## 🎯 Session vom 15.06.2026 (Abend) – Phase 2: Benutzer-Gewünschte Verbesserungen
+
+### 🏠 Navigation & Sidebar
+- **Bereinigung**: Der direkte Link zur "Adaptive Lernsession" wurde aus der Navigations-Sidebar in `index.html` entfernt. Die Lernsession wird jetzt wie gewünscht exklusiv über die Dashboard-Karte oder direkte Strategy-Aktionen gestartet, was Verwirrung auf anderen Unterseiten vermeidet.
+
+### 🏠 Dashboard: Einklappbare Kacheln
+- **Collapsible Cards**: Alle sechs Kacheln auf dem Dashboard (`adaptive-session-card`, `progress-card`, `rank-card`, `quick-actions-card`, `activity-card`, `achievements-card`) wurden mit einer einklappbaren Struktur (`.card-header` und `.card-content`) ausgestattet.
+- **Toggle-Icon**: In den Kachel-Headern wird nun ein dynamisches Icon (`▼`) angezeigt. Durch Klicken auf den Header klappt sich der Inhalt der Kachel ein oder aus.
+- **Kompakteres Padding**: Das Standard-Padding für Dashboard-Kacheln wurde in `main.css` auf `16px 20px` verringert, um mehr Übersicht zu bieten.
+- **Click-Routing**: Das Klick-Event der Kachel für adaptive Sessions wurde von der Karte selbst auf die Kachel-Schaltfläche verlegt, um das Einklappen ohne ungewollte Navigation zu ermöglichen. Info-Buttons (`ⓘ`) verhindern nun die Event-Ausbreitung (Propagation), sodass sie nicht ungewollt die Kacheln einklappen.
+
+### 🚀 Adaptive Lernsession: Mehrfachauswahl & Upload
+- **Auswahl mehrerer Themen**: In der Startansicht der adaptiven Lernsession wurde die Themenauswahl von einem einfachen `<select>`-Dropdown auf eine scrollbare Checkbox-Liste (`.topics-checkbox-list`) umgestellt. Benutzer können jetzt beliebig viele Themen gleichzeitig ankreuzen.
+- **Upload-Button**: Die Beschriftung der Datei-Import-Schaltfläche wurde von `"📁 Textdatei laden"` zu `"📁 Textdatei hochladen"` geändert.
+- **Mehrthemen-Parsing**: `readSessionSetup()`, `getAllExercisesForTopic()` und `getTopicName()` wurden aktualisiert, um ein Array von Themen-IDs (als kommagetrennte Liste) zu verarbeiten, sodass die passenden Diagnosefragen aus allen ausgewählten Themenbereichen kombiniert geladen werden.
+
+### 🎨 Quellenarbeit: Karikaturen
+- **Löschen der Bildbeschreibung**: Um die Lerneffektivität zu maximieren, wurde die detaillierte Bildbeschreibung (`item.beschreibung`) aus dem Analyse-Frame in `source-analysis.js` entfernt (da diese die Lösung vorwegnahm).
+- **Google-Recherche-Hinweis**: Stattdessen wird nun ein ansprechender Hinweistext angezeigt, der den Benutzer anleitet, nach dem exakten Karikaturtitel in einer Suchmaschine (z. B. Google Bilder) zu suchen.
+
+### 🎯 Quiz: Skalierung der Fragen
+- **Kompakte Quizfragen**: In `components.css` wurden die Schriftgröße von `.quiz-question` auf `1.05em` und das Margin-Bottom auf `12px` verkleinert. Zudem wurde das Padding auf `.quiz-option` auf `10px 14px` und die Schriftgröße auf `0.95em` reduziert. Dadurch passt das Quiz nun viel sauberer und ohne Überlauf in den Viewport.
+
+### 🧠 Lernstrategien: Lesbarkeit & Verknüpfungen
+- **Kontrast-Optimierung**: Alle hartkodierten weißen Textfarben (`#ffffff !important`) in den Detailansichten der Lernstrategien in `components.css` wurden durch die Theme-Variablen `var(--text-primary)` und `var(--text-secondary)` ersetzt. Dadurch sind die Strategie-Details nun im Sepia- (Hell-) und Dunkelmodus optimal lesbar.
+- **Reduzierte Buttons**: Für die Strategien "Dual Coding", "Mind-Mapping" und "Cornell-Methode" wurde die Aktionsschaltfläche am Ende der Detailkarte ausgeblendet, da diese redundant war.
+- **Aktions-Routing**:
+  - Die Strategien "Verteiltes Lernen" (`spaced-repetition`) und "Interleaving" leiten nun über `showSection('adaptive-session')` direkt zur adaptiven Lernsession weiter (statt zum Dashboard).
+  - Die Strategie "Pomodoro" öffnet die Timer-Bar und startet den Timer sofort direkt auf der aktuellen Seite (ohne zum Dashboard zurückzukehren).
+
+### 📖 Glossar: Intelligente Suche & Alphabet-Verknüpfung
+- **Leere Kategorien ausblenden**: In `glossary.js` wurde die Funktion `searchGlossary` so optimiert, dass Buchstaben-Kategorien (z. B. die Überschrift "A") ausgeblendet werden, falls nach einer Filterung oder Suche kein passender Begriff mehr darunter existiert.
+- **Dynamische Alphabet-Leiste**: Die Buchstaben-Schaltflächen in der A-Z-Indexleiste werden in Echtzeit als `active`/`inactive` markiert und erhalten nur dann einen Klickpfad, wenn tatsächlich Begriffe zu diesem Buchstaben in den Suchergebnissen vorhanden sind.
+- **Filter-Eingabe-Synchronisation**: Beim Wechsel der Klassen-Filter in `setupGlossaryFilters()` wird die Sucheingabe automatisch gelöscht, um logische Desynchronisationen zu vermeiden.
+
+### ⚙️ Einstellungen & Registrierung
+- **Daten exportieren**: Der Export-Button wurde aus den Einstellungen in `index.html` entfernt.
+- **Altersbeschränkung**: Die Option `7. Klasse` wurde aus dem dropdown-Feld zur Registrierung in `index.html` entfernt.
+
+### 🎨 Theme-Swap
+- **Hellmodus (Light Mode)**: Zeigt nun die warmen, augenschonenden Farben des **Sepia-Modus** (Parchment-Stil).
+- **Dunkelmodus (Dark Mode)**: Die bläulichen Theme-Overrides für `body.dark` wurden am Dateianfang von `themes.css` entfernt, sodass der Dunkelmodus nun das standardmäßige, kontraststarke Schwarz/Gold-Design der App lädt.
+
+### 🗂️ Geänderte Dateien
+- `app/index.html` – Einklappbare Kachel-Header im Dashboard, Entfernung des Export-Buttons und der 7. Klasse, Entfernung der Adaptive-Session aus der Sidebar.
+- `app/css/main.css` – Kachel-Styles für Header/Inhalt, einklappbare Zustände und kompakte Paddings.
+- `app/css/components.css` – Schrift- und Padding-Verkleinerungen bei Quizzes, Themen-Checklisten-Styles, Ersetzung harter weißer Farbcodes bei Lernstrategien durch CSS-Variablen.
+- `app/js/app.js` – Globale Funktion `toggleCard(header)`, Anpassungen für Checkbox-Verarbeitung in `showLearningSessionStart()` und `readSessionSetup()`.
+- `app/js/adaptive-learning.js` – Parsing-Logik für mehrfache Themen-IDs in `getAllExercisesForTopic()` und `getTopicName()`.
+- `app/js/source-analysis.js` – Austausch der Karikatur-Bildbeschreibung durch Recherche-Hinweis.
+- `app/js/strategies.js` – Entfernung der Buttons für Dual Coding, Mind-Mapping und Cornell; Anpassung der Routings für spaced-repetition, interleaving und pomodoro.
+- `app/js/glossary.js` – Erweiterte Suchlogik für ausblendbare Buchstaben-Gruppen und dynamische Alphabet-Bar.
+- `app/css/themes.css` – Light-Theme auf Sepia gemappt, Dark-Theme-Overrides bereinigt für Standard-Schwarz/Gold.
+- `standpunkt.md` – Diese Dokumentation.

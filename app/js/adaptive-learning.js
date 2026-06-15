@@ -426,6 +426,11 @@ function checkWeaknessImprovement(weakness) {
  * @returns {Array} Alle Übungen
  */
 function getAllExercisesForTopic(topicId) {
+    if (!topicId) return [];
+
+    // Support comma-separated topicIds
+    const topicIds = typeof topicId === 'string' ? topicId.split(',') : (Array.isArray(topicId) ? topicId : [topicId]);
+
     // Prüfe verschiedene Exercise-Objekte
     const sources = [
         TOPIC_EXERCISES_FINAL,
@@ -435,13 +440,17 @@ function getAllExercisesForTopic(topicId) {
         TOPIC_EXERCISES_PART3
     ];
 
-    for (const source of sources) {
-        if (source && source[topicId]) {
-            return source[topicId];
+    let combinedExercises = [];
+    for (const tId of topicIds) {
+        const trimmedId = tId.trim();
+        for (const source of sources) {
+            if (source && source[trimmedId]) {
+                combinedExercises = combinedExercises.concat(source[trimmedId]);
+                break; // Found for this topic, go to next topic
+            }
         }
     }
-
-    return [];
+    return combinedExercises;
 }
 
 /**
@@ -606,8 +615,12 @@ function getAvailableTopics() {
  * @returns {string} Topic-Name
  */
 function getTopicName(topicId) {
-    const topic = getAvailableTopics().find(t => t.id === topicId);
-    return topic ? topic.name : topicId;
+    if (!topicId) return '';
+    const topicIds = typeof topicId === 'string' ? topicId.split(',') : (Array.isArray(topicId) ? topicId : [topicId]);
+    return topicIds.map(tId => {
+        const topic = getAvailableTopics().find(t => t.id === tId.trim());
+        return topic ? topic.name : tId.trim();
+    }).join(', ');
 }
 
 /**

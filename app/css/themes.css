@@ -1,81 +1,9 @@
-/* ===== Dark Theme ===== */
-body.dark {
-    --bg-primary: #1a1a2e;
-    --bg-secondary: #16213e;
-    --bg-tertiary: #0f3460;
-
-    --text-primary: #eaeaea;
-    --text-secondary: #a0a0a0;
-    --text-light: #666666;
-
-    --border-color: #2a2a4a;
-    --shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.4);
-}
-
-body.dark .login-box {
-    background: var(--bg-secondary);
-}
-
-body.dark .tab-btn {
-    color: var(--text-secondary);
-}
-
-body.dark .tab-btn.active {
-    color: var(--primary);
-}
-
-body.dark .input-group input,
-body.dark .input-group select {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-    border-color: var(--border-color);
-}
-
-body.dark .fun-fact {
-    background: rgba(0, 0, 0, 0.3);
-}
-
-body.dark .message.ai .message-content {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-}
-
-body.dark .quick-prompt-btn {
-    background: var(--bg-tertiary);
-    border-color: var(--border-color);
-    color: var(--text-primary);
-}
-
-body.dark .chat-input-area input {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-    border-color: var(--border-color);
-}
-
-body.dark .quiz-option {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-}
-
-body.dark .timeline-container {
-    background: var(--bg-secondary);
-}
-
-body.dark .timeline-event-label {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-}
-
-body.dark .castle-view {
-    background: linear-gradient(180deg, #1a1a2e 0%, #0f3460 100%);
-}
-
-/* ===== Sepia Theme ===== */
-body.sepia {
+/* ===== Sepia / Light Theme ===== */
+body.sepia, body.light {
     --bg-primary: #f4ecd8;
     --bg-secondary: #faf8f0;
     --bg-tertiary: #e8e0cc;
+    --bg-card: rgba(250, 248, 240, 0.95);
 
     --text-primary: #5c4a32;
     --text-secondary: #8b7355;
@@ -85,13 +13,20 @@ body.sepia {
     --primary: #8b6914;
     --primary-dark: #725610;
     --secondary: #a67c00;
+    --secondary-light: #cfa11d;
+    --secondary-dark: #7a5c00;
+    --text-gold: #8b6914;
+    --border-gold: #8b6914;
+    --shadow: 0 2px 10px rgba(92, 74, 50, 0.15);
+    --shadow-lg: 0 10px 30px rgba(92, 74, 50, 0.25);
+    --shadow-gold: 0 0 20px rgba(139, 105, 20, 0.2);
 }
 
-body.sepia .login-box {
+body.sepia .login-box, body.light .login-box {
     background: var(--bg-secondary);
 }
 
-body.sepia .castle-view {
+body.sepia .castle-view, body.light .castle-view {
     background: linear-gradient(180deg, #d4c9b0 0%, #c9b896 100%);
 }
 

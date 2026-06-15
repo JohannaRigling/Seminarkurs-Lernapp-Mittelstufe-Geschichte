@@ -877,8 +877,8 @@ function openQuellenarbeitItem(topicId, index) {
                         <div class="ql-karikatur-visual">
                             <div class="ql-karikatur-icon-large">🖼️</div>
                             <div class="ql-karikatur-desc-block">
-                                <div class="ql-karikatur-desc-title">Bildbeschreibung (Analyse-Grundlage)</div>
-                                <p class="ql-karikatur-desc-text">${item.beschreibung}</p>
+                                <div class="ql-karikatur-desc-title">Bild-Recherche</div>
+                                <p class="ql-karikatur-desc-text">Da diese Karikatur ohne Bild integriert ist, kannst du nach dem Namen <strong>"${item.title}"</strong> googeln, um dir das Bild anzuschauen.</p>
                             </div>
                         </div>
                         <div class="ql-karikatur-meta">

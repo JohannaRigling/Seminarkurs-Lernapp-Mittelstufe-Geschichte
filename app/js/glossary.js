@@ -433,6 +433,10 @@ function setupGlossaryFilters() {
 
     filterButtons.forEach(btn => {
         btn.addEventListener('click', () => {
+            // Search Input leeren
+            const searchInput = document.getElementById('glossarySearch');
+            if (searchInput) searchInput.value = '';
+
             // Aktiven Button markieren
             filterButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -447,15 +451,51 @@ function setupGlossaryFilters() {
 
 // Glossar-Suche
 function searchGlossary(searchTerm) {
-    const items = document.querySelectorAll('.glossary-item');
-    const lowerSearch = searchTerm.toLowerCase();
+    const lowerSearch = (searchTerm || '').toLowerCase().trim();
+    const groups = document.querySelectorAll('.glossary-letter-group');
+    const activeLetters = new Set();
 
-    items.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        if (text.includes(lowerSearch)) {
-            item.style.display = 'block';
+    groups.forEach(group => {
+        const letter = group.id.replace('glossary-letter-', '');
+        const items = group.querySelectorAll('.glossary-item');
+        let visibleCount = 0;
+
+        items.forEach(item => {
+            const termName = item.querySelector('.term-name')?.textContent || '';
+            const definition = item.querySelector('.glossary-definition')?.textContent || '';
+            const example = item.querySelector('.glossary-example')?.textContent || '';
+            const theme = item.querySelector('.glossary-theme')?.textContent || '';
+            const text = `${termName} ${definition} ${example} ${theme}`.toLowerCase();
+
+            if (text.includes(lowerSearch)) {
+                item.style.display = 'block';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+
+        if (visibleCount > 0) {
+            group.style.display = 'block';
+            activeLetters.add(letter);
         } else {
-            item.style.display = 'none';
+            group.style.display = 'none';
+        }
+    });
+
+    // Alphabet-Bar aktualisieren
+    const alphabetLetters = document.querySelectorAll('.alphabet-letter');
+    alphabetLetters.forEach(span => {
+        const letter = span.textContent;
+        if (activeLetters.has(letter)) {
+            span.className = 'alphabet-letter active';
+            span.onclick = () => {
+                const target = document.getElementById(`glossary-letter-${letter}`);
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            };
+        } else {
+            span.className = 'alphabet-letter inactive';
+            span.onclick = null;
         }
     });
 }

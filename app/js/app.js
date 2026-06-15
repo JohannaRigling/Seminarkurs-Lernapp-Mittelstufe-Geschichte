@@ -53,6 +53,14 @@ function setupEventListeners() {
     setInterval(updateFunFact, 30000);
 }
 
+// Dashboard Card einklappen/ausklappen
+function toggleCard(header) {
+    const card = header.closest('.card');
+    if (card) {
+        card.classList.toggle('collapsed');
+    }
+}
+
 // Sektion anzeigen
 const BREAK_BLOCKED_SECTIONS = ['chat', 'exercises', 'library-materials', 'library-glossary', 'adaptive-session'];
 const STUDY_BLOCKED_SECTIONS = ['castle'];
@@ -1684,14 +1692,17 @@ function showLearningSessionStart() {
                     <label>📅 Prüfungsdatum *</label>
                     <input type="date" id="examDate" min="${today}" required>
                 </div>
-                <div class="setup-field">
-                    <label>📚 Thema *</label>
-                    <select id="sessionTopic">
-                        <option value="">-- Thema wählen --</option>
-                        ${getAvailableTopics().map(t =>
-                            `<option value="${t.id}">${t.name}</option>`
-                        ).join('')}
-                    </select>
+            </div>
+
+            <div class="setup-field">
+                <label>📚 Thema/Themen *</label>
+                <div class="topics-checkbox-list">
+                    ${getAvailableTopics().map(t =>
+                        `<label class="topic-checkbox-label">
+                            <input type="checkbox" name="sessionTopic" value="${t.id}">
+                            <span>${t.name}</span>
+                        </label>`
+                    ).join('')}
                 </div>
             </div>
 
@@ -1706,7 +1717,7 @@ function showLearningSessionStart() {
                 <textarea id="kannListe" rows="4"
                     placeholder="Füge hier ein, was du können musst – z.B. aus dem Aufgabenblatt deiner Lehrkraft:&#10;• Ursachen der Französischen Revolution nennen&#10;• Verlauf der Revolution erläutern&#10;• Bedeutung für Europa beurteilen"></textarea>
                 <button class="btn btn-secondary btn-small" onclick="document.getElementById('kannListeFile').click()" style="margin-top:6px">
-                    📁 Textdatei laden
+                    📁 Textdatei hochladen
                 </button>
                 <input type="file" id="kannListeFile" accept=".txt,.md" style="display:none" onchange="loadKannListeFile(event)">
             </div>
@@ -1749,7 +1760,8 @@ function loadKannListeFile(event) {
  */
 function readSessionSetup() {
     const examDate = document.getElementById('examDate')?.value;
-    const topicId = document.getElementById('sessionTopic')?.value;
+    const checkedTopics = Array.from(document.querySelectorAll('input[name="sessionTopic"]:checked')).map(cb => cb.value);
+    const topicId = checkedTopics.join(',');
     const focus = document.getElementById('sessionFocus')?.value?.trim() || '';
     const kannListe = document.getElementById('kannListe')?.value?.trim() || '';
 
@@ -1757,8 +1769,8 @@ function readSessionSetup() {
         showToast('Bitte gib das Prüfungsdatum an!', 'error');
         return null;
     }
-    if (!topicId) {
-        showToast('Bitte wähle ein Thema!', 'error');
+    if (checkedTopics.length === 0) {
+        showToast('Bitte wähle mindestens ein Thema!', 'error');
         return null;
     }
 

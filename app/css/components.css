@@ -520,25 +520,25 @@
     line-height: 1.5;
 }
 
-.strategy-detail h2,
-.strategy-detail h4,
-.strategy-detail p,
-.strategy-detail li {
-    color: #ffffff !important;
+.strategy-detail h2 {
+    color: var(--text-primary) !important;
 }
 
+.strategy-detail h4,
 .strategy-section h4 {
-    color: #ffffff !important;
+    color: var(--secondary-light) !important;
     margin-bottom: 12px;
 }
 
+.strategy-detail p,
+.strategy-detail li,
 .strategy-section p,
 .strategy-steps li {
-    color: #ffffff !important;
+    color: var(--text-secondary) !important;
 }
 
 .strategy-benefits li {
-    color: var(--secondary-light);
+    color: var(--secondary) !important;
 }
 
 .history-tip {
@@ -1234,8 +1234,8 @@
 }
 
 .quiz-question {
-    font-size: 1.15em;
-    margin-bottom: 16px;
+    font-size: 1.05em;
+    margin-bottom: 12px;
     text-align: center;
     color: #e8e4d9;
 }
@@ -1251,13 +1251,13 @@
 }
 
 .quiz-option {
-    padding: 12px 16px;
+    padding: 10px 14px;
     background: var(--bg-tertiary);
     border: 2px solid transparent;
     border-radius: 12px;
     cursor: pointer;
     transition: var(--transition);
-    font-size: 1em;
+    font-size: 0.95em;
 }
 
 .quiz-option:hover {
@@ -1739,11 +1739,11 @@ body.timer-open .glossary-header { top: 90px; }
 
 /* ===== Lernstrategien-Detailkarte ===== */
 .strategy-detail {
-    color: #ffffff;
+    color: var(--text-primary);
 }
 .strategy-detail p,
 .strategy-detail li {
-    color: #ffffff !important;
+    color: var(--text-secondary) !important;
     line-height: 1.6;
 }
 .strategy-detail-header {
@@ -1754,7 +1754,7 @@ body.timer-open .glossary-header { top: 90px; }
 }
 .strategy-detail-header h2 {
     margin: 0;
-    color: #ffffff !important;
+    color: var(--text-primary) !important;
 }
 .strategy-icon-large {
     font-size: 4em;
@@ -4424,6 +4424,34 @@ body.timer-open .glossary-header { top: 90px; }
 
 .info-badge span:first-child {
     font-size: 1.2em;
+}
+
+.topics-checkbox-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+    max-height: 160px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 14px;
+    background: var(--bg-primary);
+    text-align: left;
+}
+.topic-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.95em;
+    color: var(--text-primary);
+    padding: 4px 0;
+}
+.topic-checkbox-label input[type="checkbox"] {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--secondary);
 }
 
 /* ===== Adaptive Session Section ===== */
