@@ -232,12 +232,24 @@ function updateTimerStatus() {
 function updateLearningTime() {
     if (!currentUser) return;
 
+    // Midnight reset check: if day has shifted, reset todayMinutes to 0
+    const today = new Date().toDateString();
+    const lastActive = currentUser.progress.lastActive ? new Date(currentUser.progress.lastActive).toDateString() : null;
+    if (lastActive && lastActive !== today) {
+        currentUser.progress.todayMinutes = 0;
+        updateUserProgress({
+            todayMinutes: 0,
+            lastActive: new Date().toISOString()
+        });
+    }
+
     currentUser.progress.todayMinutes++;
     currentUser.progress.totalMinutes++;
 
     updateUserProgress({
         todayMinutes: currentUser.progress.todayMinutes,
-        totalMinutes: currentUser.progress.totalMinutes
+        totalMinutes: currentUser.progress.totalMinutes,
+        lastActive: new Date().toISOString()
     });
 
     if (currentUser.progress.todayMinutes === 60) {

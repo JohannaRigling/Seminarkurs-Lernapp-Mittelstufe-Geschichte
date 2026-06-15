@@ -2187,3 +2187,49 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 ---
 
 **Letzte Aktualisierung:** 13.05.2026 (spät Abend) – Adaptive-Layout-Refactor, no-scroll-System, Kontrast-Fixes, Cache-Busting
+
+## 🎯 Session vom 15.06.2026 – Codebase Restructuring & SaaS-Level Optimization (Phase 2 & 3 Bug Fixes)
+
+### 🗂️ Reorganisation (Dateien & Ordner-Clutter)
+- **archive/**-Verzeichnis im Projekt-Root erstellt.
+- **Lehrbuchscans & Materialien** (`Klasse 8`, `Klasse 9`, `Klasse 10.1`, `Klasse 10.2`, `Methoden`, `Operatoren`) nach `archive/raw-textbook-scans/` verschoben.
+- **Projekt-Dokumente** (`.docx`, `.odt`, `.pdf`, Checklisten) nach `archive/project-documents/` verschoben.
+- **Alte Python-Skripte** (`geschichts_tutor_ultimate.py`, `main.py`) nach `archive/legacy-code/` verschoben.
+- **UI-Pre-Mockups / alte HTML-Dateien** (`history-learning-app.html`, `home.html`, etc.) nach `archive/ui-previews/` verschoben.
+
+### 🏰 3D Castle Builder
+- Standardmäßig im **Viewer-Modus** (`_buildMode = false`) laden, um Gitterlinien, Shop-Panels und Koordinaten auszublenden. Toggle über „Baumodus aktivieren“.
+- **Bett-Spalt behoben**: Tiefe auf `1.02` skaliert und Z-Offset (`frameZ`) dynamisch auf die Bettsegmente angewendet, um jegliche Lücken zu schließen.
+- **Sleek Walls**: Mauer-Dicke von `0.5` auf `0.35` reduziert, Verbindungs-Arme proportional angepasst.
+- **Kollisionsfilter**: Mauern/Zäune verbinden sich via `cb3IsConnectable` nur noch mit festen Blöcken (Verbindungen zu Blumen, Fackeln, Wasser oder Tieren gefiltert).
+- **Berge & Wälder**: Berge weiter nach Osten verschoben (Koord. `GRID_SIZE + 4.5/3.5`) zur Kollisionsvermeidung; Baumdichte auf 180 erhöht.
+- Block-Käufe im Castle Builder werfen keine Toasts mehr aus (Spam-Reduktion).
+
+### ⏱️ Pomodoro-Timer
+- **Floating Break Widget**: Das Vollbild-Pause-Overlay (`.break-overlay`) durch eine schwebende Card unten rechts (`bottom: 24px`, `right: 24px`, `width: 380px`) ersetzt, damit andere Tabs (z.B. Burg oder Einstellungen) während Pausen bedienbar bleiben. Countdown-Schrift auf `2.5em` geschrumpft und Break-Buttons verkleinert (kein `btn-large` mehr).
+- **Menü-Integration**: Der schwebende Toggle-Button wurde entfernt und durch einen Navigationsbutton im Sidebar-Untermenü `LERNHILFEN` ersetzt.
+- **Sidebar-Resize**: `toggleSidebar` triggert jetzt für 300ms ein window-resize-Intervall, damit der Three.js Canvas während des Einklappens flüssig mitskaliert.
+- **Logout-Cleanup**: Setzt den Timer zurück und schließt das Break-Overlay sowie Chat-Intervalle bei Abmeldung, um Leaks zu verhindern.
+- **Midnight-Reset**: Beim Timer-Tick wird geprüft, ob das Datum gewechselt hat, um die `todayMinutes` automatisch auf `0` zu setzen.
+
+### 📖 Layout & UI Polishing
+- **Zentrierte Modals**: `padding-left` Offsets für die Sidebar auf `.modal` gelöscht; alle Modals (AI-Tutor, Avatar-Editor, Notizen) zentrieren sich jetzt automatisch.
+- **Sticky Glossar & Alphabetleiste**: Die Alphabet-Bar wurde in die `.glossary-header` verschoben. Die Alphabet-Bar bricht nun horizontal um (`flex-wrap: wrap`) und ist zusammen mit den Sucheingaben und Klassenfiltern sticky an der Oberseite des Containers fixiert.
+- **Fixierter Header**: `.main-content` von `overflow-x: hidden` auf `overflow-x: clip` umgestellt, um die Funktionsweise von `position: sticky` auf allen Unterseiten zu aktivieren.
+- **Chat Attach Button**: Der Upload-Button (`.chat-attach-btn`) wurde farblich an das grüne System-Theme angepasst (`var(--primary)`).
+- **Info-Karten**: Hover-Pop/Skalierungseffekte bei den Adaptive-Learning Erklär-Karten entfernt zur besseren visuellen Ruhe.
+- **Adaptive Sektion**: Sichtbarkeit korrigiert, indem `#adaptive-session.content-section` standardmäßig ausgeblendet wird (`display: none;`) und nur bei aktiver Klasse auf `display: flex;` wechselt.
+
+### 🗂️ Geänderte Dateien
+- `app/index.html` – Alphabet-Bar in Header integriert, Timer-Button entfernt, Break-Buttons angepasst.
+- `app/css/main.css` – Modal-Zentrierung, `.main-content` mit `overflow-x: clip`.
+- `app/css/components.css` – Break-Overlay-Widget, horizontaler Alphabet-Bar, grüne Chat-Büroklammer, static-cards, adaptive-session default-hidden.
+- `app/js/app.js` – Sidebar-Resize Dispatcher interval, update toggleTimer.
+- `app/js/auth.js` – Logout-Cleanup erweitert.
+- `app/js/timer.js` – Midnight reset check.
+- `app/js/castle-builder.js` – 3D-Kollisionen, Bett-Gap, milde Toasts, Default-Viewer.
+- `standpunkt.md` – Diese Dokumentation.
+
+---
+
+**Letzte Aktualisierung:** 15.06.2026 – Großes Reorganisations- und UI/UX-Polishing-Paket (Castle Builder 3D, Pomodoro Break Widget, Sticky-Glossar-Header, Section Visibility Fixes)

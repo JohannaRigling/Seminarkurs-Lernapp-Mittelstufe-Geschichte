@@ -341,6 +341,16 @@ function toggleSidebar() {
         toggleBtn.textContent = '◀';
         localStorage.setItem('histolearn_sidebar_collapsed', 'false');
     }
+
+    // Dispatch window resize events continuously during transition (300ms) to update Three.js aspect ratio smoothly
+    let resizeTimer = 0;
+    const resizeInterval = setInterval(() => {
+        window.dispatchEvent(new Event('resize'));
+        resizeTimer += 20;
+        if (resizeTimer >= 300) {
+            clearInterval(resizeInterval);
+        }
+    }, 20);
 }
 
 // Chat Vollbild umschalten
@@ -2652,16 +2662,13 @@ function toggleNavCategory(button) {
 // Toggle Timer Visibility
 function toggleTimer() {
     const timerBar = document.getElementById('timerBar');
-    const toggleBtn = document.querySelector('.timer-toggle-btn');
 
     if (timerBar.style.display === 'none' || timerBar.style.display === '') {
         timerBar.style.display = 'flex';
-        if (toggleBtn) toggleBtn.style.display = 'none';
         // Body-Klasse für globales Padding-Top, damit Inhalt nicht vom fixen Timer überdeckt wird
         document.body.classList.add('timer-open');
     } else {
         timerBar.style.display = 'none';
-        if (toggleBtn) toggleBtn.style.display = 'block';
         document.body.classList.remove('timer-open');
     }
 }

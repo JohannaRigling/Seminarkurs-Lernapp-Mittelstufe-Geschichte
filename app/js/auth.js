@@ -283,8 +283,10 @@ function logout() {
     document.getElementById('mainApp').classList.remove('active');
     document.getElementById('loginScreen').classList.add('active');
 
-    // Timer stoppen
-    pauseTimer();
+    // Timer stoppen und aufräumen
+    if (typeof resetTimer === 'function') resetTimer();
+    if (typeof hideBreakOverlay === 'function') hideBreakOverlay();
+    if (typeof stopChatTimer === 'function') stopChatTimer();
 
     showToast('Erfolgreich abgemeldet!', 'info');
 }

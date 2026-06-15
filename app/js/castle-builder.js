@@ -73,6 +73,7 @@ function cbInit() {
         console.warn('[Burg] Bitte zuerst einloggen.');
         return;
     }
+    _buildMode = false; // Zurücksetzen auf Normalmodus bei jedem Eintritt
     if (!window.currentUser.castleBuilder3) {
         window.currentUser.castleBuilder3 = { blocks: [], inventory: {} };
     }
@@ -289,7 +290,7 @@ function cb3BindEvents(canvas, wrap) {
                 _selectedType = null;
                 cb3HideGhost();
                 cb3UpdateUI();
-                if (typeof window.showToast === 'function') window.showToast('Block losgelassen.', 'info');
+                // success/info Toast stummgeschaltet wie gewünscht
                 e.preventDefault();
             }
             return;
@@ -487,7 +488,7 @@ function cb3CreateSurroundings() {
     }
 
     // 🌲 WALD (Norden, z < 0) — deutlich dichter besetzt
-    for (let i = 0; i < 130; i++) {
+    for (let i = 0; i < 180; i++) {
         const x = cx + (Math.random() - 0.5) * GRID_SIZE * 4;
         const z = -2 - Math.random() * GRID_SIZE * 2.6;
         if (!isLandPosition(x, z)) continue;
@@ -563,8 +564,8 @@ function cb3CreateSurroundings() {
         const mtnGeo = new THREE.ConeGeometry(mtnR, mtnH, 6);
         const mtnMat = new THREE.MeshLambertMaterial({ color: 0x6a5a4a });
         const mtn = new THREE.Mesh(mtnGeo, mtnMat);
-        // Mindestabstand: Berg-Mittelpunkt mind. mtnR hinter Plateau-Rand (x = GRID_SIZE)
-        const baseX = GRID_SIZE + mtnR + 2 + Math.random() * GRID_SIZE * 0.5;
+        // Mindestabstand vergrößert (+4.5), um Überlappung mit dem Bauplatz sicher zu verhindern
+        const baseX = GRID_SIZE + mtnR + 4.5 + Math.random() * GRID_SIZE * 0.5;
         mtn.position.set(baseX, mtnH / 2 - 0.5, cz + (i - 2.5) * GRID_SIZE * 0.45);
         mtn.rotation.y = Math.random() * Math.PI;
         _scene.add(mtn);
@@ -585,8 +586,8 @@ function cb3CreateSurroundings() {
         const hillGeo = new THREE.SphereGeometry(hillR, 8, 4, 0, Math.PI * 2, 0, Math.PI / 2);
         const hillMat = new THREE.MeshLambertMaterial({ color: 0x4a7a3e });
         const hill = new THREE.Mesh(hillGeo, hillMat);
-        // Mindestabstand: x mind. GRID_SIZE + Radius + Puffer
-        const hx = GRID_SIZE + hillR + 1.5 + Math.random() * GRID_SIZE * 0.5;
+        // Mindestabstand vergrößert (+3.5), um Überlappung mit dem Bauplatz sicher zu verhindern
+        const hx = GRID_SIZE + hillR + 3.5 + Math.random() * GRID_SIZE * 0.5;
         hill.position.set(hx, -0.2, cz + (Math.random() - 0.5) * GRID_SIZE * 2);
         hill.scale.y = 0.4 + Math.random() * 0.5;
         _scene.add(hill);
@@ -930,15 +931,19 @@ function cb3CreateBedMesh(half, color) {
     const blanketDarkMat = new THREE.MeshLambertMaterial({ color: darkColor });
     const pillowMat = new THREE.MeshLambertMaterial({ color: 0xf5f5f5 });
 
-    // Solides Holzgestell — volle Block-Tiefe damit Hälften nahtlos zusammenschließen
-    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.32, 1.0), woodMat);
-    frame.position.y = -0.34;
+    // Solides Holzgestell — wir überlappen leicht (1.02 statt 1.0) und verschieben um 0.01
+    // um Z-Fighting und gapping Linien an der Verbindungsstelle komplett zu vermeiden
+    const frameDepth = 1.02;
+    const frameZ = half === 'head' ? 0.01 : -0.01;
+
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.32, frameDepth), woodMat);
+    frame.position.set(0, -0.34, frameZ);
     frame.castShadow = true; frame.receiveShadow = true;
     grp.add(frame);
 
-    // Bettdecke — auch volle Block-Tiefe, keine Lücke mehr in der Mitte
-    const blanket = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.18, 1.0), blanketMat);
-    blanket.position.y = -0.09;
+    // Bettdecke
+    const blanket = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.18, frameDepth), blanketMat);
+    blanket.position.set(0, -0.09, frameZ);
     grp.add(blanket);
 
     // Dunklere Decken-Naht NUR an Außenseite (head: hinten, foot: vorne)
@@ -946,30 +951,30 @@ function cb3CreateBedMesh(half, color) {
         new THREE.BoxGeometry(0.95, 0.2, 0.05),
         blanketDarkMat
     );
-    blanketEdge.position.set(0, -0.08, half === 'head' ? -0.475 : 0.475);
+    blanketEdge.position.set(0, -0.08, half === 'head' ? -0.475 + frameZ : 0.475 + frameZ);
     grp.add(blanketEdge);
 
     if (half === 'head') {
         // HOHES KOPFTEIL-BRETT (charakteristisches Bett-Element)
         const headBoard = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.7, 0.1), woodLightMat);
-        headBoard.position.set(0, 0.18, -0.45);
+        headBoard.position.set(0, 0.18, -0.45 + frameZ);
         headBoard.castShadow = true;
         grp.add(headBoard);
         // Holzverzierung an den Ecken
         const ornL = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.13, 0.13), woodMat);
-        ornL.position.set(-0.4, 0.55, -0.45);
+        ornL.position.set(-0.4, 0.55, -0.45 + frameZ);
         grp.add(ornL);
         const ornR = new THREE.Mesh(new THREE.BoxGeometry(0.13, 0.13, 0.13), woodMat);
-        ornR.position.set(0.4, 0.55, -0.45);
+        ornR.position.set(0.4, 0.55, -0.45 + frameZ);
         grp.add(ornR);
         // Großes Kopfkissen
         const pillow = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.16, 0.32), pillowMat);
-        pillow.position.set(0, 0.05, -0.28);
+        pillow.position.set(0, 0.05, -0.28 + frameZ);
         grp.add(pillow);
     } else {
         // NIEDRIGERES FUSSTEIL-BRETT
         const footBoard = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.32, 0.1), woodLightMat);
-        footBoard.position.set(0, 0.0, 0.45);
+        footBoard.position.set(0, 0.0, 0.45 + frameZ);
         footBoard.castShadow = true;
         grp.add(footBoard);
         // Decken-Falten am Fußende
@@ -978,7 +983,7 @@ function cb3CreateBedMesh(half, color) {
                 new THREE.BoxGeometry(0.92, 0.008, 0.04),
                 blanketDarkMat
             );
-            stripe.position.set(0, 0.005, 0.05 + i * 0.18);
+            stripe.position.set(0, 0.005, 0.05 + i * 0.18 + frameZ);
             grp.add(stripe);
         }
     }
@@ -1312,8 +1317,19 @@ function cb3CreateFenceMesh(connections) {
     return grp;
 }
 
+// Hilfsfunktion: Prüft, ob ein Nachbar-Block solide und connectable ist
+function cb3IsConnectable(type) {
+    if (!type) return false;
+    // Blumen, Fackeln, Banner, Wasser und Tiere sind Deko/flüssig und verbinden sich nicht mit Felsen/Zäunen
+    const nonConnectable = ['fackel', 'banner', 'blume', 'wasser', 'schaf', 'kuh', 'huhn', 'pferd', 'schwein'];
+    return !nonConnectable.includes(type);
+}
+
 function cb3GetFenceConnections(x, y, z) {
-    const hasNeighbor = (dx, dz) => !!_blocks.get(`${x + dx},${y},${z + dz}`);
+    const hasNeighbor = (dx, dz) => {
+        const b = _blocks.get(`${x + dx},${y},${z + dz}`);
+        return b && cb3IsConnectable(b.type);
+    };
     return {
         E: hasNeighbor(1, 0),
         W: hasNeighbor(-1, 0),
@@ -1323,6 +1339,7 @@ function cb3GetFenceConnections(x, y, z) {
 }
 
 // ───── Mauer (Minecraft-Wall-Stil): Pfosten + Cap + Verbindungs-Arme ─────
+// Schmalerer und eleganterer Look (Pfosten-Dicke 0.35 statt 0.5)
 function cb3CreateWallMesh(connections) {
     const grp = new THREE.Group();
     grp.userData.isWall = true;
@@ -1330,15 +1347,15 @@ function cb3CreateWallMesh(connections) {
     const mat = cb3GetMaterial(def);
     const c = connections || { N: false, S: false, E: false, W: false };
 
-    // Zentraler Pfosten: 8×16×8 px = 0.5 × 1 × 0.5
-    const post = new THREE.Mesh(new THREE.BoxGeometry(0.5, 1, 0.5), mat);
+    // Zentraler Pfosten: 0.35 × 1 × 0.35
+    const post = new THREE.Mesh(new THREE.BoxGeometry(0.35, 1, 0.35), mat);
     post.castShadow = true; post.receiveShadow = true;
     grp.add(post);
 
-    // Wenn vollständig isoliert: Top-Kappe (Pfostenkappe) drauf — 12×3×12 px
+    // Wenn vollständig isoliert: Top-Kappe (Pfostenkappe) drauf
     const isolated = !c.N && !c.S && !c.E && !c.W;
     if (isolated) {
-        const cap = new THREE.Mesh(new THREE.BoxGeometry(0.75, 3/16, 0.75), mat);
+        const cap = new THREE.Mesh(new THREE.BoxGeometry(0.5, 3/16, 0.5), mat);
         cap.position.y = 0.5 - (3/16) / 2; // sitzt oben
         cap.castShadow = true;
         grp.add(cap);
@@ -1346,15 +1363,15 @@ function cb3CreateWallMesh(connections) {
 
     // Verbindungs-Arme — Pfosten-breit, fast volle Höhe, vom Pfosten bis Block-Rand
     const armHeight = 15/16;
-    const armY = -0.5 + armHeight / 2; // Unterkante am Boden, Oberkante 1/16 unter Pfosten-Top
+    const armY = -0.5 + armHeight / 2;
     const addArm = (dir) => {
         let arm;
         if (dir === 'N' || dir === 'S') {
-            arm = new THREE.Mesh(new THREE.BoxGeometry(0.5, armHeight, 0.25), mat);
-            arm.position.set(0, armY, dir === 'N' ? -0.375 : 0.375);
+            arm = new THREE.Mesh(new THREE.BoxGeometry(0.35, armHeight, 0.325), mat);
+            arm.position.set(0, armY, dir === 'N' ? -0.3375 : 0.3375);
         } else {
-            arm = new THREE.Mesh(new THREE.BoxGeometry(0.25, armHeight, 0.5), mat);
-            arm.position.set(dir === 'E' ? 0.375 : -0.375, armY, 0);
+            arm = new THREE.Mesh(new THREE.BoxGeometry(0.325, armHeight, 0.35), mat);
+            arm.position.set(dir === 'E' ? 0.3375 : -0.3375, armY, 0);
         }
         arm.castShadow = true; arm.receiveShadow = true;
         grp.add(arm);
@@ -1369,7 +1386,10 @@ function cb3CreateWallMesh(connections) {
 
 function cb3GetWallConnections(x, y, z) {
     // Mauer verbindet mit anderer Mauer oder mit einem Vollblock auf gleicher Höhe
-    const hasNeighbor = (dx, dz) => !!_blocks.get(`${x + dx},${y},${z + dz}`);
+    const hasNeighbor = (dx, dz) => {
+        const b = _blocks.get(`${x + dx},${y},${z + dz}`);
+        return b && cb3IsConnectable(b.type);
+    };
     return {
         E: hasNeighbor(1, 0),
         W: hasNeighbor(-1, 0),
@@ -2453,7 +2473,7 @@ function cb3OnContextMenu(e) {
         _inventory[animal.type] = (_inventory[animal.type] || 0) + 1;
         cb3Save();
         cb3UpdateUI();
-        if (typeof window.showToast === 'function') window.showToast('Tier zurück ins Inventar.', 'success');
+        // success/info Toast stummgeschaltet wie gewünscht
         return;
     }
 
@@ -2492,7 +2512,7 @@ function cb3OnContextMenu(e) {
     }
     cb3Save();
     cb3UpdateUI();
-    if (typeof window.showToast === 'function') window.showToast('Block ins Inventar zurück.', 'success');
+    // success/info Toast stummgeschaltet wie gewünscht
 }
 
 function cb3PlaceBlock(x, y, z, typeId, wall) {
@@ -2762,7 +2782,7 @@ function cb3BuyBlock(typeId) {
     }
     cb3Save();
     cb3UpdateUI();
-    if (typeof window.showToast === 'function') window.showToast(`${def.name} gekauft!`, 'success');
+    // success/info Toast stummgeschaltet wie gewünscht
 }
 
 // ─────────────────────── GLOBAL EXPORTS ────────────────────────────

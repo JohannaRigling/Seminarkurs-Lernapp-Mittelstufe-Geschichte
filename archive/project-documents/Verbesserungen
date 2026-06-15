@@ -1,0 +1,32 @@
+Mir sind noch ein paar mehr Sachen aufgefallen bitte ändere noch folgendes:
+
+Ich möchte einen unterschied zwischen dem baumodus oder einer normalen Ansicht. Also wenn man auf Burg geht dann sollte man erstim Normalen Modus sein, sprich ohne die weißen Linien und ohne Shop und Inventar und dann soll man in den Baumodus wechseln können. Dort tauchen dann Shop Linien und Inventar auf.
+
+Außerdem wird dass Huhn wenn es plaziert wurde mit nur zwei Beinen angezeigt aber auf dem Bild hat es immer noch vier Beine. Zudem sieht das Bett zwar sehr gut aus so aber da sollte keine Lücke sein sonst sieht das aus als wären es zwei Teile und das sieht blöd aus. Genauso bei den Zäunen, da gehen die Verbindungsstreben in alle vier Richtungen aber eigentlich sollten die Streben ja nur mit dem daneben plazierten Teil verbunden werden. Das bedeutet der erste zaun der plaziert wird ist einfach nur wie so ein Stock und bildet erst eine Verbindung wenn er einen direkten Nachbar bekommt (das kann auch einer von den Quadratischen Blöcken sein.) Die Mauer sollte auch bisschen schmaler gemacht werden weil diese quadratischen blöcke sind in dem Fall einfach zu massiv.
+
+Die Umgebung sieht seh gut aus, auf der Waldseite könnten es aber noch paar mehr Bäume sein und die Berge bzw die Büsche am Fuß der Berge überlappen bisschen mit dem Feld auf dem man bauen kann das sollte so nicht sein.
+
+Dann mal noch ein anderer Bereich und zwar das Glossar. Folgendes und zwar die Buchstabenleiste wird oben von dem Timer verdeckt und man muss auf ihr scrollen das sollte nicht sein. Man sollte die gesamte Leiste auf einmal einsehen können ohne dass sie von irgendetwas verdeckt wird und oben die Leiste mit Alle Begriffe, die Klassen und die Suchleiste sollten fixiert werden damit sie beim scrollen bleibt. Ausserdem hätte ich gerne für jeden Begriff einen Button der zum KI Tutor führt der dann fragt ob er den Begriff besser erklären soll oder in den Kontext einordnen soll oder ob er erzählen soll warum das so wichtig ist... irgendwie sowas denk dir da was gutes aus.
+
+In der Bibliothek überlappen sich der Button hochladen und der Timer Button immer noch bisschen bitte behebe das auch.
+
+Im KI Chat gibt es ja den Button Bild oder Textdatei anhängen und der ist noch bisschen klein und undeutlich neben der Texteingabe leiste bitte mache den deutlicher zum beispiel in der aktuellen Designfarbe.
+
+Ausserdem müssen wir noch an dem Ordner Lernstrategien noch einiges vornehmen. Klickt man zum Beispiel auf die Lernstrategie Pomodoro Timer sollte sich oben der Pomodoro Timer öffnen. Bei den anderen Strategien sollten es andere Features sein die sich öffnen, je nach dem was da Sinn macht. Ausserdem ist der text wenn man auf die Lernstrategien klickt in der Karteikarte die sich dann öffnet in einer hässlichen viel zu dunklen und deshalb schwer leserlichen gelblichen Farbe. Bitte mache den text da weiß.
+
+Während der Timer läuft sollte man keinen Zugriff auf das Burgfeature haben, dafür sollte man während der pause zugriff haben und natürlich auch wenn der timer nicht läuft.
+
+Bei jeder Aktion kommen rechts unten so Pushnachrichten. Das sollte nicht mehr so sein weil das stört. Vorallem beim Kauf von einem Burgteil nervt das.
+
+Die Leiste für den Pomodorotimer sollte etwas schmaler werden. ausserdem stört es wenn man auf jeder Seite immer erst scrollen muss um das ganze Bild zu sehen. 
+
+Beim Timer stand heute beim reinkommen dass ich schon 20 Minuten gelernt hätte obwohl ich die App heute erst zwei Minuten ohne Timer benutzt habe. Das geht nicht bitte.
+
+Wenn man die linke Seitenleiste einklappt bei dem Burgfeature verändern sich die Proportionen dort, bitte schaue dass die Proportionen gleichbleiben obwohl der Bildschirm breiter ist. Ausserdem sollten der Shop und das Inventar im Normalen Modus nicht zu sehen sein sondern nur im Baumodus.
+
+Bei der Adaptiven Lernsession sind am Anfang drei buttons auf die man ja nicht klicken kann. Das sollte mehr aussehen wie eine erklärung und nicht so hochpoppen wenn man da draufgeht. So nach dem Motto: Adaptive Lernsession was ist das? und da drunter dann diese Buttons als erklärung. Ausserdem öffnet sich die Adaptive Lernsession ja als Karteikarte, allerdings ist die nicht in der Mitte des Bildschirms, das stört bisschen und sie überschneidet sich mit der linken Leiste sowohl wenn sie eingeklappt als auch wenn sie ausgeklappt ist.
+
+Dann wen nman sich ja Anmeldet kommt ja eine kurze Anleitung. Da ist die Überschrift wieder in diesem komischen schwer leserlichen Gelb und ausserdem fehlen mir da die Adaptive Lernsession mit erklärung und die Lernhilfen und die Materialien und die Einstellungen. Zu den Einstellungen sollte kommen dass man seinen Avatar erstellen kann und das Passwort und die Farbe und so ändern kann.
+
+
+

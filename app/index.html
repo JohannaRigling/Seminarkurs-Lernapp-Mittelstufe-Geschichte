@@ -173,6 +173,10 @@
                             <span class="nav-icon">🧠</span>
                             <span class="nav-text">Lernstrategien</span>
                         </button>
+                        <button class="nav-item" onclick="toggleTimer()">
+                            <span class="nav-icon">⏱️</span>
+                            <span class="nav-text">Pomodoro-Timer</span>
+                        </button>
                     </div>
                 </div>
 
@@ -242,10 +246,7 @@
                 </div>
             </div>
 
-            <!-- Timer Toggle Button (immer sichtbar) -->
-            <button class="timer-toggle-btn" onclick="toggleTimer()" title="Timer ein-/ausblenden">
-                ⏱️ Timer
-            </button>
+
 
             <!-- Dashboard Section -->
             <section id="dashboard" class="content-section active">
@@ -813,22 +814,24 @@
                 <div class="library-tab-content" id="libraryTabGlossary">
                     <div class="glossary-layout">
                         <div class="glossary-header">
-                            <div class="glossary-filters">
-                                <button class="glossary-filter-btn active" data-filter="alle">Alle Begriffe</button>
-                                <button class="glossary-filter-btn" data-filter="klasse8">Klasse 8</button>
-                                <button class="glossary-filter-btn" data-filter="klasse9">Klasse 9</button>
-                                <button class="glossary-filter-btn" data-filter="klasse10">Klasse 10</button>
+                            <div class="glossary-filters-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 20px; flex-wrap: wrap;">
+                                <div class="glossary-filters">
+                                    <button class="glossary-filter-btn active" data-filter="alle">Alle Begriffe</button>
+                                    <button class="glossary-filter-btn" data-filter="klasse8">Klasse 8</button>
+                                    <button class="glossary-filter-btn" data-filter="klasse9">Klasse 9</button>
+                                    <button class="glossary-filter-btn" data-filter="klasse10">Klasse 10</button>
+                                </div>
+                                <div class="glossary-search">
+                                    <input type="text" id="glossarySearch" placeholder="Begriff suchen..." onkeyup="searchGlossary(this.value)">
+                                </div>
                             </div>
-                            <div class="glossary-search">
-                                <input type="text" id="glossarySearch" placeholder="Begriff suchen..." onkeyup="searchGlossary(this.value)">
+                            <div class="glossary-alphabet-bar" id="glossaryAlphabetBar">
+                                <!-- Filled by JavaScript -->
                             </div>
                         </div>
 
                         <div class="glossary-content">
                             <div class="glossary-list" id="glossaryList">
-                                <!-- Filled by JavaScript -->
-                            </div>
-                            <div class="glossary-alphabet-bar" id="glossaryAlphabetBar">
                                 <!-- Filled by JavaScript -->
                             </div>
                         </div>
@@ -1067,8 +1070,8 @@
             <p id="breakOverlayMessage">Gönn dir eine Auszeit. Die App ist während der Pause gesperrt.</p>
             <div id="breakOverlayCountdown" class="break-overlay-countdown">05:00</div>
             <div id="breakOverlayActions" class="break-overlay-actions" style="display:none;">
-                <button class="btn btn-primary btn-large" onclick="continuePomodoro()">📚 Weiterlernen</button>
-                <button class="btn btn-secondary btn-large" onclick="finishPomodoro()">✅ Fertig für heute</button>
+                <button class="btn btn-primary" onclick="continuePomodoro()">📚 Weiterlernen</button>
+                <button class="btn btn-secondary" onclick="finishPomodoro()">✅ Fertig für heute</button>
             </div>
         </div>
     </div>
