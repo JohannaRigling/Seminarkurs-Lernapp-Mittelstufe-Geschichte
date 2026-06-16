@@ -5380,27 +5380,11 @@
     padding: 3px 10px;
 }
 
-.modal-fullscreen-btn {
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    color: var(--text-secondary);
-    cursor: pointer;
-    font-size: 1.1rem;
-    padding: 4px 10px;
-    transition: var(--transition);
-}
-.modal-fullscreen-btn:hover {
-    background: var(--secondary);
-    color: #fff;
-    border-color: var(--secondary);
-}
-
 /* Vollbild-Modus für exerciseModal */
-#exerciseModal.exercise-fullscreen {
+#exerciseModal {
     padding: 0;
 }
-#exerciseModal.exercise-fullscreen .modal-content {
+#exerciseModal .modal-content {
     position: fixed;
     inset: 0;
     max-width: 100vw;
@@ -5409,18 +5393,12 @@
     max-height: 100vh;
     border-radius: 0;
     margin: 0;
-    overflow-y: auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
 }
-#exerciseModal.exercise-fullscreen .modal-fullscreen-btn {
-    font-size: 1rem;
-}
-#exerciseModalContent {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    padding: 20px;
-}
-#exerciseModal.exercise-fullscreen #exerciseModalContent {
+#exerciseModal #exerciseModalContent {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
@@ -5428,7 +5406,7 @@
     flex-direction: column;
     padding: 0;
 }
-#exerciseModal.exercise-fullscreen .quiz-container {
+#exerciseModal .quiz-container {
     padding: 24px 32px;
     max-width: 760px;
     width: 100%;
@@ -5437,7 +5415,7 @@
 .cognitive-game-wrapper { padding: 10px 16px 16px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
 .cognitive-game-wrapper > * { width: 100%; }
 .cognitive-game-wrapper .btn { width: auto; align-self: flex-start; }
-#exerciseModal.exercise-fullscreen .cognitive-game-wrapper {
+#exerciseModal .cognitive-game-wrapper {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
@@ -5447,16 +5425,16 @@
     gap: 10px;
     align-items: center;
 }
-#exerciseModal.exercise-fullscreen .cognitive-game-wrapper > * {
+#exerciseModal .cognitive-game-wrapper > * {
     width: 100%;
     max-width: 680px;
 }
-#exerciseModal.exercise-fullscreen .cognitive-game-wrapper .btn {
+#exerciseModal .cognitive-game-wrapper .btn {
     width: auto;
     align-self: center;
     min-width: 160px;
 }
-#exerciseModal.exercise-fullscreen .cognitive-game-wrapper .memory-grid {
+#exerciseModal .cognitive-game-wrapper .memory-grid {
     flex: 1;
     min-height: 0;
     max-width: none !important;
@@ -5464,33 +5442,39 @@
     margin: 0;
     align-content: stretch;
 }
-#exerciseModal.exercise-fullscreen .cognitive-game-wrapper .memory-card {
+#exerciseModal .cognitive-game-wrapper .memory-card {
     aspect-ratio: unset;
     min-height: 60px;
 }
-#exerciseModal.exercise-fullscreen .flashcard-header {
+#exerciseModal .flashcard-header {
     flex-shrink: 0;
 }
-#exerciseModal.exercise-fullscreen #exerciseCardContainer {
+#exerciseModal #exerciseCardContainer {
     flex: 1;
     min-height: 0;
     display: flex;
     flex-direction: column;
 }
-#exerciseModal.exercise-fullscreen .fc-card {
+#exerciseModal .fc-card {
     overflow: hidden;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 30px;
 }
-#exerciseModal.exercise-fullscreen .fc-answer-section {
+#exerciseModal .fc-answer-section {
     flex: 1;
     min-height: 0;
     display: flex;
     flex-direction: column;
 }
-#exerciseModal.exercise-fullscreen .fc-textarea {
+#exerciseModal .fc-textarea {
     flex: 1;
-    min-height: 100px;
+    min-height: 180px;
     max-height: none;
     resize: none;
+    font-size: 1.05em;
+    padding: 14px;
 }
 
 /* Hilfe-Button auf Karteikarten */

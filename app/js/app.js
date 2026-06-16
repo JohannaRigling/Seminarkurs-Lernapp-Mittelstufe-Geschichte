@@ -239,14 +239,6 @@ function _initExercisePomodoroObserver() {
     }).observe(modal, { attributes: true, attributeFilter: ['class'] });
 }
 
-function toggleExerciseFullscreen() {
-    const modal = document.getElementById('exerciseModal');
-    if (!modal) return;
-    const isFullscreen = modal.classList.toggle('exercise-fullscreen');
-    const btn = modal.querySelector('.modal-fullscreen-btn');
-    if (btn) btn.textContent = isFullscreen ? '✕' : '⤢';
-}
-
 // Öffnet den KI-Tutor-Chat mit der aktuellen Aufgabenfrage als Kontext
 function openChatForHelp() {
     // Aktuelle Aufgabenfrage ermitteln
