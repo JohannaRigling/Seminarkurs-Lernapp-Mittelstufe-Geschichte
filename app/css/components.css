@@ -1237,11 +1237,11 @@
     font-size: 1.05em;
     margin-bottom: 12px;
     text-align: center;
-    color: #e8e4d9;
+    color: var(--text-primary);
 }
 
 .quiz-progress span {
-    color: #a09080;
+    color: var(--text-secondary);
 }
 
 .quiz-options {
@@ -3972,7 +3972,7 @@
 .flashcard-header {
     padding: 14px 50px 14px 20px;
     border-bottom: 1px solid var(--border-color);
-    background: rgba(0,0,0,0.2);
+    background: var(--bg-tertiary);
     flex-shrink: 0;
 }
 
@@ -4041,10 +4041,10 @@
     font-size: 1.05em;
     font-weight: 500;
     line-height: 1.6;
-    color: #e8e4d9;
+    color: var(--text-primary);
     max-height: 110px;
     overflow-y: auto;
-    background: rgba(255,255,255,0.04);
+    background: var(--bg-primary);
     border-left: 3px solid var(--secondary);
     padding: 10px 14px;
     border-radius: 0 8px 8px 0;
@@ -4087,10 +4087,12 @@
 }
 
 .fc-feedback {
-    background: rgba(0,0,0,0.2);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 10px 14px;
     font-size: 0.9em;
+    color: var(--text-primary);
 }
 
 .fc-sample {
@@ -4116,7 +4118,7 @@
     justify-content: space-between;
     padding: 12px 20px;
     border-top: 1px solid var(--border-color);
-    background: rgba(0,0,0,0.15);
+    background: var(--bg-tertiary);
     flex-shrink: 0;
 }
 
@@ -4811,18 +4813,18 @@
     gap: 14px;
     width: 100%;
     padding: 16px 18px;
-    background: var(--card-bg, #1e1e2e);
-    border: 1px solid var(--border-color, rgba(255,255,255,0.1));
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     cursor: pointer;
     text-align: left;
     transition: border-color 0.2s, background 0.2s, transform 0.15s;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
 }
 
 .ql-source-btn:hover {
-    border-color: var(--primary, #27ae60);
-    background: rgba(255,255,255,0.04);
+    border-color: var(--primary);
+    background: var(--bg-tertiary);
     transform: translateX(4px);
 }
 
@@ -4870,10 +4872,10 @@
     align-items: center;
     gap: 6px;
     background: none;
-    border: 1px solid var(--border-color, rgba(255,255,255,0.15));
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 8px 14px;
-    color: var(--text-secondary, rgba(255,255,255,0.6));
+    color: var(--text-secondary);
     font-size: 0.9em;
     cursor: pointer;
     margin-bottom: 20px;
@@ -4881,8 +4883,8 @@
 }
 
 .ql-back-btn:hover {
-    color: var(--text-primary, #fff);
-    border-color: var(--text-primary, #fff);
+    color: var(--text-primary);
+    border-color: var(--text-primary);
 }
 
 /* Quellen-Anzeige */
@@ -4893,13 +4895,13 @@
 .ql-source-display h3 {
     font-size: 1.2em;
     font-weight: 700;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
     margin-bottom: 6px;
 }
 
 .ql-autor {
     font-size: 0.85em;
-    color: var(--text-secondary, rgba(255,255,255,0.55));
+    color: var(--text-secondary);
     font-style: italic;
     margin-bottom: 14px;
 }
@@ -4911,7 +4913,7 @@
     border-radius: 12px;
     overflow: hidden;
     margin-top: 14px;
-    background: rgba(0,0,0,0.2);
+    background: var(--bg-tertiary);
 }
 .ql-karikatur-label {
     background: linear-gradient(90deg, var(--primary, #27ae60), transparent);
@@ -4936,8 +4938,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255,255,255,0.06);
-    border: 1px dashed rgba(255,255,255,0.2);
+    background: var(--bg-primary);
+    border: 1px dashed var(--border-color);
     border-radius: 8px;
 }
 .ql-karikatur-desc-block { flex: 1; }
@@ -4950,7 +4952,7 @@
     margin-bottom: 8px;
 }
 .ql-karikatur-desc-text {
-    color: rgba(255,255,255,0.88);
+    color: var(--text-primary);
     line-height: 1.7;
     font-size: 0.97em;
     margin: 0;
@@ -4959,16 +4961,16 @@
     display: flex;
     gap: 16px;
     padding: 8px 18px;
-    border-top: 1px solid rgba(255,255,255,0.08);
+    border-top: 1px solid var(--border-color);
     font-size: 0.77em;
-    color: rgba(255,255,255,0.45);
+    color: var(--text-light);
 }
 
 /* Legacy .ql-karikatur-box (keep for backward compat) */
 .ql-karikatur-box {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border-color, rgba(255,255,255,0.1));
-    border-left: 3px solid var(--primary, #27ae60);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--primary);
     border-radius: 10px;
     padding: 18px 20px;
     margin-top: 12px;
@@ -4976,7 +4978,7 @@
 
 /* Historikertext-Box */
 .ql-text-box {
-    border: 2px solid rgba(255,255,255,0.1);
+    border: 2px solid var(--border-color);
     border-radius: 12px;
     overflow: hidden;
     margin-top: 14px;
@@ -4991,21 +4993,21 @@
     color: rgba(255,255,255,0.85);
 }
 .ql-text-box blockquote {
-    background: rgba(255,255,255,0.03);
+    background: var(--bg-secondary);
     border-left: none;
     border-radius: 0;
     padding: 18px 20px;
     margin: 0;
-    color: rgba(255,255,255,0.88);
+    color: var(--text-primary);
     font-style: italic;
     line-height: 1.8;
     font-size: 0.97em;
 }
 .ql-text-quelle {
     padding: 8px 18px;
-    border-top: 1px solid rgba(255,255,255,0.08);
+    border-top: 1px solid var(--border-color);
     font-size: 0.77em;
-    color: rgba(255,255,255,0.45);
+    color: var(--text-light);
     margin: 0;
 }
 
@@ -5015,13 +5017,13 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--text-secondary, rgba(255,255,255,0.55));
+    color: var(--text-secondary);
     margin-bottom: 16px;
 }
 
 .ql-frage-block {
-    background: var(--card-bg, #1e1e2e);
-    border: 1px solid var(--border-color, rgba(255,255,255,0.1));
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 18px 20px;
     margin-bottom: 14px;
@@ -5043,7 +5045,7 @@
 }
 
 .ql-frage-text {
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
     font-size: 0.97em;
     line-height: 1.55;
     margin-bottom: 14px;
@@ -5056,7 +5058,7 @@
 }
 
 .ql-hinweis-details summary {
-    color: var(--primary, #27ae60);
+    color: var(--primary);
     font-size: 0.88em;
     font-weight: 600;
     cursor: pointer;
@@ -5074,11 +5076,11 @@
 }
 
 .ql-hinweis-text {
-    color: rgba(255,255,255,0.65);
+    color: var(--text-secondary);
     font-size: 0.88em;
     line-height: 1.55;
     padding: 10px 14px;
-    background: rgba(255,255,255,0.04);
+    background: var(--bg-primary);
     border-radius: 8px;
     margin: 0;
 }
@@ -5086,11 +5088,11 @@
 /* Antwort-Textfeld */
 .ql-answer-field {
     width: 100%;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border-color, rgba(255,255,255,0.15));
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 12px 14px;
-    color: var(--text-primary, #fff);
+    color: var(--text-primary);
     font-size: 0.95em;
     line-height: 1.55;
     resize: vertical;
@@ -5101,11 +5103,13 @@
 
 .ql-answer-field:focus {
     outline: none;
-    border-color: var(--primary, #27ae60);
+    border-color: var(--primary);
 }
 
 .ql-answer-field::placeholder {
-    color: rgba(255,255,255,0.3);
+    color: var(--text-light);
+    opacity: 0.6;
+}
 }
 
 /* ===== Adaptive Lernsession – Neues Setup ===== */
@@ -5532,24 +5536,24 @@
 
 /* Reihenfolge-Spiel */
 .sequence-list { max-width: 500px; margin: 0 auto; }
-.sequence-item { display: flex; align-items: center; gap: 15px; padding: 14px 16px; background: rgba(255,255,255,0.07); border-radius: 10px; margin-bottom: 10px; cursor: grab; transition: var(--transition); color: #e8e4d9; border: 1px solid rgba(255,255,255,0.1); }
-.sequence-item:hover { transform: translateX(5px); background: rgba(255,255,255,0.12); }
+.sequence-item { display: flex; align-items: center; gap: 15px; padding: 14px 16px; background: var(--bg-tertiary); border-radius: 10px; margin-bottom: 10px; cursor: grab; transition: var(--transition); color: var(--text-primary); border: 1px solid var(--border-color); }
+.sequence-item:hover { transform: translateX(5px); background: var(--bg-primary); }
 .sequence-number { flex-shrink: 0; width: 30px; height: 30px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-.sequence-name { color: #e8e4d9; }
+.sequence-name { color: var(--text-primary); }
 .sequence-item.correct .sequence-number { background: var(--success); }
 .sequence-item.incorrect .sequence-number { background: var(--danger); }
 
 /* Zuordnungs-Spiel */
 .matching-container { display: flex; gap: 30px; justify-content: center; margin: 0; flex-wrap: wrap; }
 .matching-column { min-width: 180px; flex: 1; max-width: 260px; }
-.matching-column h4 { margin-bottom: 12px; text-align: center; color: #a09080; }
-.matching-item { padding: 12px 14px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: var(--transition); text-align: center; color: #e8e4d9; }
-.matching-item:hover { background: rgba(255,255,255,0.14); }
+.matching-column h4 { margin-bottom: 12px; text-align: center; color: var(--text-secondary); }
+.matching-item { padding: 12px 14px; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: var(--transition); text-align: center; color: var(--text-primary); }
+.matching-item:hover { background: var(--bg-primary); }
 .matching-item.selected { background: var(--primary); color: white; border-color: var(--primary); }
 .matching-item.matched { background: var(--success); color: white; pointer-events: none; border-color: var(--success); }
 .matching-item.wrong { animation: shake 0.5s; }
 @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-.matching-results { margin-top: 10px; text-align: center; color: #a09080; }
+.matching-results { margin-top: 10px; text-align: center; color: var(--text-secondary); }
 
 /* Kognitives Spiel — Belohnungsbildschirm */
 .cognitive-reward {
@@ -5681,7 +5685,7 @@
     flex-direction: column;
     gap: 10px;
     padding: 10px;
-    background: rgba(0,0,0,0.2);
+    background: var(--bg-tertiary);
     border-radius: 8px;
     border: 1px dashed var(--border-color);
     align-items: center;
