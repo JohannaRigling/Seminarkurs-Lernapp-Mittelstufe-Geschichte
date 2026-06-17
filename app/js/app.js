@@ -1788,9 +1788,9 @@ function showLearningSessionStart() {
                         <textarea id="kannListe" style="flex: 1; resize: none;"
                             placeholder="Füge hier ein, was du können musst – z.B. aus dem Aufgabenblatt deiner Lehrkraft:&#10;• Ursachen der Französischen Revolution nennen&#10;• Verlauf der Revolution erläutern&#10;• Bedeutung für Europa beurteilen"></textarea>
                         <button class="btn btn-secondary btn-small" onclick="document.getElementById('kannListeFile').click()" style="margin-top:6px; align-self: flex-start; flex-shrink: 0;">
-                            📁 Textdatei hochladen
+                            📁 Datei / Bild hochladen
                         </button>
-                        <input type="file" id="kannListeFile" accept=".txt,.md" style="display:none" onchange="loadKannListeFile(event)">
+                        <input type="file" id="kannListeFile" accept=".txt,.md,image/*" style="display:none" onchange="loadKannListeFile(event)">
                     </div>
                 </div>
             </div>
@@ -1817,15 +1817,129 @@ function showLearningSessionStart() {
 /**
  * Liest eine Textdatei in das Kann-Liste-Feld
  */
+/**
+ * Hilfsfunktion: Ruft die Gemini Vision API auf, um Text aus einem Bild zu extrahieren
+ */
+async function callGeminiVisionAPI(base64Data, mediaType, apiKey) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            contents: [{
+                parts: [
+                    {
+                        inlineData: {
+                            mimeType: mediaType,
+                            data: base64Data
+                        }
+                    },
+                    {
+                        text: "Transkribiere den gesamten Text aus diesem Bild. Extrahiere insbesondere Aufgabenstellungen, Lernziele, eine Kann-Liste oder eine Checkliste. Antworte ausschließlich mit dem extrahierten Text (z.B. als Stichpunkte mit Bindestrich), ohne einleitende oder abschließende Kommentare."
+                    }
+                ]
+            }]
+        })
+    });
+
+    if (!response.ok) throw new Error(`Gemini API returned status ${response.status}`);
+    const data = await response.json();
+    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+        return data.candidates[0].content.parts[0].text;
+    }
+    throw new Error('Gemini invalid response structure');
+}
+
+/**
+ * Liest eine Textdatei oder ein Bild in das Kann-Liste-Feld
+ */
 function loadKannListeFile(event) {
     const file = event.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const ta = document.getElementById('kannListe');
-        if (ta) ta.value = e.target.result;
-    };
-    reader.readAsText(file, 'UTF-8');
+
+    const ta = document.getElementById('kannListe');
+    if (!ta) return;
+
+    if (file.type.startsWith('image/')) {
+        // Bild verarbeiten (OCR / KI-Transkription)
+        ta.value = `[Bild wird per KI transkribiert... Bitte kurz warten.]`;
+        ta.disabled = true;
+
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            const base64Data = e.target.result.split(',')[1];
+            const mediaType = file.type;
+
+            const apiKey = (typeof HISTOLEARN_CONFIG !== 'undefined' && HISTOLEARN_CONFIG.apiKey)
+                ? HISTOLEARN_CONFIG.apiKey
+                : localStorage.getItem('histolearn_apiKey');
+
+            if (!apiKey || (!apiKey.startsWith('sk-') && !apiKey.startsWith('AIza'))) {
+                // Offline-Modus / Kein API-Key
+                ta.value = `[Fehler: Für die Bild-Transkription ist ein API-Schlüssel (Claude oder Gemini) in den Einstellungen oder in config.js erforderlich.\n\nBitte tippe deine Kann-Liste manuell ein oder lade eine Textdatei (.txt, .md) hoch.]`;
+                ta.disabled = false;
+                showToast('Für Bildanalyse ist ein API-Schlüssel notwendig', 'warning');
+                return;
+            }
+
+            try {
+                let extractedText = '';
+
+                if (apiKey.startsWith('sk-')) {
+                    // Claude API
+                    const prompt = [
+                        {
+                            type: 'image',
+                            source: { type: 'base64', media_type: mediaType, data: base64Data }
+                        },
+                        {
+                            type: 'text',
+                            text: 'Transkribiere den gesamten Text aus diesem Bild. Extrahiere insbesondere Aufgabenstellungen, Lernziele, eine Kann-Liste oder eine Checkliste. Antworte ausschließlich mit dem extrahierten Text (z.B. als Stichpunkte mit Bindestrich), ohne einleitende oder abschließende Kommentare.'
+                        }
+                    ];
+
+                    const response = await fetch('/api/messages', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            model: 'claude-haiku-4-5-20251001',
+                            max_tokens: 1000,
+                            messages: [{ role: 'user', content: prompt }]
+                        })
+                    });
+
+                    if (!response.ok) throw new Error(`API lieferte Status ${response.status}`);
+                    const data = await response.json();
+                    extractedText = data.content?.[0]?.text || '';
+                } else if (apiKey.startsWith('AIza')) {
+                    // Gemini API
+                    extractedText = await callGeminiVisionAPI(base64Data, mediaType, apiKey);
+                }
+
+                if (extractedText.trim()) {
+                    ta.value = extractedText.trim();
+                } else {
+                    ta.value = '[Kein Text im Bild gefunden oder die Transkription war leer. Bitte gib deine Kann-Liste manuell ein.]';
+                }
+            } catch (err) {
+                console.error('Error extracting text from image:', err);
+                ta.value = `[Fehler bei der Bildanalyse: ${err.message}. Bitte gib deine Kann-Liste manuell ein oder lade eine Textdatei hoch.]`;
+                showToast('Bildanalyse fehlgeschlagen', 'error');
+            } finally {
+                ta.disabled = false;
+            }
+        };
+        reader.readAsDataURL(file);
+    } else {
+        // Normale Textdatei
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            ta.value = e.target.result;
+        };
+        reader.readAsText(file, 'UTF-8');
+    }
 }
 
 /**
