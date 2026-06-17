@@ -1853,6 +1853,120 @@ async function callGeminiVisionAPI(base64Data, mediaType, apiKey) {
 }
 
 /**
+ * Analysiert den Text der Kann-Liste und füllt Prüfungsdatum und Themen automatisch aus.
+ */
+function autoFillFromKannListe(text) {
+    if (!text) return;
+    const lowerText = text.toLowerCase();
+
+    // 1. Datum suchen
+    let foundDate = null;
+    
+    // Muster: DD.MM.YYYY (z.B. 17.06.2026)
+    const dateMatch1 = text.match(/\b(\d{1,2})\.(\d{1,2})\.(\d{4})\b/);
+    if (dateMatch1) {
+        const d = parseInt(dateMatch1[1], 10);
+        const m = parseInt(dateMatch1[2], 10) - 1; // 0-indexed
+        const y = parseInt(dateMatch1[3], 10);
+        foundDate = new Date(y, m, d);
+    }
+    
+    // Muster: YYYY-MM-DD (z.B. 2026-06-17)
+    if (!foundDate) {
+        const dateMatch2 = text.match(/\b(\d{4})-(\d{2})-(\d{2})\b/);
+        if (dateMatch2) {
+            const y = parseInt(dateMatch2[1], 10);
+            const m = parseInt(dateMatch2[2], 10) - 1;
+            const d = parseInt(dateMatch2[3], 10);
+            foundDate = new Date(y, m, d);
+        }
+    }
+
+    // Muster: DD.MM.YY (z.B. 17.06.26)
+    if (!foundDate) {
+        const dateMatch3 = text.match(/\b(\d{1,2})\.(\d{1,2})\.(\d{2})\b/);
+        if (dateMatch3) {
+            const d = parseInt(dateMatch3[1], 10);
+            const m = parseInt(dateMatch3[2], 10) - 1;
+            let y = parseInt(dateMatch3[3], 10);
+            y += (y < 50) ? 2000 : 1900; // 26 -> 2026
+            foundDate = new Date(y, m, d);
+        }
+    }
+
+    // Muster mit ausgeschriebenen Monaten: DD. Monat YYYY
+    if (!foundDate) {
+        const months = {
+            januar: 0, februar: 1, märz: 2, maerz: 2, april: 3, mai: 4, juni: 5,
+            juli: 6, august: 7, september: 8, oktober: 9, november: 10, dezember: 11
+        };
+        const dateMatch4 = text.match(/\b(\d{1,2})\.\s*(januar|februar|märz|maerz|april|mai|juni|juli|august|september|oktober|november|dezember)\s*(\d{4})\b/i);
+        if (dateMatch4) {
+            const d = parseInt(dateMatch4[1], 10);
+            const mStr = dateMatch4[2].toLowerCase();
+            const m = months[mStr];
+            const y = parseInt(dateMatch4[3], 10);
+            foundDate = new Date(y, m, d);
+        }
+    }
+
+    if (foundDate && !isNaN(foundDate.getTime())) {
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        if (foundDate >= today) {
+            const examDateInput = document.getElementById('examDate');
+            if (examDateInput) {
+                const year = foundDate.getFullYear();
+                const month = String(foundDate.getMonth() + 1).padStart(2, '0');
+                const day = String(foundDate.getDate()).padStart(2, '0');
+                examDateInput.value = `${year}-${month}-${day}`;
+                showToast(`Prüfungsdatum automatisch auf den ${day}.${month}.${year} gesetzt!`, 'success');
+            }
+        }
+    }
+
+    // 2. Themen suchen
+    const topicKeywords = {
+        'franzoesische-revolution': ['französische revolution', 'französischen revolution', 'bastille', 'robespierre', 'napoleon', 'terrors', 'klerus', 'stände', 'generalstände'],
+        'industrialisierung': ['industrialisierung', 'industrielle revolution', 'dampfmaschine', 'soziale frage', 'kinderarbeit', 'webstuhl', 'lokomotive', 'kapitalismus'],
+        'imperialismus': ['imperialismus', 'kolonien', 'kolonialismus', 'berliner konferenz', 'bismarck', 'schutzgebiete'],
+        'erster-weltkrieg': ['erster weltkrieg', '1. weltkrieg', 'weltkrieg i', 'sarajewo', 'stellungskrieg', 'versailler vertrag'],
+        'weimarer-republik': ['weimarer republik', 'weimarer verfassung', 'hyperinflation', 'goldene zwanziger', 'ruhrkampf', 'stresemann'],
+        'nationalsozialismus': ['nationalsozialismus', 'drittes reich', 'ns-zeit', 'machtergreifung', 'ns-ideologie', 'hitler', 'antisemitismus', 'gleichschaltung'],
+        'brd-ddr': ['brd', 'ddr', 'bundesrepublik', 'deutsche demokratische', 'stasi', 'mauerbau', 'kohl', 'adenauer', 'besatzungszonen'],
+        'kalter-krieg': ['kalter krieg', 'kuba-krise', 'bündnisse', 'nato', 'warschauer pakt', 'vietnamkrieg', 'berlin-blockade'],
+        'wiedervereinigung': ['wiedervereinigung', 'mauerfall', 'deutsche einheit', '2+4-vertrag', 'zwei-plus-vier', 'montagsdemonstrationen'],
+        'russland': ['russland', 'zarenreich', 'sowjetunion', 'bolschewiki', 'lenin', 'stalin', 'glasnost', 'perestroika', 'oktoberrevolution'],
+        'china': ['china', 'kaiserreich china', 'opiumkriege', 'opiumkrieg', 'mao zedong', 'kulturrevolution', 'boxeraufstand'],
+        'tuerkei': ['türkei', 'osmanisches reich', 'osmanischen reich', 'armenier', 'kemal', 'atatürk'],
+        'eu': ['eu', 'europäische union', 'europäischen union', 'montanunion', 'römische verträge', 'maastricht']
+    };
+
+    let autoSelectedTopics = [];
+    const checkboxes = document.querySelectorAll('input[name="sessionTopic"]');
+    
+    // Zuerst alle demarkieren, falls wir frisch laden
+    checkboxes.forEach(cb => cb.checked = false);
+
+    checkboxes.forEach(cb => {
+        const topicId = cb.value;
+        const keywords = topicKeywords[topicId];
+        if (keywords) {
+            const matches = keywords.some(keyword => lowerText.includes(keyword));
+            if (matches) {
+                cb.checked = true;
+                const topicName = cb.nextElementSibling?.textContent || topicId;
+                autoSelectedTopics.push(topicName);
+            }
+        }
+    });
+
+    if (autoSelectedTopics.length > 0) {
+        showToast(`Themen automatisch ausgewählt: ${autoSelectedTopics.join(', ')}`, 'success');
+    }
+}
+
+/**
  * Liest eine Textdatei oder ein Bild in das Kann-Liste-Feld
  */
 function loadKannListeFile(event) {
@@ -1919,7 +2033,9 @@ function loadKannListeFile(event) {
                 }
 
                 if (extractedText.trim()) {
-                    ta.value = extractedText.trim();
+                    const cleanText = extractedText.trim();
+                    ta.value = cleanText;
+                    autoFillFromKannListe(cleanText);
                 } else {
                     ta.value = '[Kein Text im Bild gefunden oder die Transkription war leer. Bitte gib deine Kann-Liste manuell ein.]';
                 }
@@ -1936,7 +2052,9 @@ function loadKannListeFile(event) {
         // Normale Textdatei
         const reader = new FileReader();
         reader.onload = function(e) {
-            ta.value = e.target.result;
+            const textContent = e.target.result;
+            ta.value = textContent;
+            autoFillFromKannListe(textContent);
         };
         reader.readAsText(file, 'UTF-8');
     }

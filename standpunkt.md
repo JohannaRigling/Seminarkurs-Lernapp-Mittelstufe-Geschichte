@@ -2473,18 +2473,18 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 - **Problem**: An verschiedenen Stellen (wie Avatar-Tabs, Einstellungs-Karten, Notizboxen, Generierungsbereichen und den Flashcard-Karten) gab es noch hartkodierte weiße Hintergründe (`background: white`), was im Dark Mode zu unlesbarer weiß-auf-weißer Schrift führte.
 - **Lösung**: Alle hartkodierten weißen CSS-Hintergründe wurden in `components.css` durch die Theme-Variablen `var(--bg-card)` oder `var(--bg-tertiary)` ersetzt. Das gewährleistet universelle Lesbarkeit in allen Themes.
 
-### ✅ Multimodaler Bild-Upload & KI-Transkription für die Kann-Liste
-- **Ziel**: Ermöglichen des Uploads von Bildern (z. B. Fotos von Arbeitsblättern oder Schulbuchseiten) in das Einrichtungsfenster der adaptiven Lernsession, mit automatischer Extraktion des Texts/Lernziele in das Textfeld.
+### ✅ Multimodaler Bild-Upload & KI-Transkription mit Autofill-Funktion
+- **Ziel**: Ermöglichen des Uploads von Bildern (z. B. Fotos von Arbeitsblättern oder Schulbuchseiten) in das Einrichtungsfenster der adaptiven Lernsession. Zudem soll die App automatisch das Prüfungsdatum und die Themen-Checkboxes ausfüllen, wenn diese im Text der Kann-Liste erkannt werden.
 - **Lösung**:
   - Der Dateiupload akzeptiert nun auch Bilder (`accept=".txt,.md,image/*"`).
   - Der Upload-Button wurde in `📁 Datei / Bild hochladen` umbenannt.
-  - Wenn ein Bild hochgeladen wird, liest die App die Datei als Base64-Daten und sendet sie an die Claude API (oder die Gemini Vision API, falls ein Gemini-Key aktiv ist).
-  - Die KI transkribiert den Text aus dem Bild und extrahiert die relevanten Lernziele/Checklisten-Punkte direkt in das `Kann-Liste`-Textfeld.
+  - Wenn ein Bild hochgeladen wird, liest die App die Datei als Base64-Daten und sendet sie an die Claude API (oder die Gemini Vision API, falls ein Gemini-Key aktiv ist). Die KI transkribiert den Text direkt in das `Kann-Liste`-Textfeld.
+  - **Autofill-Algorithmus**: Eine neu hinzugefügte Funktion `autoFillFromKannListe(text)` sucht im hochgeladenen Text nach gängigen Datumsformaten (z. B. `17.06.2026`, `2026-06-17`, `17. Juni 2026`) und setzt automatisch das Prüfungsdatum. Außerdem gleicht sie den Text mit Schlagwortkatalogen für die 13 Geschichtsthemen ab und setzt die entsprechenden Haken in der Themen-Checkliste selbstständig.
 
 ### 🗂️ Geänderte Dateien in dieser Session
 - `app/index.html` – Shuffling-Integration in Quizze und Zuordnungsspiele, Feynman-Rollenwechsel UI.
 - `app/css/components.css` – Layout-Kompaktierung für Übungsmodals, Premium-Feedback UI-Elemente, Kontrastkorrekturen im Dark Mode.
-- `app/js/app.js` – Steuerung des Feynman-Startprompts, Shuffling-Hilfsfunktionen, multimodale Bildtranskription für die Kann-Liste.
+- `app/js/app.js` – Steuerung des Feynman-Startprompts, Shuffling-Hilfsfunktionen, multimodale Bildtranskription & automatisches Befüllen von Datum und Themen aus der Kann-Liste.
 - `app/js/auth.js` – Automatische Initialisierung des Showcase-Accounts.
 - `app/js/chat.js` – Abfangmechanismus für Feynman-Rollenwechsel und kindliche Antworten, Erweiterung des API-Prompts.
 - `app/js/data.js` – Vollständige Operatoren-Quizfragen-Sätze, Shuffling-kompatible Quizstrukturen.
