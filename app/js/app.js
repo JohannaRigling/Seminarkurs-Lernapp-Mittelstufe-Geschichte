@@ -83,7 +83,7 @@ function toggleModalFullscreen(modalId) {
 const BREAK_BLOCKED_SECTIONS = ['chat', 'exercises', 'library-materials', 'library-glossary', 'adaptive-session'];
 const STUDY_BLOCKED_SECTIONS = ['castle'];
 // Auf diesen Seiten ist kein Scrollen nötig UND auch nicht möglich
-const NO_SCROLL_SECTIONS = ['castle', 'adaptive-session', 'dashboard'];
+const NO_SCROLL_SECTIONS = ['castle', 'adaptive-session', 'dashboard', 'timeline'];
 
 function showSection(sectionId) {
     // No-Scroll-Modus: bestimmte Sections fixen die Höhe auf 100vh ohne Body-Scroll
@@ -387,6 +387,33 @@ function _syncPomodoroMini() {
     const src = document.getElementById('timerDisplay');
     const dst = document.getElementById('chatPomodoroTime');
     if (src && dst) dst.textContent = src.textContent;
+
+    // Popover synchronization
+    const popover = document.getElementById('chatPomodoroPopover');
+    if (popover && popover.classList.contains('active')) {
+        // Sync status text
+        const mainStatus = document.getElementById('timerStatus');
+        const popoverStatus = document.getElementById('chatPopoverStatus');
+        if (mainStatus && popoverStatus) popoverStatus.textContent = mainStatus.textContent;
+
+        // Sync progress bar width
+        const mainProgress = document.getElementById('timerProgressBar');
+        const popoverProgress = document.getElementById('chatPopoverProgressBar');
+        if (mainProgress && popoverProgress) popoverProgress.style.width = mainProgress.style.width;
+
+        // Sync buttons visibility
+        const mainStart = document.getElementById('timerStartBtn');
+        const popoverStart = document.getElementById('chatPopoverStartBtn');
+        if (mainStart && popoverStart) popoverStart.style.display = mainStart.style.display;
+
+        const mainPause = document.getElementById('timerPauseBtn');
+        const popoverPause = document.getElementById('chatPopoverPauseBtn');
+        if (mainPause && popoverPause) popoverPause.style.display = mainPause.style.display;
+
+        const mainSkip = document.getElementById('skipBreakBtn');
+        const popoverSkip = document.getElementById('chatPopoverSkipBtn');
+        if (mainSkip && popoverSkip) popoverSkip.style.display = mainSkip.style.display;
+    }
 }
 
 function toggleChatFullscreen() {
@@ -408,6 +435,9 @@ function toggleChatFullscreen() {
     } else {
         clearInterval(_pomodoroSyncInterval);
         _pomodoroSyncInterval = null;
+        // Close popover when exiting fullscreen
+        const popover = document.getElementById('chatPomodoroPopover');
+        if (popover) popover.classList.remove('active');
     }
 
     // Escape-Taste zum Beenden
@@ -417,6 +447,26 @@ function toggleChatFullscreen() {
         document.removeEventListener('keydown', _chatEscHandler);
     }
 }
+
+function toggleChatPomodoroPopover(event) {
+    if (event) event.stopPropagation();
+    const popover = document.getElementById('chatPomodoroPopover');
+    if (popover) {
+        popover.classList.toggle('active');
+        if (popover.classList.contains('active')) {
+            _syncPomodoroMini();
+        }
+    }
+}
+
+// Click outside handler to close the popover
+document.addEventListener('click', function(event) {
+    const popover = document.getElementById('chatPomodoroPopover');
+    const container = document.querySelector('.chat-pomodoro-mini-container');
+    if (popover && popover.classList.contains('active') && container && !container.contains(event.target)) {
+        popover.classList.remove('active');
+    }
+});
 
 function _chatEscHandler(e) {
     if (e.key === 'Escape') {

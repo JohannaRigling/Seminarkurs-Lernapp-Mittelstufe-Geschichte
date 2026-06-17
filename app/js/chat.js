@@ -2,6 +2,7 @@
 
 let chatHistory = [];
 let currentAIMode = 'tutor';
+window.chatFeynmanMode = false;
 
 // Sicherheitshinweis der an alle System-Prompts angehängt wird
 const SAFETY_ADDENDUM = `
@@ -235,19 +236,39 @@ async function getAIResponse(message, extraSystemInstruction = '', attachment = 
         return;
     }
 
+    // Intercept initial Feynman prompt in both API and simulated mode to guarantee the expected response.
+    if (window.chatFeynmanMode && (message.includes('Feynman-Methode') || message.includes('Feynman-Technik') || (message.includes('Feynman') && message.includes('12')))) {
+        showTypingIndicator();
+        setTimeout(() => {
+            hideTypingIndicator();
+            addChatMessage('Schieß los! Welches Thema möchtest du mir erklären? Ich bin ganz Ohr und versuche es zu verstehen! 😊', 'ai');
+            addXP(2);
+        }, 600);
+        return;
+    }
+
     showTypingIndicator();
 
     const apiKey = (typeof HISTOLEARN_CONFIG !== 'undefined' && HISTOLEARN_CONFIG.apiKey)
         ? HISTOLEARN_CONFIG.apiKey
         : localStorage.getItem('histolearn_apiKey');
 
+    // Feynman mode system instruction injection
+    let systemInstruction = extraSystemInstruction;
+    if (window.chatFeynmanMode) {
+        const feynmanPrompt = 'Du bist ab jetzt ein 12-jähriges Kind namens Fynn (oder Fionn), das noch nicht viel über Geschichte weiß. Der Schüler wendet die Feynman-Methode an und erklärt dir ein geschichtliches Thema. Antworte immer als 12-jähriges Kind, stelle einfache, naive und neugierige Fragen und weise den Schüler darauf hin, wenn er unverständliche Fachbegriffe verwendet, die ein 12-Jähriger nicht verstehen würde. Verhalte dich genau wie ein neugieriges 12-jähriges Kind.';
+        systemInstruction = systemInstruction 
+            ? `${systemInstruction}\n\n${feynmanPrompt}`
+            : feynmanPrompt;
+    }
+
     try {
         let response;
 
         if (apiKey && apiKey.startsWith('sk-')) {
-            response = await callClaudeAPI(message, apiKey, extraSystemInstruction, attachment);
+            response = await callClaudeAPI(message, apiKey, systemInstruction, attachment);
         } else if (apiKey && apiKey.startsWith('AIza')) {
-            response = await callGeminiAPI(message, apiKey);
+            response = await callGeminiAPI(message, apiKey, systemInstruction);
         } else {
             response = await getSimulatedResponse(message);
         }
@@ -317,9 +338,12 @@ async function callClaudeAPI(message, apiKey, extraSystemInstruction = '', attac
 }
 
 // Google Gemini API aufrufen
-async function callGeminiAPI(message, apiKey) {
+async function callGeminiAPI(message, apiKey, extraSystemInstruction = '') {
     const mode = AI_MODES[currentAIMode];
-    const fullPrompt = `${mode.systemPrompt}\n\nFrage: ${message}`;
+    const systemPrompt = extraSystemInstruction
+        ? `${mode.systemPrompt}\n\n${extraSystemInstruction}`
+        : mode.systemPrompt;
+    const fullPrompt = `${systemPrompt}\n\nFrage: ${message}`;
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
         method: 'POST',
@@ -359,6 +383,40 @@ async function getSimulatedResponse(message) {
     if (currentUser) {
         currentUser.progress.chatQuestions = (currentUser.progress.chatQuestions || 0) + 1;
         updateUserProgress({ chatQuestions: currentUser.progress.chatQuestions });
+    }
+
+    // Feynman-Methode (wenn aktiv, antworte als neugieriges Kind)
+    if (window.chatFeynmanMode) {
+        if (lowerMessage.includes('revolution') || lowerMessage.includes('rebell')) {
+            return 'Eine Revolution? Das klingt spannend, aber auch irgendwie gefährlich. Warum haben die Menschen denn damals rebelliert? Wollten die den König oder Herrscher nicht mehr haben?';
+        }
+        if (lowerMessage.includes('krieg') || lowerMessage.includes('kampf') || lowerMessage.includes('kämpfen') || lowerMessage.includes('soldat')) {
+            return 'Krieg finde ich voll gruselig. Warum haben die Länder denn damals nicht einfach miteinander geredet, anstatt Soldaten loszuschicken und sich zu bekämpfen?';
+        }
+        if (lowerMessage.includes('mauer') || lowerMessage.includes('ddr') || lowerMessage.includes('teilung') || lowerMessage.includes('brd')) {
+            return 'Warum wurde denn eine echte Mauer mitten durch eine Stadt wie Berlin gebaut? Durften die Leute gar nicht auf die andere Seite rübergehen, um ihre Familie zu besuchen?';
+        }
+        if (lowerMessage.includes('hitler') || lowerMessage.includes('nationalsozialismus') || lowerMessage.includes('nazi') || lowerMessage.includes('holocaust')) {
+            return 'Das klingt alles so traurig und gemein. Warum haben die Menschen damals eigentlich auf diese schlimmen Ideen gehört? Und warum hat niemand versucht, das zu stoppen?';
+        }
+        if (lowerMessage.includes('dampfmaschine') || lowerMessage.includes('fabrik') || lowerMessage.includes('industrialisierung') || lowerMessage.includes('maschine')) {
+            return 'Maschinen statt Handarbeit? War das nicht voll laut und dreckig in den alten Fabriken? Und stimmt es, dass damals auch Kinder in meinem Alter dort arbeiten mussten?';
+        }
+        if (lowerMessage.includes('kaiser') || lowerMessage.includes('könig') || lowerMessage.includes('fürst') || lowerMessage.includes('sultan')) {
+            return 'Könige und Herrscher haben einfach alles bestimmt? Durften die normalen Menschen denn gar nichts mitentscheiden, so wie wir heute bei Wahlen?';
+        }
+        if (lowerMessage.includes('europa') || lowerMessage.includes('eu ') || lowerMessage.includes('europäische union')) {
+            return 'Die Europäische Union kenne ich! Da kann man einfach so über die Grenzen reisen, oder? Wie haben die Länder es geschafft, sich nach den ganzen Kriegen zu vertragen?';
+        }
+
+        const childResponses = [
+            'Das klingt echt spannend! Aber kannst du mir das noch mal ganz einfach erklären? Ich verstehe manche von den schweren Wörtern noch nicht so richtig. 😊',
+            'Ah, verstehe! Aber warum war das für die Menschen damals eigentlich so wichtig? Was hat sich dadurch für sie geändert?',
+            'Puh, das ist ganz schön kompliziert. Gibt es dafür vielleicht ein einfaches Beispiel aus dem Alltag, damit ich mir das besser vorstellen kann?',
+            'Oh, das wusste ich gar nicht! Wer war denn die wichtigste Person bei diesem Thema und was genau hat sie gemacht?',
+            'Das ist echt interessant! Und was hat dieses Ereignis mit unserem Leben heute zu tun? Merken wir davon heute noch irgendwas?'
+        ];
+        return childResponses[Math.floor(Math.random() * childResponses.length)];
     }
 
     // Eselsbrücke-Anfragen
@@ -1061,6 +1119,8 @@ function loadChat(chatId) {
     const chat = currentUser.savedChats.find(c => c.id === chatId);
     if (!chat) return;
 
+    window.chatFeynmanMode = false;
+
     // Chat-Container leeren
     const container = document.getElementById('chatMessages');
     container.innerHTML = '';
@@ -1080,6 +1140,7 @@ function loadChat(chatId) {
 // Neuen Chat starten
 function startNewChat() {
     chatHistory = [];
+    window.chatFeynmanMode = false;
 
     const container = document.getElementById('chatMessages');
     container.innerHTML = `

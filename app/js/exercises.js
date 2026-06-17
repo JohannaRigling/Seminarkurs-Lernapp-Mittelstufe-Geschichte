@@ -5,6 +5,19 @@ let currentQuizQuestion = 0;
 let quizScore = 0;
 let quizAnswered = false;
 
+// Helper: shuffle options locally or using global function
+function localShuffleArray(array) {
+    if (typeof shuffleArray === 'function') {
+        return shuffleArray(array);
+    }
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
 // Quiz starten
 function startQuiz(topicId) {
     const topic = QUIZ_TOPICS.find(t => t.id === topicId);
@@ -13,7 +26,23 @@ function startQuiz(topicId) {
         return;
     }
 
-    currentQuiz = topic;
+    // Deep copy and shuffle question options
+    currentQuiz = {
+        ...topic,
+        questions: topic.questions.map(q => {
+            const optionsWithCorrectness = q.options.map((opt, index) => ({
+                text: opt,
+                isCorrect: index === q.correct
+            }));
+            const shuffled = localShuffleArray(optionsWithCorrectness);
+            return {
+                ...q,
+                options: shuffled.map(o => o.text),
+                correct: shuffled.findIndex(o => o.isCorrect)
+            };
+        })
+    };
+
     currentQuizQuestion = 0;
     quizScore = 0;
 

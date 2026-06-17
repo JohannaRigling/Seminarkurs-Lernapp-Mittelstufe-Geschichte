@@ -420,8 +420,22 @@
                         <div class="chat-header">
                             <h2>💬 KI-Geschichtstutor</h2>
                             <div class="chat-header-right">
-                                <div class="chat-pomodoro-mini" id="chatPomodoroMini">
-                                    ⏱️ <span id="chatPomodoroTime">--:--</span>
+                                <div class="chat-pomodoro-mini-container">
+                                    <div class="chat-pomodoro-mini" id="chatPomodoroMini" onclick="toggleChatPomodoroPopover(event)" title="Pomodoro-Timer Steuerung">
+                                        ⏱️ <span id="chatPomodoroTime">--:--</span>
+                                    </div>
+                                    <div class="chat-pomodoro-popover" id="chatPomodoroPopover">
+                                        <div class="popover-status" id="chatPopoverStatus">⏸️ Timer pausiert</div>
+                                        <div class="popover-progress">
+                                            <div class="popover-progress-bar" id="chatPopoverProgressBar"></div>
+                                        </div>
+                                        <div class="popover-controls">
+                                            <button class="popover-btn" id="chatPopoverStartBtn" onclick="startTimer(); _syncPomodoroMini();">▶️ Start</button>
+                                            <button class="popover-btn" id="chatPopoverPauseBtn" onclick="pauseTimer(); _syncPomodoroMini();" style="display:none;">⏸️ Pause</button>
+                                            <button class="popover-btn" id="chatPopoverResetBtn" onclick="resetTimer(); _syncPomodoroMini();">🔄 Reset</button>
+                                            <button class="popover-btn" id="chatPopoverSkipBtn" onclick="skipBreak(); _syncPomodoroMini();" style="display:none;">⏭️ Überspringen</button>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="chat-timer">
                                     <span>Chat-Zeit: </span>
@@ -585,18 +599,25 @@
                 <div class="timeline-controls">
                     <div class="timeline-zoom">
                         <button onclick="zoomTimeline('out')">➖</button>
-                        <span id="zoomLevel">100%</span>
+                        <span id="zoomLevel">Übersicht</span>
                         <button onclick="zoomTimeline('in')">➕</button>
                     </div>
-                    <div class="timeline-filter">
-                        <select id="timelineEra" onchange="filterTimeline()">
-                            <option value="all">Alle Epochen</option>
-                            <option value="antike">Antike</option>
-                            <option value="mittelalter">Mittelalter</option>
-                            <option value="fruehe-neuzeit">Frühe Neuzeit</option>
-                            <option value="19jh">19. Jahrhundert</option>
-                            <option value="20jh">20. Jahrhundert</option>
-                        </select>
+                    <div class="timeline-search">
+                        <input type="text" id="timelineSearchInput" placeholder="Zeitstrahl durchsuchen..." oninput="handleTimelineSearch()" onkeydown="handleTimelineSearchKey(event)" />
+                        <button id="clearTimelineSearch" onclick="clearTimelineSearch()">×</button>
+                    </div>
+                    <div class="timeline-grade-filter">
+                        <button id="filter-grade-all" class="grade-filter-btn active" onclick="filterByGrade('all')">Alle</button>
+                        <button id="filter-grade-8" class="grade-filter-btn" onclick="filterByGrade(8)">Klasse 8</button>
+                        <button id="filter-grade-9" class="grade-filter-btn" onclick="filterByGrade(9)">Klasse 9</button>
+                        <button id="filter-grade-10" class="grade-filter-btn" onclick="filterByGrade(10)">Klasse 10</button>
+                    </div>
+                </div>
+
+                <!-- Dedicated Era Header Bar -->
+                <div class="timeline-eras-container" id="timelineErasContainer">
+                    <div class="timeline-eras-track" id="timelineErasTrack">
+                        <!-- Era markers filled by JavaScript -->
                     </div>
                 </div>
 
@@ -606,12 +627,8 @@
                     </div>
                 </div>
 
-                <div class="timeline-detail-panel" id="timelineDetail">
-                    <h3 id="eventTitle">Wähle ein Ereignis</h3>
-                    <p id="eventDate"></p>
-                    <p id="eventDescription"></p>
-                    <button class="btn btn-secondary" onclick="learnMoreEvent()">Mehr erfahren</button>
-                </div>
+                <div id="eventCardBackdrop" class="event-card-backdrop" style="display: none;" onclick="closeEventCard()"></div>
+                <div id="eventCard" class="event-card"></div>
             </section>
 
             <!-- Exercises Section -->

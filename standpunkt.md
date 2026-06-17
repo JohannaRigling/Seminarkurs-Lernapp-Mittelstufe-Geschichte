@@ -2422,5 +2422,71 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 - `app/js/app.js` – Synchronisation des Einstellungs-Dropdowns bei Profil-Ladevorgang.
 - `standpunkt.md` – Diese Dokumentation.
 
+---
+
+## 🎯 Session vom 17.06.2026 – Endprodukt-Finishing, Bugfixes & Vorzeige-Account (Aktuell)
+
+### ✅ Operator-Quiz: Behebung fehlender Fragen
+- **Problem**: Bei den Übungsaufgaben der Operatoren im Quiz-Bereich fehlten teilweise die ausformulierten Fragen, wodurch diese nicht gelöst werden konnten.
+- **Lösung**: Alle Operatoren-Quizzes wurden überprüft und die Fragen-Generierung so korrigiert, dass zu jedem Operator eine passende Fragestellung mit vordefinierten Antworten bereitsteht.
+
+### ✅ Shuffling: Zufällige Antwortreihenfolge bei allen Quizzes & Übungen
+- **Ziel**: Bei jedem Durchlauf eines Quizes oder einer kognitiven Übung sollen die Antwortmöglichkeiten in einer zufälligen Reihenfolge präsentiert werden, um Lerneffekte durch bloßes Auswendiglernen von Positionen zu verhindern.
+- **Lösung**: Die Antwortoptionen (bspw. Multiple-Choice-Optionen in Quizzes und Zuordnungen in Loci-/Memory-Spielen) werden nun vor dem Rendern im Speicher dynamisch geshuffelt.
+
+### ✅ Feynman-Methode: Rollenwechsel-Modus & KI-Tutor als Kind
+- **Ziel**: Wenn der Schüler die Feynman-Methode anwendet, soll der KI-Tutor die Rolle eines 12-jährigen Kindes einnehmen. Der Schüler erklärt dem Tutor das historische Thema, und die KI reagiert darauf wie ein neugieriges Kind, statt dem Schüler das Thema selbst zu erklären.
+- **Lösung**:
+  - Beim Starten der Feynman-Methode wird der Eingabebereich im Chat mit einem Rollenspiel-Prompt für die KI vorbefüllt (z. B. *"Tu so, als wärst du 12 Jahre alt. Ich werde dir gleich ein geschichtliches Thema erklären. Antworte nur mit 'Schieß los!' oder ähnlichen altersgerechten Sätzen, und lass dir das Thema von mir erklären."*).
+  - Die erste Nachricht wird abgefangen und liefert eine kindgerechte, motivierende Antwort (*„Schieß los!“*).
+  - Der System-Prompt der KI (Claude und Gemini API) wurde für die Feynman-Methode angepasst, sodass die KI konsequent in der Rolle des Kindes bleibt und das Thema altersgerecht hinterfragt.
+  - Das lokale Auswertungssystem (`simulatedEvaluate()`) wurde angepasst, um kindliche Rückfragen und Feedback zu simulieren.
+
+### ✅ Layout- & Scroll-Bug in Übungen behoben
+- **Problem**: Bei langen Aufgabenstellungen oder Rückmeldungen kam es im Übungs-Modal zu Layout-Verzerrungen und abgeschnittenem Inhalt, da manche Container zusammengestaucht wurden oder keine Scrollbalken hatten.
+- **Lösung**:
+  - Die Header- und Fortschrittskomponenten (`.fc-question`, `.fc-progress`) erhielten `flex-shrink: 0`, damit sie ihre korrekte Höhe beibehalten.
+  - Die Übungskarte (`#exerciseModal .fc-card`) wurde mit `overflow-y: auto` versehen, sodass man lange Fragen scrollen kann.
+  - Der Antwortbereich (`#exerciseModal .fc-answer-section`) wurde per `flex-shrink: 0` fixiert, um eine konsistente Größe für das Eingabefeld zu garantieren.
+
+### ✅ Premium KI-Auswertung & UI-Politur
+- **Ziel**: Hochwertige Visualisierung der KI-Feedback-Details (Musterlösung, eingegebene Antwort, prozentuale Übereinstimmung) nach Klick auf die KI-Auswertung.
+- **Lösung**:
+  - **Farbige Score-Badges**: Ein farbkodiertes Auswertungs-Badge (Grün für hohe Punktzahl, Gold für mittel, Rot für niedrig) mit passenden Status-Icons wurde integriert.
+  - **Kontrast-Politur**: Die Textfarbe der Rückmeldung (`.feedback-text`) wurde von dem kontrastarmen Grau (`#d0c8b8`) auf die Standard-Theme-Variable `var(--text-primary)` angehoben.
+  - **Musterlösung**: Die Musterlösung wird nun in einer edlen, gestrichelten Premium-Card (`.fc-sample`) präsentiert.
+  - **Eingabefeld-Kontrast**: Das deaktivierte Textfeld nach Absenden der Antwort (`.fc-textarea:disabled`) wurde mit einer Deckkraft von `0.95`, einem passenden Hintergrund (`var(--bg-tertiary)`) und Standardcursor lesbar formatiert.
+
+### ✅ Tolerante & Generöse KI-Bewertung (Synonyme)
+- **Problem**: Die lokale simulierte KI-Auswertung war zu streng und erkannte alternative Begrifflichkeiten (z. B. „Geistliche, Adel und Bauern“ vs. „Adel, Klerus und Bauern“) nicht als korrekt an.
+- **Lösung**:
+  - Der System-Prompt für die echten APIs wurde instruiert, Synonyme und inhaltlich richtige Umschreibungen tolerant und wohlwollend zu bewerten.
+  - Das lokale Simulationssystem `simulatedEvaluate()` wurde grundlegend erweitert. Es nutzt nun semantische Wort-Cluster (Synonym-Gruppen), Wortlängen-Abgleiche und eine Mindest-Erfolgsquote, sodass alternative korrekte Antworten fair beurteilt werden.
+
+### ✅ Vorzeige-Account (Showcase-Account)
+- **Ziel**: Bereitstellung eines Demokontos für Präsentationen, bei dem bereits alle Spielfunktionen, Burg-Erweiterungen, Ränge und Erfolge freigeschaltet sind.
+- **Lösung**:
+  - In der Benutzerdatenbank wird nun automatisch ein Account mit den Anmeldedaten **Benutzername: `Showcase`** und **Passwort: `showcase`** angelegt.
+  - Dieser Account startet mit maximalen Statistiken: Level 10, Legenden-Rang, 9999 Kuh-Münzen, allen freigeschalteten Auszeichnungen, einer fast vollständig gekauften Burg-Inventar-Ausrüstung und standardmäßig aktiviertem Dark-Mode.
+
+### ✅ Dark Mode Farbbereinigung
+- **Problem**: An verschiedenen Stellen (wie Avatar-Tabs, Einstellungs-Karten, Notizboxen, Generierungsbereichen und den Flashcard-Karten) gab es noch hartkodierte weiße Hintergründe (`background: white`), was im Dark Mode zu unlesbarer weiß-auf-weißer Schrift führte.
+- **Lösung**: Alle hartkodierten weißen CSS-Hintergründe wurden in `components.css` durch die Theme-Variablen `var(--bg-card)` oder `var(--bg-tertiary)` ersetzt. Das gewährleistet universelle Lesbarkeit in allen Themes.
+
+### 🗂️ Geänderte Dateien in dieser Session
+- `app/index.html` – Shuffling-Integration in Quizze und Zuordnungsspiele, Feynman-Rollenwechsel UI.
+- `app/css/components.css` – Layout-Kompaktierung für Übungsmodals, Premium-Feedback UI-Elemente, Kontrastkorrekturen im Dark Mode.
+- `app/js/app.js` – Steuerung des Feynman-Startprompts, Shuffling-Hilfsfunktionen.
+- `app/js/auth.js` – Automatische Initialisierung des Showcase-Accounts.
+- `app/js/chat.js` – Abfangmechanismus für Feynman-Rollenwechsel und kindliche Antworten, Erweiterung des API-Prompts.
+- `app/js/data.js` – Vollständige Operatoren-Quizfragen-Sätze, Shuffling-kompatible Quizstrukturen.
+- `app/js/exercises.js` – Übungs-Layoutanpassungen, generöse Synonym-Auswertungslogik, Textarea-Verhalten.
+- `app/js/integration.js` – Anpassung des Topic-Exercise und Feedback-Renderers.
+- `app/js/operators.js` – Operatoren-Fragenbehebung.
+- `app/js/strategies.js` – Strategie-spezifische Routing-Anpassungen für die Feynman-Methode.
+- `app/js/timeline.js` – Shuffling-Support für zeitstrahlbasierte Memory-Karten.
+- `standpunkt.md` – Diese Dokumentation (Aktualisiert).
+
+
 
 

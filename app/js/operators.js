@@ -212,46 +212,58 @@ Antworte NUR mit gültigem JSON (kein Markdown), exakt dieses Format:
 function _renderOperatorExerciseContent(exercise, topicName) {
     const content = document.getElementById('exerciseModalContent');
     content.innerHTML = `
-        <h2>📝 Übung: ${selectedOperator.name}</h2>
-        <div style="display:flex; gap:8px; align-items:center; margin-bottom:20px; flex-wrap:wrap;">
-            <div class="afb-badge afb${selectedOperator.afb}">AFB ${selectedOperator.afb}</div>
-            <span style="font-size:0.85em; color:var(--text-secondary);">📖 ${topicName}</span>
-        </div>
+        <div class="operator-exercise-container">
+            <div class="operator-exercise-header">
+                <h2>📝 Übung: ${selectedOperator.name}</h2>
+                <div class="operator-exercise-badges">
+                    <div class="afb-badge afb${selectedOperator.afb}">AFB ${selectedOperator.afb}</div>
+                    <span class="operator-exercise-topic">📖 ${topicName}</span>
+                </div>
+            </div>
 
-        <div class="exercise-task">
-            <h4>Aufgabe:</h4>
-            <p>${exercise.task}</p>
-        </div>
+            <div class="operator-exercise-body">
+                <div class="operator-left-column">
+                    <div class="exercise-task">
+                        <h4>Aufgabe:</h4>
+                        <p>${exercise.task}</p>
+                    </div>
 
-        <div class="exercise-material" style="background: var(--bg-tertiary); padding: 20px; border-radius: 10px; margin: 20px 0;">
-            <h4>📄 Material:</h4>
-            <p style="font-style: italic; line-height: 1.8;">${exercise.material}</p>
-            <p style="font-size: 0.9em; color: var(--text-secondary); margin-top: 10px;">Quelle: ${exercise.source}</p>
-        </div>
+                    <div class="exercise-material">
+                        <h4>📄 Material:</h4>
+                        <div class="material-scroll-area">
+                            <p class="material-text">${exercise.material}</p>
+                        </div>
+                        <div class="material-source">Quelle: ${exercise.source}</div>
+                    </div>
+                </div>
 
-        <div class="exercise-input">
-            <h4>Deine Antwort:</h4>
-            <textarea id="exerciseAnswer" rows="10" style="width: 100%; padding: 15px; border: 2px solid var(--border-color); border-radius: 10px; font-size: 1em; resize: vertical;" placeholder="Schreibe hier deine Antwort…"></textarea>
-        </div>
+                <div class="operator-right-column">
+                    <div class="exercise-input">
+                        <h4>Deine Antwort:</h4>
+                        <textarea id="exerciseAnswer" placeholder="Schreibe hier deine Antwort…"></textarea>
+                    </div>
 
-        <div class="exercise-help" style="margin-top: 20px;">
-            <button class="btn btn-secondary" onclick="showOperatorHelp()">💡 Tipps anzeigen</button>
-            <button class="btn btn-secondary" onclick="showSampleAnswer()">📋 Musterantwort</button>
-        </div>
+                    <div class="exercise-help">
+                        <button class="btn btn-secondary btn-sm" onclick="showOperatorHelp()">💡 Tipps anzeigen</button>
+                        <button class="btn btn-secondary btn-sm" onclick="showSampleAnswer()">📋 Musterantwort</button>
+                    </div>
 
-        <div id="exerciseHelp" style="display: none; margin-top: 15px; padding: 15px; background: #e3f2fd; border-radius: 10px;">
-            <h4>💡 Tipps für "${selectedOperator.name}":</h4>
-            <ul>${selectedOperator.tips.map(tip => `<li>${tip}</li>`).join('')}</ul>
-        </div>
+                    <div id="exerciseHelp" class="help-box info-box" style="display: none;">
+                        <h4>💡 Tipps für "${selectedOperator.name}":</h4>
+                        <ul>${selectedOperator.tips.map(tip => `<li>${tip}</li>`).join('')}</ul>
+                    </div>
 
-        <div id="sampleAnswer" style="display: none; margin-top: 15px; padding: 15px; background: #e8f5e9; border-radius: 10px;">
-            <h4>📋 Musterantwort:</h4>
-            <p>${exercise.sampleAnswer}</p>
-        </div>
+                    <div id="sampleAnswer" class="help-box success-box" style="display: none;">
+                        <h4>📋 Musterantwort:</h4>
+                        <p>${exercise.sampleAnswer}</p>
+                    </div>
 
-        <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center;">
-            <button class="btn btn-primary" onclick="submitExercise()">✓ Abschicken & Bewerten</button>
-            <button class="btn btn-secondary" onclick="closeExerciseModal()">Abbrechen</button>
+                    <div class="exercise-actions">
+                        <button class="btn btn-primary" onclick="submitExercise()">✓ Abschicken & Bewerten</button>
+                        <button class="btn btn-secondary" onclick="closeExerciseModal()">Abbrechen</button>
+                    </div>
+                </div>
+            </div>
         </div>
     `;
 }
@@ -697,82 +709,136 @@ function getFeedback(score, operator) {
     }
 }
 
-// Quiz zum Operator
+// State variables for Operator Quiz
+let currentOperatorQuiz = null;
+let currentOperatorQuizQuestion = 0;
+let operatorQuizScore = 0;
+let operatorQuizAnswered = false;
+
+// Helper: Escape HTML
+function escapeHTML(str) {
+    if (!str) return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+// Helper: shuffle options locally or using global function
+function localShuffleArray(array) {
+    if (typeof shuffleArray === 'function') {
+        return shuffleArray(array);
+    }
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+}
+
+// Quiz zum Operator starten
 function showOperatorQuiz() {
     if (!selectedOperator) {
         showToast('Bitte wähle zuerst einen Operator aus.', 'warning');
         return;
     }
 
+    const baseQuiz = generateOperatorQuiz(selectedOperator);
+    currentOperatorQuiz = baseQuiz.map(q => {
+        const optionsWithCorrectness = q.options.map((opt, index) => ({
+            text: opt,
+            isCorrect: index === q.correct
+        }));
+        const shuffled = localShuffleArray(optionsWithCorrectness);
+        return {
+            ...q,
+            options: shuffled.map(o => o.text),
+            correct: shuffled.findIndex(o => o.isCorrect)
+        };
+    });
+    currentOperatorQuizQuestion = 0;
+    operatorQuizScore = 0;
+
+    showOperatorQuizQuestion();
+}
+
+// Zeigt die aktuelle Frage des Operator-Quizzes an
+function showOperatorQuizQuestion() {
+    if (!currentOperatorQuiz) return;
+
     const modal = document.getElementById('exerciseModal');
     const content = document.getElementById('exerciseModalContent');
-
-    const quiz = generateOperatorQuiz(selectedOperator);
-
-    content.innerHTML = `
-        <h2>❓ Quiz: ${selectedOperator.name}</h2>
-
-        <div class="quiz-container" id="operatorQuizContainer">
-            <div class="quiz-progress">
-                <span>Frage <span id="quizCurrentQ">1</span> von ${quiz.length}</span>
-                <div class="quiz-progress-bar">
-                    <div class="quiz-progress-fill" id="quizProgressFill" style="width: ${100/quiz.length}%"></div>
-                </div>
-            </div>
-
-            <div id="quizQuestionArea"></div>
-        </div>
-    `;
+    if (!modal || !content) return;
 
     modal.classList.add('active');
 
-    // Quiz starten
-    let currentQ = 0;
-    let correctAnswers = 0;
-
-    function showQuestion() {
-        const q = quiz[currentQ];
-        const area = document.getElementById('quizQuestionArea');
-
-        area.innerHTML = `
-            <div class="quiz-question">${q.question}</div>
-            <div class="quiz-options">
-                ${q.options.map((opt, i) => `
-                    <div class="quiz-option" onclick="checkQuizAnswer(${i}, ${q.correct})">${opt}</div>
-                `).join('')}
-            </div>
-        `;
+    const quiz = currentOperatorQuiz;
+    if (currentOperatorQuizQuestion >= quiz.length) {
+        showOperatorQuizResult();
+        return;
     }
 
-    window.checkQuizAnswer = function(selected, correct) {
-        const options = document.querySelectorAll('.quiz-option');
-        options.forEach((opt, i) => {
-            opt.classList.add('disabled');
-            if (i === correct) opt.classList.add('correct');
-            if (i === selected && selected !== correct) opt.classList.add('incorrect');
-        });
+    const q = quiz[currentOperatorQuizQuestion];
+    operatorQuizAnswered = false;
 
-        if (selected === correct) {
-            correctAnswers++;
-            if (currentUser) {
-                currentUser.progress.quizCorrect++;
-            }
+    content.innerHTML = `
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <h3>❓ Quiz: ${selectedOperator.name}</h3>
+                <div class="quiz-progress">
+                    <span>Frage ${currentOperatorQuizQuestion + 1} von ${quiz.length}</span>
+                    <div class="quiz-progress-bar">
+                        <div class="quiz-progress-fill" style="width: ${((currentOperatorQuizQuestion + 1) / quiz.length) * 100}%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quiz-question">${escapeHTML(q.question)}</div>
+
+            <div class="quiz-options">
+                ${q.options.map((opt, i) => `
+                    <div class="quiz-option" data-index="${i}" onclick="selectOperatorQuizAnswer(${i})">
+                        <span class="option-letter">${String.fromCharCode(65 + i)}</span>
+                        <span class="option-text">${escapeHTML(opt)}</span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+// Antwort im Operator-Quiz verarbeiten
+function selectOperatorQuizAnswer(index) {
+    if (operatorQuizAnswered || !currentOperatorQuiz) return;
+
+    operatorQuizAnswered = true;
+    const q = currentOperatorQuiz[currentOperatorQuizQuestion];
+    const options = document.querySelectorAll('.quiz-option');
+
+    options.forEach((opt, i) => {
+        opt.classList.add('disabled');
+        if (i === q.correct) {
+            opt.classList.add('correct');
         }
+        if (i === index && index !== q.correct) {
+            opt.classList.add('incorrect');
+        }
+    });
 
-        setTimeout(() => {
-            currentQ++;
-            if (currentQ < quiz.length) {
-                document.getElementById('quizCurrentQ').textContent = currentQ + 1;
-                document.getElementById('quizProgressFill').style.width = `${((currentQ + 1) / quiz.length) * 100}%`;
-                showQuestion();
-            } else {
-                // Quiz beendet
-                showQuizResult(correctAnswers, quiz.length);
-            }
-        }, 1500);
-    };
+    if (index === q.correct) {
+        operatorQuizScore++;
+        if (currentUser) {
+            currentUser.progress.quizCorrect++;
+        }
+    }
 
-    showQuestion();
+    setTimeout(() => {
+        currentOperatorQuizQuestion++;
+        showOperatorQuizQuestion();
+    }, 1500);
 }
 
 // Operator-Quiz generieren
@@ -812,29 +878,32 @@ function generateOperatorQuiz(operator) {
 }
 
 // Quiz-Ergebnis anzeigen
-function showQuizResult(correct, total) {
-    const percent = Math.round((correct / total) * 100);
-    const coins = correct; // 1 Münze pro richtige Antwort
+function showOperatorQuizResult() {
+    const total = currentOperatorQuiz.length;
+    const percent = Math.round((operatorQuizScore / total) * 100);
+    const coins = operatorQuizScore; // 1 Münze pro richtige Antwort
 
     const content = document.getElementById('exerciseModalContent');
+    if (!content) return;
+
     content.innerHTML = `
         <div class="quiz-result">
             <h2>${percent >= 80 ? '🎉 Super!' : percent >= 50 ? '👍 Gut!' : '📚 Weiter üben!'}</h2>
-            <div class="quiz-score">${correct}/${total}</div>
+            <div class="quiz-score">${operatorQuizScore}/${total}</div>
             <p>Du hast ${percent}% der Fragen richtig beantwortet.</p>
-            ${coins > 0 ? `<div class="quiz-coins-earned">+${coins} 🐄</div>` : ''}
-            <div style="margin-top: 30px;">
+            ${coins > 0 ? `<div class="quiz-coins-earned">+${coins} 🪙</div>` : ''}
+            <div style="margin-top: 30px; display: flex; gap: 15px; justify-content: center;">
                 <button class="btn btn-primary" onclick="showOperatorQuiz()">Nochmal versuchen</button>
                 <button class="btn btn-secondary" onclick="closeExerciseModal()">Schließen</button>
             </div>
         </div>
     `;
 
-    if (coins > 0) {
-        addCoins(coins, 'Operator-Quiz');
+    if (coins > 0 && typeof addCoins === 'function') {
+        addCoins(coins, `Operator-Quiz: ${selectedOperator.name}`);
     }
 
-    if (currentUser) {
+    if (currentUser && typeof updateUserProgress === 'function') {
         updateUserProgress({ quizCorrect: currentUser.progress.quizCorrect });
     }
 }

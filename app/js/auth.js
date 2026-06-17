@@ -110,10 +110,121 @@ function ensureMasterAccount() {
     }
 }
 
+// === SHOWCASE-ACCOUNT "Showcase" — wird automatisch angelegt ===
+function ensureShowcaseAccount() {
+    try {
+        const users = JSON.parse(localStorage.getItem('histolearn_users') || '[]');
+        const existing = users.find(u => u.username === 'Showcase');
+
+        const allBlockIds = [
+            'stein','ziegel','sandstein','holz','dachziegel','zinne','fenster','tuer',
+            'fackel','banner','baum','gold','wasser','blume','zaun','buecherregal',
+            'bett_rot','bett_blau','bett_gruen','bett_gelb','bett_weiss','bett_lila',
+            'treppe_stein','treppe_ziegel','treppe_sandstein','treppe_holz','treppe_dachziegel',
+            'schaf','kuh','huhn','pferd','schwein'
+        ];
+        const fullInventory = {};
+        allBlockIds.forEach(id => fullInventory[id] = 999);
+
+        const allAchievements = (typeof ACHIEVEMENTS !== 'undefined')
+            ? ACHIEVEMENTS.map(a => a.id) : [];
+
+        if (existing) {
+            existing.password = 'showcase';
+            existing.progress.coins = 15200;
+            existing.progress.totalCoins = 24500;
+            existing.progress.rank = 5;
+            existing.progress.xp = 78500;
+            existing.progress.topicsCompleted = 17;
+            existing.progress.exercisesDone = 340;
+            existing.progress.quizCorrect = 820;
+            existing.progress.totalMinutes = 1420;
+            existing.progress.operatorsViewed = 17;
+            existing.progress.strategiesViewed = 12;
+            existing.progress.timelineViewed = 100;
+            existing.progress.castleLevel = 5;
+            existing.tutorialCompleted = true;
+            if (allAchievements.length) existing.achievements = allAchievements;
+            if (!existing.castleBuilder3) {
+                existing.castleBuilder3 = { blocks: [], inventory: {}, animals: [] };
+            }
+            allBlockIds.forEach(id => {
+                existing.castleBuilder3.inventory[id] = 999;
+            });
+            localStorage.setItem('histolearn_users', JSON.stringify(users));
+            return;
+        }
+
+        const newUser = {
+            id: 'showcase-user',
+            username: 'Showcase',
+            email: 'showcase@histolearn.de',
+            password: 'showcase',
+            displayName: 'Histo-Pro Showcase',
+            class: 10,
+            avatar: null,
+            isAdmin: false,
+            createdAt: new Date().toISOString(),
+            progress: {
+                coins: 15200,
+                totalCoins: 24500,
+                rank: 5,
+                xp: 78500,
+                topicsCompleted: 17,
+                exercisesDone: 340,
+                quizCorrect: 820,
+                totalMinutes: 1420,
+                todayMinutes: 0,
+                lastActive: new Date().toISOString(),
+                operatorsViewed: 17,
+                strategiesViewed: 12,
+                timelineViewed: 100,
+                castleLevel: 5,
+                castleParts: {
+                    gate: true, wallLeft: true, wallRight: true,
+                    towerLeft: true, towerRight: true, keep: true, flag: true
+                },
+                learningSessions: { current: null, history: [] }
+            },
+            castleBuilder3: {
+                blocks: [],
+                inventory: fullInventory,
+                animals: []
+            },
+            exerciseAttempts: {},
+            performanceAnalytics: { byTopic: {}, byOperator: {}, byAFB: { 1: {}, 2: {}, 3: {} } },
+            weaknesses: [],
+            achievements: allAchievements,
+            preferences: {
+                theme: 'dark',
+                accentColor: '#daa520',
+                aiMode: 'tutor',
+                pomodoroWork: 20,
+                pomodoroBreak: 5,
+                pomodoroSound: true,
+                preferredStrategy: ''
+            },
+            savedChats: [],
+            folders: [],
+            activities: [],
+            tutorialCompleted: true
+        };
+        users.push(newUser);
+        localStorage.setItem('histolearn_users', JSON.stringify(users));
+        console.log('[Auth] Showcase-Account "Showcase" angelegt. Login: Showcase / showcase');
+    } catch (e) {
+        console.error('[Auth] Showcase-Account konnte nicht angelegt werden:', e);
+    }
+}
+
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', ensureMasterAccount);
+    document.addEventListener('DOMContentLoaded', () => {
+        ensureMasterAccount();
+        ensureShowcaseAccount();
+    });
 } else {
     ensureMasterAccount();
+    ensureShowcaseAccount();
 }
 
 // Login Tab wechseln

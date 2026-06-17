@@ -98,6 +98,9 @@ function renderExerciseCard() {
     const prog = getTopicProgress(currentTopicKey);
     const alreadyDone = prog.completedIds && prog.completedIds.includes(ex.id);
 
+    const grade = ex.grade || 50;
+    const feedbackCls = grade >= 70 ? 'feedback-good' : grade >= 50 ? 'feedback-ok' : 'feedback-poor';
+
     container.innerHTML = `
         <div class="fc-card">
             <div class="fc-progress">
@@ -140,7 +143,7 @@ function renderExerciseCard() {
                 </div>
             </div>
 
-            <div class="fc-feedback" id="feedback-current" style="${isAnswered && ex.feedback ? '' : 'display:none;'}">
+            <div class="fc-feedback ${feedbackCls}" id="feedback-current" style="${isAnswered && ex.feedback ? '' : 'display:none;'}">
                 ${isAnswered && ex.feedback ? ex.feedback : ''}
             </div>
 
@@ -275,6 +278,8 @@ async function submitPhotoAnswer() {
         if (feedbackDiv) {
             feedbackDiv.style.display = 'block';
             feedbackDiv.innerHTML = buildFeedbackHTML(result);
+            const cls = (result.grade || 50) >= 70 ? 'feedback-good' : (result.grade || 50) >= 50 ? 'feedback-ok' : 'feedback-poor';
+            feedbackDiv.className = `fc-feedback ${cls}`;
         }
 
         document.getElementById('sample-current')?.style && (document.getElementById('sample-current').style.display = 'block');
@@ -282,6 +287,7 @@ async function submitPhotoAnswer() {
 
         exercise.answered = true;
         exercise.userAnswer = result.transcription || '';
+        exercise.grade = result.grade || 50;
         exercise.feedback = feedbackDiv?.innerHTML || '';
 
         saveExerciseProgress(exercise, result.grade || 50);
@@ -408,12 +414,16 @@ async function submitCurrentExerciseAnswer() {
         feedbackDiv.style.display = 'block';
         feedbackDiv.innerHTML = buildFeedbackHTML(evaluation);
 
+        const cls = (evaluation.grade || 50) >= 70 ? 'feedback-good' : (evaluation.grade || 50) >= 50 ? 'feedback-ok' : 'feedback-poor';
+        feedbackDiv.className = `fc-feedback ${cls}`;
+
         document.getElementById('sample-current').style.display = 'block';
         answerInput.disabled = true;
         if (submitBtn) submitBtn.style.display = 'none';
 
         exercise.answered = true;
         exercise.userAnswer = userAnswer;
+        exercise.grade = evaluation.grade || 50;
         exercise.feedback = feedbackDiv.innerHTML;
 
         saveExerciseProgress(exercise, evaluation.grade);
@@ -434,12 +444,21 @@ async function submitCurrentExerciseAnswer() {
 function buildFeedbackHTML(evaluation) {
     const grade = evaluation.grade || 50;
     const cls = grade >= 70 ? 'feedback-good' : grade >= 50 ? 'feedback-ok' : 'feedback-poor';
+    const icon = grade >= 70 ? '🌟' : grade >= 50 ? '👍' : '📚';
     return `
-        <div class="feedback-header ${cls}">
-            <span class="feedback-score">${grade}%</span>
-            <span class="feedback-label">${evaluation.label || ''}</span>
+        <div class="feedback-header-premium">
+            <div class="feedback-score-badge">
+                <span class="feedback-score-number">${grade}%</span>
+            </div>
+            <div class="feedback-status">
+                <span class="feedback-status-icon">${icon}</span>
+                <span class="feedback-status-label">${evaluation.label || ''}</span>
+            </div>
         </div>
-        <div class="feedback-text">${evaluation.feedback || ''}</div>
+        <div class="feedback-body">
+            <h4>Feedback des KI-Tutors:</h4>
+            <p class="feedback-text-premium">${evaluation.feedback || ''}</p>
+        </div>
     `;
 }
 
@@ -460,6 +479,12 @@ Aufgabe: ${exercise.question}
 Operator: ${exercise.operator} (AFB ${exercise.afb})
 Musterantwort: ${sampleText}
 Schülerantwort: ${userAnswer}
+
+WICHTIGE BEWERTUNGSRICHTLINIEN:
+- Nimm die Musterantwort nicht als starre Wort-für-Wort-Vorgabe.
+- Akzeptiere synonyme Begriffe und inhaltlich gleichwertige Konzepte voll als richtig (Beispiel: "Adel, Klerus und Bauern" ist absolut gleichwertig mit "Geistliche, Adel und Bürgertum/Dritter Stand").
+- Sei nicht übermäßig pedantisch. Wenn der Schüler den historischen Kern des Themas richtig erfasst hat, bewerte dies sehr großzügig.
+- Achte auf das Niveau eines 8.-10. Klässlers.
 
 Bewerte auf einer Skala von 0–100 und erkläre kurz was gut ist und was fehlt. Sei motivierend.
 
@@ -490,17 +515,54 @@ Antworte NUR als JSON: {"grade": 75, "label": "Gut gemacht! ✅", "feedback": "W
 function simulatedEvaluate(exercise, userAnswer) {
     const sampleText = Array.isArray(exercise.sampleAnswer)
         ? exercise.sampleAnswer.join(' ') : exercise.sampleAnswer;
-    const keywords = sampleText.toLowerCase().match(/\b\w{5,}\b/g) || [];
     const userLower = userAnswer.toLowerCase();
-    const matchCount = keywords.filter(kw => userLower.includes(kw)).length;
-    const matchPct = keywords.length > 0 ? (matchCount / keywords.length) * 100 : 0;
-    const lengthScore = Math.min(userAnswer.length / 100, 1) * 30;
-    const grade = Math.min(Math.round(matchPct * 0.7 + lengthScore), 100);
 
-    if (grade >= 80) return { grade, label: '🌟 Hervorragend!', feedback: 'Sehr vollständige Antwort! Du hast das Thema verstanden.' };
-    if (grade >= 65) return { grade, label: '✅ Gut gemacht!', feedback: 'Gute Antwort – einige Details könnten noch ergänzt werden.' };
-    if (grade >= 45) return { grade, label: '👍 Okay', feedback: 'Auf dem richtigen Weg! Schau dir noch die Musterantwort an.' };
-    return { grade, label: '📚 Noch üben', feedback: 'Versuche mehr Details einzubauen. Die Musterantwort zeigt dir was fehlt.' };
+    // Define synonym clusters for common historical terms to allow generous matches
+    const synonyms = {
+        'klerus': ['geistlich', 'kirche', 'klerus', 'priester', 'bischof'],
+        'adel': ['adel', 'adlig', 'fürst', 'graf', 'ritter'],
+        'bauer': ['bauer', 'bürger', 'dritter stand', 'bauern'],
+        'bürger': ['bürger', 'dritter stand', 'bauern', 'bevölkerung'],
+        'geistliche': ['geistlich', 'kirche', 'klerus', 'priester'],
+        'dampfmaschine': ['dampfmaschine', 'watt', 'antrieb'],
+        'eisenbahn': ['eisenbahn', 'zug', 'schienen', 'lokomotive'],
+        'webstuhl': ['webstuhl', 'jenny', 'spinn', 'textil'],
+        'revolution': ['revolution', 'sturm', 'aufstand', 'rebell', 'umsturz'],
+        'verfassung': ['verfassung', 'gesetz', 'grundrecht', 'recht']
+    };
+
+    const rawKeywords = sampleText.toLowerCase().match(/\b[a-zäöüß]{5,}\b/g) || [];
+    const keywords = [...new Set(rawKeywords)];
+
+    let matchCount = 0;
+    keywords.forEach(kw => {
+        if (userLower.includes(kw)) {
+            matchCount++;
+            return;
+        }
+        for (const [key, list] of Object.entries(synonyms)) {
+            if (kw.includes(key) || key.includes(kw)) {
+                if (list.some(syn => userLower.includes(syn))) {
+                    matchCount++;
+                    return;
+                }
+            }
+        }
+    });
+
+    const matchPct = keywords.length > 0 ? (matchCount / keywords.length) * 100 : 0;
+    const lengthScore = Math.min(userLower.length / 80, 1) * 35;
+    const bonus = matchCount > 0 ? 15 : 0;
+    let grade = Math.min(Math.round(matchPct * 0.6 + lengthScore + bonus), 100);
+
+    if (userLower.length > 15 && grade < 50) {
+        grade = 50;
+    }
+
+    if (grade >= 80) return { grade, label: '🌟 Hervorragend!', feedback: 'Sehr vollständige und inhaltlich korrekte Antwort! Du hast das Thema verstanden.' };
+    if (grade >= 65) return { grade, label: '✅ Gut gemacht!', feedback: 'Gute Antwort – die wichtigsten historischen Kernpunkte wurden richtig erfasst.' };
+    if (grade >= 50) return { grade, label: '👍 Bestanden', feedback: 'Auf dem richtigen Weg! Du hast die Grundlagen verstanden. Schau dir die Musterantwort für weitere Details an.' };
+    return { grade, label: '📚 Noch üben', feedback: 'Versuche noch etwas mehr Details oder Fachbegriffe einzubauen. Die Musterantwort zeigt dir, was wichtig ist.' };
 }
 
 // Themenname ermitteln
