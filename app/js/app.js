@@ -2010,8 +2010,11 @@ Erstelle genau 5 Diagnoseaufgaben zum Thema "${examInfo.topicName}".`;
         prompt += `\n\nFokus des Schülers: ${examInfo.focus}`;
     }
     if (examInfo.kannListe) {
-        prompt += `\n\n**WICHTIG (Prüfungsschwerpunkt - Richte deine Aufgaben prioritär danach aus!):**
-Richte die 5 Diagnosefragen thematisch und inhaltlich prioritär an der folgenden hochgeladenen Kann-Liste / den hochgeladenen Anforderungen aus:\n${examInfo.kannListe}`;
+        prompt += `\n\n**WICHTIG (Erwartungshorizont / Kann-Liste zur prioritären Ausrichtung):**
+Der Schüler hat folgenden Erwartungshorizont/Kann-Liste hochgeladen:
+${examInfo.kannListe}
+
+Anweisungen: Erstelle die 5 Diagnoseaufgaben so, dass sie sich direkt auf die konkreten Anforderungen und Formulierungen aus diesem Erwartungshorizont beziehen. Jede Aufgabe soll eine der hochgeladenen Anforderungen prüfen, damit das Diagnoseergebnis präzise anzeigt, was der Schüler aus diesem Erwartungshorizont bereits beherrscht und was nicht.`;
     }
     const lernzettel = getLernzettelContent();
     if (lernzettel) {
@@ -2159,8 +2162,15 @@ async function generateLernplan(examInfo, diagnosticResults) {
         prompt += `\n- Fokusthemen: ${examInfo.focus}`;
     }
     if (examInfo.kannListe) {
-        prompt += `\n\n**WICHTIG (Prüfungsschwerpunkt - Richte den Lernplan prioritär danach aus!):**
-Richte den gesamten tagesgenauen Lernplan und die Lernziele prioritär und ganz konkret an den Inhalten und Anforderungen aus dieser hochgeladenen Kann-Liste / den hochgeladenen Anforderungen aus:\n${examInfo.kannListe}`;
+        prompt += `\n\n**WICHTIG (Erwartungshorizont / Kann-Liste zur prioritären Ausrichtung):**
+Der Schüler hat folgenden Erwartungshorizont/Kann-Liste hochgeladen:
+${examInfo.kannListe}
+
+Anweisungen zur Berücksichtigung des Erwartungshorizonts:
+1. Analysiere jede Anforderung/jeden Punkt aus diesem Erwartungshorizont genau.
+2. Jeder Punkt dieses Erwartungshorizonts MUSS einem oder mehreren Tagen im Lernplan fest zugeordnet werden.
+3. Gib für JEDEN Tag bei den empfohlenen Methoden eine konkrete, praxisnahe Anleitung, WIE der Schüler auf genau diesen spezifischen Punkt lernen soll (z. B. 'Schreibe eine Mindmap zu Ursachen der Revolution' oder 'Nutze das Übungssystem und beantworte eine Frage zum Operator Erläutern').
+4. Beziehe dich namentlich auf die konkreten Stichpunkte des hochgeladenen Erwartungshorizonts, damit der Schüler genau sieht, an welchem Tag welche Anforderung abgedeckt wird.`;
     }
     if (diagnosticResults) {
         const stärken = diagnosticResults.strengths.map(s => `${s.name} (${Math.round(s.score * 100)}%)`).join(', ') || 'keine';

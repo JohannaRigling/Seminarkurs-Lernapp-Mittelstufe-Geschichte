@@ -2473,13 +2473,13 @@ Im Vollbild sind jetzt beide Sidebars ausgeblendet (linke per JS, rechte per CSS
 - **Problem**: An verschiedenen Stellen (wie Avatar-Tabs, Einstellungs-Karten, Notizboxen, Generierungsbereichen und den Flashcard-Karten) gab es noch hartkodierte weiße Hintergründe (`background: white`), was im Dark Mode zu unlesbarer weiß-auf-weißer Schrift führte.
 - **Lösung**: Alle hartkodierten weißen CSS-Hintergründe wurden in `components.css` durch die Theme-Variablen `var(--bg-card)` oder `var(--bg-tertiary)` ersetzt. Das gewährleistet universelle Lesbarkeit in allen Themes.
 
-### ✅ Multimodaler Bild-Upload & KI-Transkription (mit Lernplan-Fokus)
-- **Ziel**: Ermöglichen des Uploads von Bildern (z. B. Fotos von Arbeitsblättern oder Schulbuchseiten) in das Einrichtungsfenster der adaptiven Lernsession. Der Lernplan soll seinen Schwerpunkt primär auf diese hochgeladenen Inhalte legen, während der Schüler Datum und Themen selbstständig wählt.
+### ✅ Multimodaler Bild-Upload & KI-Transkription (mit tiefem Lernplan-Fokus)
+- **Ziel**: Ermöglichen des Uploads von Bildern (z. B. Fotos von Arbeitsblättern oder Schulbuchseiten) in das Einrichtungsfenster der adaptiven Lernsession. Der Lernplan soll seinen Schwerpunkt vollkommen auf diese hochgeladenen Inhalte (Erwartungshorizont) legen, indem er die Anforderungen analysiert und konkrete Lernmethoden vorschlägt.
 - **Lösung**:
   - Der Dateiupload akzeptiert nun auch Bilder (`accept=".txt,.md,image/*"`).
   - Der Upload-Button wurde in `📁 Datei / Bild hochladen` umbenannt.
   - Wenn ein Bild hochgeladen wird, liest die App die Datei als Base64-Daten und sendet sie an die Claude API (oder die Gemini Vision API, falls ein Gemini-Key aktiv ist). Die KI transkribiert den Text direkt in das `Kann-Liste`-Textfeld.
-  - **Prompt-Priorisierung**: Die API-Prompts für die Diagnoseaufgaben (`generateAIDiagnosticQuestions`) und die Lernplan-Generierung (`generateLernplan`) wurden mit expliziten System-Anweisungen versehen. Sie zwingen die KI dazu, den Lernplan und die Testfragen thematisch und inhaltlich prioritär an der hochgeladenen Kann-Liste auszurichten.
+  - **Detaillierte Prompt-Steuerung**: Die API-Prompts (`generateAIDiagnosticQuestions` & `generateLernplan`) wurden stark erweitert. Die KI wird angewiesen, jeden einzelnen Punkt des Erwartungshorizonts namentlich im Plan aufzuführen, ihn festen Tagen zuzuordnen und konkrete, praxisnahe Anleitungen zu geben, *wie* der Schüler auf diesen spezifischen Punkt lernen soll (z. B. unter Nutzung der in der App integrierten Lernhilfen/Operatoren).
 
 ### 🗂️ Geänderte Dateien in dieser Session
 - `app/index.html` – Shuffling-Integration in Quizze und Zuordnungsspiele, Feynman-Rollenwechsel UI.
